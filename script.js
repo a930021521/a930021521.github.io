@@ -19,6 +19,10 @@
     slots: ['半日（上午）', '半日（下午）', '全日'],
     // display text for each slot option; the option VALUE stays the slot above (backend / sheet / calendar parse these)
     slotLabels: { '半日（上午）': '上午（9:00–12:00）', '半日（下午）': '下午（13:00–16:00）', '全日': '全天（6小時，含1小時用餐）' },
+    // short display text for summaries (values stay as in slots)
+    slotShort: { '半日（上午）': '上午', '半日（下午）': '下午', '全日': '全天' },
+    // display text for durations (payload durationLabel keeps the 半日／全日 wording the backend stores)
+    durationsDisplay: { half: '半天（3小時）', full: '全天（6小時，含1小時用餐）' },
     // 早鳥回饋價 2026–27 — PRICE_TABLE[half|full][totalPeople - 1] = group total in TWD (not per person).
     // half = 半日 3 小時, full = 全日 6 小時（含午休 1 小時）. 5 人以上 → 私訊報價.
     priceLabel: '早鳥回饋價 2026–27',
@@ -539,9 +543,16 @@
   }
 
   /* ---------- live summary ---------- */
+  // customer-facing duration text (booking.durationLabel is left as-is for the payload)
+  function durationText(b) {
+    const days = b.dates || [], n = days.length; if (!n) return '';
+    const half = days.filter(d => slotKey(d.slot) === 'half').length, full = n - half;
+    if (half && full) return `半天 ${half} 天・全天 ${full} 天`;
+    return `${CONFIG.durationsDisplay[full ? 'full' : 'half']} × ${n} 天`;
+  }
   function datesText(short) {
     if (!booking.dates.length) return '尚未選擇';
-    const t = booking.dates.map(d => `${fmtDate(d.date)} ${d.slot}`);
+    const t = booking.dates.map(d => `${fmtDate(d.date)} ${CONFIG.slotShort[d.slot] || d.slot}`);
     return short && t.length > 3 ? t.slice(0, 3).join('、') + ` 等 ${t.length} 天` : t.join('\n');
   }
   function updateLive() {
@@ -617,7 +628,7 @@
     const c = booking.contact;
     const agesText = booking.children ? booking.childAges.map((age, i) => `小孩 ${i + 1}：${age ? age + ' 歲' : '未填'}`).join('、') : '—';
     const rows = [['板類', booking.discipline], ['程度', booking.level], ['語言', booking.language],
-      ['日期', datesText(false)], ['時數', booking.durationLabel || '—'], ['大人', booking.adults + ' 人'], ['小孩', booking.children + ' 人'], ['小孩年齡', agesText], ['總人數', booking.totalPeople + ' 人'], ['雪場', booking.resort],
+      ['日期', datesText(false)], ['時數', durationText(booking) || '—'], ['大人', booking.adults + ' 人'], ['小孩', booking.children + ' 人'], ['小孩年齡', agesText], ['總人數', booking.totalPeople + ' 人'], ['雪場', booking.resort],
       ['聯絡人', booking.name], [c.method, c.id]];
     if (c.method !== 'Email') rows.push(['Email', c.email || '（未填）']);
     rows.push(['備註', booking.notes || '（無）']);
