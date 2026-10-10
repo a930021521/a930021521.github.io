@@ -17,6 +17,8 @@
     maxDays: 14,
     monthsAhead: 12,
     slots: ['半日（上午）', '半日（下午）', '全日'],
+    // display text for each slot option; the option VALUE stays the slot above (backend / sheet / calendar parse these)
+    slotLabels: { '半日（上午）': '上午（9:00–12:00）', '半日（下午）': '下午（13:00–16:00）', '全日': '全天（6小時，含1小時用餐）' },
     // 早鳥回饋價 2026–27 — PRICE_TABLE[half|full][totalPeople - 1] = group total in TWD (not per person).
     // half = 半日 3 小時, full = 全日 6 小時（含午休 1 小時）. 5 人以上 → 私訊報價.
     priceLabel: '早鳥回饋價 2026–27',
@@ -456,7 +458,7 @@
   const daysEl = $('#days'), daysEmpty = $('#days-empty');
   function renderDays() {
     daysEl.innerHTML = booking.dates.map((d, i) => `<li><span class="d-date">${fmtDate(d.date)}</span>
-      <select data-slot="${i}" aria-label="${fmtDate(d.date)} 的時段">${CONFIG.slots.map(s => `<option${s === d.slot ? ' selected' : ''}>${s}</option>`).join('')}</select>
+      <select data-slot="${i}" aria-label="${fmtDate(d.date)} 的時段">${CONFIG.slots.map(s => `<option value="${s}"${s === d.slot ? ' selected' : ''}>${CONFIG.slotLabels[s] || s}</option>`).join('')}</select>
       <button type="button" class="d-del" data-del="${d.date}" aria-label="移除 ${fmtDate(d.date)}">✕</button></li>`).join('');
     daysEmpty.textContent = booking.dates.length ? `已選 ${booking.dates.length} 天` : '還沒有選日期。';
   }
