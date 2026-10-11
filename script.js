@@ -19,8 +19,6 @@
     slots: ['半日（上午）', '半日（下午）', '全日'],
     // display text for each slot option; the option VALUE stays the slot above (backend / sheet / calendar parse these)
     slotLabels: { '半日（上午）': '上午（9:00–12:00）', '半日（下午）': '下午（13:00–16:00）', '全日': '全天（6小時，含1小時用餐）' },
-    // short display text for summaries (values stay as in slots)
-    slotShort: { '半日（上午）': '上午', '半日（下午）': '下午', '全日': '全天' },
     // display text for durations (payload durationLabel keeps the 半日／全日 wording the backend stores)
     durationsDisplay: { half: '半天（3小時）', full: '全天（6小時，含1小時用餐）' },
     // 早鳥回饋價 2026–27 — PRICE_TABLE[half|full][totalPeople - 1] = group total in TWD (not per person).
@@ -552,13 +550,20 @@
   }
   function datesText(short) {
     if (!booking.dates.length) return '尚未選擇';
-    const t = booking.dates.map(d => `${fmtDate(d.date)} ${CONFIG.slotShort[d.slot] || d.slot}`);
+    const t = booking.dates.map(d => `${fmtDate(d.date)} ${CONFIG.slotLabels[d.slot] || d.slot}`);
     return short && t.length > 3 ? t.slice(0, 3).join('、') + ` 等 ${t.length} 天` : t.join('\n');
+  }
+  // same dates as markup: one row per day; date and time label are kept whole so a long label wraps as a unit
+  function datesHTML(short) {
+    if (!booking.dates.length) return esc('尚未選擇');
+    const rows = booking.dates.map(d => `<span class="dt-row"><span class="dt-d">${esc(fmtDate(d.date))}</span> <span class="dt-s">${esc(CONFIG.slotLabels[d.slot] || d.slot)}</span></span>`);
+    return short && rows.length > 3 ? rows.slice(0, 3).join('') + `<span class="dt-row dt-more">等 ${rows.length} 天</span>` : rows.join('');
   }
   function updateLive() {
     booking.price = computePrice(booking);
     const map = { discipline: booking.discipline || '尚未選擇', level: booking.level || '—', dates: datesText(true), people: `大人 ${booking.adults}・小孩 ${booking.children}（共 ${booking.totalPeople} 人）`, price: booking.price.display };
     $$('[data-live]').forEach(el => { el.textContent = map[el.dataset.live]; });
+    $$('[data-live="dates"]').forEach(el => { el.innerHTML = datesHTML(true); });
     $$('[data-live="price"]').forEach(el => el.classList.toggle('is-quote', !!booking.price.quoteRequired));
     const liveNote = $('#live-price-note');
     if (liveNote) liveNote.textContent = booking.price.note || '以我們的回覆為準';
@@ -632,7 +637,7 @@
       ['聯絡人', booking.name], [c.method, c.id]];
     if (c.method !== 'Email') rows.push(['Email', c.email || '（未填）']);
     rows.push(['備註', booking.notes || '（無）']);
-    $('#summary').innerHTML = rows.map(([k, v]) => `<dt>${esc(k)}</dt><dd>${esc(v || '—')}</dd>`).join('');
+    $('#summary').innerHTML = rows.map(([k, v]) => `<dt>${esc(k)}</dt><dd>${k === '日期' ? datesHTML(false) : esc(v || '—')}</dd>`).join('');
     $('#est-price').textContent = price.display;
     $('#est-price').classList.toggle('is-quote', !!price.quoteRequired);
     $('#est-deposit').textContent = price.depositDisplay;

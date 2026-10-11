@@ -1197,3 +1197,9 @@ button{cursor:pointer}
   .is-trio .coach-track>.coach:not(.coach-soon){grid-template-rows:calc(1.1rem * 1.75 + 2px) auto auto auto;align-content:start}
   .is-trio>.coach-note{margin-top:18px}
 }
+
+/* booking summary / step-4 日期 rows: one line per day; the time label wraps as a whole under the date when space is tight */
+.dt-row{display:block}
+.dt-row+.dt-row{margin-top:.35em}
+.dt-d{display:inline-block;margin-right:.35em}
+.dt-s{display:inline-block;max-width:100%}
