@@ -656,6 +656,16 @@
   prog.forEach(p => $('button', p).addEventListener('click', () => { const k = +p.dataset.p; if (k < cur) go(k); }));
 
   const done = $('#done');
+  // success screen: booking ref (from the backend response) + how to reach us for the contact method the customer picked
+  function showDoneContact(ref, contact) {
+    const r = String(ref || '').trim();
+    $('#done-ref').textContent = r;
+    $('#done-ref-box').hidden = !r;
+    $('#done-ref-missing').hidden = !!r;
+    const m = ['LINE', 'WhatsApp', 'WeChat'].includes(contact.method) ? contact.method : 'other';
+    $$('[data-done-method]', done).forEach(el => { el.hidden = el.dataset.doneMethod !== m; });
+    $('#done-mail').hidden = !contact.email;
+  }
   function showDoneOrForm(showDone) { done.hidden = !showDone; form.hidden = showDone; $('.prog').hidden = showDone; }
   form.addEventListener('submit', async e => {
     e.preventDefault();
@@ -665,8 +675,7 @@
     try {
       const res = await window.SNOWMODE.submitBooking(payload);
       window.SNOWMODE.lastSubmission = res;
-      $('#done-ref').textContent = res.ref;
-      $('#done-method').textContent = booking.contact.method;
+      showDoneContact(res && res.ref, booking.contact);
       showDoneOrForm(true); done.focus();
       toast('預約需求已送出');
       // GA4 conversion: lesson details only — never name, contact ID, email or notes

@@ -37,7 +37,7 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@200;300;400;600;700&family=Noto+Sans+TC:wght@300;400;500;700&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="style.css?v=times2">
+<link rel="stylesheet" href="style.css?v=done1">
 <link rel="stylesheet" href="hero-snow.css?v=1">
 </head>
 <body>
@@ -554,9 +554,37 @@
 
       <div class="sent" id="done" hidden tabindex="-1">
         <p class="done-ico" aria-hidden="true">✓</p>
-        <h3>已收到您的預約需求</h3>
-        <p>預約編號 <b id="done-ref">SM-0000</b></p>
-        <p class="done-sub">我們會用 <span id="done-method">LINE</span> 與您聯繫，確認教練與時段；預約確認後支付總價 30% 訂金，付款方式與相關資訊將由學校另行提供。尾款於上課前結清。</p>
+        <h3>已收到您的預約需求！</h3>
+        <div class="done-ref-box" id="done-ref-box">
+          <span class="done-ref-l">預約編號</span>
+          <b class="done-ref" id="done-ref">SM-0000</b>
+        </div>
+        <p class="done-ref-missing" id="done-ref-missing" hidden>預約編號稍後會由教練提供；聯絡我們時，請告訴我們您的姓名與上課日期。</p>
+        <div class="done-contact" data-done-method="LINE" hidden>
+          <p class="done-say">請加入 SNOWMODE 官方 LINE，並傳送您的預約編號，教練會盡快與您確認。</p>
+          <a class="done-btn done-btn--line" href="https://line.me/R/ti/p/@dqi1670m" target="_blank" rel="noopener">加入 LINE</a>
+          <p class="done-id">LINE ID：@dqi1670m</p>
+        </div>
+        <div class="done-contact" data-done-method="WhatsApp" hidden>
+          <p class="done-say">請透過 WhatsApp 傳訊息給我們，並附上您的預約編號，教練會盡快與您確認。</p>
+          <a class="done-btn done-btn--wa" href="https://wa.me/817091690683" target="_blank" rel="noopener">開啟 WhatsApp</a>
+          <p class="done-id">+81 70-9169-0683</p>
+        </div>
+        <div class="done-contact" data-done-method="WeChat" hidden>
+          <p class="done-say">請在微信搜尋 ID：Snowmode 加我們好友，並傳送您的預約編號，教練會盡快與您確認。</p>
+          <button type="button" class="done-btn done-btn--ghost" data-copy="#wechat-id">複製 WeChat ID</button>
+          <p class="done-id">WeChat ID：Snowmode</p>
+        </div>
+        <div class="done-contact" data-done-method="other" hidden>
+          <p class="done-say">請透過以下任一方式聯絡我們，並附上您的預約編號：</p>
+          <ul class="done-list">
+            <li><span class="done-list-l">LINE</span><span class="done-list-v">@dqi1670m</span><a class="done-mini done-mini--line" href="https://line.me/R/ti/p/@dqi1670m" target="_blank" rel="noopener">加入 LINE</a></li>
+            <li><span class="done-list-l">WhatsApp</span><span class="done-list-v">+81 70-9169-0683</span><a class="done-mini" href="https://wa.me/817091690683" target="_blank" rel="noopener">開啟 WhatsApp</a></li>
+            <li><span class="done-list-l">WeChat</span><span class="done-list-v">Snowmode</span><button type="button" class="done-mini" data-copy="#wechat-id">複製 ID</button></li>
+          </ul>
+        </div>
+        <p class="done-mail" id="done-mail" hidden>確認信已寄到您的 Email（若沒收到，請查看垃圾郵件）</p>
+        <p class="done-sub">預約確認後支付總價 30% 訂金，付款方式與相關資訊將由學校另行提供。尾款於上課前結清。</p>
         <button type="button" class="btn btn-ghost" id="done-again">再預約一筆</button>
       </div>
     </div>
@@ -1211,6 +1239,6 @@ Jay教練是我們這兩天玩的這麼愉快的大功臣！
 <button class="to-top" id="to-top" type="button" aria-label="回到頁首" tabindex="-1"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 19V5M5.5 11.5 12 5l6.5 6.5" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg></button>
 <div class="toast" id="toast" role="status" aria-live="polite"></div>
 <script src="hero-snow.js?v=1"></script>
-<script src="script.js?v=times2"></script>
+<script src="script.js?v=done1"></script>
 </body>
 </html>
