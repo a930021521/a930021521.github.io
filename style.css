@@ -1203,3 +1203,33 @@ button{cursor:pointer}
 .dt-row+.dt-row{margin-top:.35em}
 .dt-d{display:inline-block;margin-right:.35em}
 .dt-s{display:inline-block;max-width:100%}
+
+/* ===== booking success: ref + how to reach us for the chosen contact method ===== */
+.done-ref-box{display:inline-flex;flex-direction:column;align-items:center;gap:4px;margin:14px auto 4px;padding:14px 26px;border:1px solid rgba(226,230,235,.28);border-radius:16px;background:rgba(255,255,255,.04)}
+.done-ref-l{font-size:.78rem;letter-spacing:.2em;color:var(--mute)}
+.sent .done-ref{font-family:var(--lat);font-size:1.6rem;font-weight:600;letter-spacing:.08em;color:#fff;user-select:all}
+.done-ref-missing{font-size:.88rem;color:var(--mute);max-width:26em;margin:12px auto 0}
+.done-contact{max-width:26em;margin:22px auto 0;padding-top:20px;border-top:1px solid var(--line)}
+.done-say{font-size:.95rem;line-height:1.8;color:#E2E6EB}
+.done-btn{display:flex;align-items:center;justify-content:center;width:100%;max-width:300px;min-height:52px;margin:16px auto 0;padding:12px 24px;border-radius:999px;font-size:1rem;font-weight:700;letter-spacing:.1em;text-decoration:none;color:#fff;border:1px solid transparent;cursor:pointer;transition:transform .2s ease,box-shadow .2s ease,background-color .2s ease}
+.done-btn--line{background:#06C755;box-shadow:0 10px 28px rgba(6,199,85,.32)}
+.done-btn--wa{background:#25D366;box-shadow:0 10px 28px rgba(37,211,102,.3)}
+.done-btn--ghost{background:rgba(255,255,255,.06);border-color:rgba(226,230,235,.45);font:inherit;font-weight:600;letter-spacing:.1em}
+@media (hover:hover){.done-btn:hover{transform:translateY(-2px)}.done-btn--ghost:hover{border-color:#fff}}
+.done-btn:focus-visible,.done-mini:focus-visible{outline:2px solid var(--blue-2);outline-offset:3px}
+.done-id{margin-top:10px;font-size:.8rem;letter-spacing:.06em;color:var(--mute)}
+.done-list{display:grid;gap:10px;margin-top:14px;text-align:left}
+.done-list li{display:grid;grid-template-columns:5.6em minmax(0,1fr) auto;align-items:center;gap:10px;padding:10px 12px 10px 14px;border:1px solid var(--line);border-radius:14px;background:rgba(255,255,255,.035)}
+.done-list-l{font-family:var(--lat);font-size:.78rem;font-weight:600;letter-spacing:.06em;color:var(--blue-2)}
+.done-list-v{font-size:.88rem;overflow-wrap:anywhere}
+.done-mini{display:inline-flex;align-items:center;justify-content:center;min-height:34px;padding:6px 14px;border-radius:999px;border:1px solid rgba(226,230,235,.4);background:rgba(255,255,255,.05);color:#fff;font:inherit;font-size:.8rem;white-space:nowrap;text-decoration:none;cursor:pointer}
+.done-mini--line{background:#06C755;border-color:#06C755;font-weight:600}
+.done-mail{max-width:26em;margin:20px auto 0;font-size:.85rem;color:#C9CED6}
+.sent .done-sub{margin-top:14px}
+@media (max-width:640px){
+  .sent .done-ref{font-size:1.4rem}
+  .done-list li{grid-template-columns:minmax(0,1fr) auto;grid-template-rows:auto auto;column-gap:10px;row-gap:2px}
+  .done-list-l{grid-column:1}
+  .done-list-v{grid-column:1;grid-row:2}
+  .done-mini{grid-column:2;grid-row:1/span 2}
+}
