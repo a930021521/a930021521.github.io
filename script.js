@@ -626,7 +626,7 @@
     back.hidden = n === 1; next.hidden = n === 4; send.hidden = n !== 4;
     if (n === 4) buildSummary();
     msg('');
-    if (focus) { const t = $('.step.on .step-title', form); if (t) { t.tabIndex = -1; t.focus({ preventScroll: true }); } if ($('#wizard').getBoundingClientRect().top < 0) $('#wizard').scrollIntoView({ behavior: 'smooth', block: 'start' }); }
+    if (focus) { const t = $('.step.on .step-title', form); if (t) { t.tabIndex = -1; t.focus({ preventScroll: true }); } if ($('#wizard').getBoundingClientRect().top < 102) $('#wizard').scrollIntoView({ behavior: 'smooth', block: 'start' }); }
   }
   function buildSummary() {
     const price = computePrice(booking);
@@ -1227,8 +1227,12 @@
   const btn = document.getElementById('to-top');
   if (!btn) return;
   const reduce = matchMedia('(prefers-reduced-motion: reduce)');
+  const mqMobile = matchMedia('(max-width: 640px)');
+  const avoid = [...document.querySelectorAll('#book-form, .pt-body, .hk-season')];
   const sync = () => {
-    const show = scrollY > innerHeight;
+    let show = scrollY > innerHeight;
+    // mobile: keep it off the booking form steppers and the price tables' right columns
+    if (show && mqMobile.matches) { const b = innerHeight - parseFloat(getComputedStyle(btn).bottom); show = !avoid.some(el => { const r = el.getBoundingClientRect(); return r.top < b && r.bottom > b - 46; }); }
     btn.classList.toggle('is-shown', show);
     btn.tabIndex = show ? 0 : -1;
   };
