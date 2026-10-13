@@ -1259,3 +1259,15 @@ button{cursor:pointer}
   .coach-bio,.coach-lang,.coach-list,.rs-facts dd,.rs-fit{font-size:14px}
   #wizard{scroll-margin-top:18px}
 }
+
+/* ===== mobile hero declutter (≤640px only): fewer lines, lighter veil so the mountains show ===== */
+@media (max-width:640px){
+  .hero{padding-top:34svh}
+  .hero .hero-btn--line{background:rgba(10,16,32,.35)}
+  .hero .eyebrow,.hero .snow-hint,.hero .facts{display:none}
+  .hero::after{background:linear-gradient(180deg,rgba(10,16,32,.35) 0%,rgba(10,16,32,0) 22%,rgba(10,16,32,.05) 50%,rgba(10,16,32,.5) 78%,var(--night) 100%)}
+  .hero.ss:not(.is-on)::before{opacity:.35}
+  .hero.ss:not(.is-on) .hero-bg{filter:grayscale(.2) saturate(.9) brightness(.95)}
+  .hero .lead,.hero .hero-course,.hero .hero-eb{text-shadow:0 1px 3px rgba(0,0,0,.55),0 0 14px rgba(0,0,0,.35)}
+  .hero h1{text-shadow:0 2px 12px rgba(0,0,0,.4)}
+}
