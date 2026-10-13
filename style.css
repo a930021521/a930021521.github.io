@@ -49,7 +49,8 @@ button{cursor:pointer}
 .fld input:focus,.fld select:focus,.fld textarea:focus{outline:none;border-color:var(--blue-2);background:rgba(255,255,255,.14)}
 .fld select option{color:#111;background:#fff}
 .fld input::placeholder,.fld textarea::placeholder{color:rgba(255,255,255,.4)}
-.fld input[type=date]{color-scheme:dark;min-height:46px}
+.fld input[type=date]{color-scheme:dark;min-height:46px;display:block;width:100%;max-width:100%;min-width:0;box-sizing:border-box;-webkit-appearance:none;appearance:none;text-align:left}
+.fld input[type=date]::-webkit-date-and-time-value{text-align:left}
 .fld .invalid,.fld [aria-invalid=true]{border-color:var(--bad)!important}
 .err{font-size:.76rem;color:var(--bad);min-height:0}
 .err:empty{display:none}
