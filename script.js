@@ -681,6 +681,7 @@
       // GA4 conversion: lesson details only — never name, contact ID, email or notes
       const resort = payload.resort || '';
       const lead = {
+        form: 'booking',
         resort,
         area: resort.startsWith('北海道・') ? '北海道' : (resort && resort !== '由教練建議' ? '越後湯澤' : '未指定'),
         discipline: payload.discipline || '',
@@ -810,7 +811,7 @@
     if (!el) return;
     const href = el.getAttribute('href') || '';
     let method = '';
-    if (/line\.me\//.test(href)) method = 'LINE';
+    if (/(line\.me|lin\.ee)\//.test(href)) method = 'LINE';
     else if (/wa\.me\//.test(href)) method = 'WhatsApp';
     else if (/instagram\.com\//.test(href)) method = 'Instagram';
     else if (href.startsWith('mailto:')) method = 'Email';
@@ -818,6 +819,20 @@
     else if (el.hasAttribute('data-wechat-toggle') && el.getAttribute('aria-expanded') === 'true') method = 'WeChat';
     if (method) track('contact_click', { method });
   });
+
+  /* ---------- GA4: section reach (once per page load, ~40% visible or fills 40% of the screen) ---------- */
+  if ('IntersectionObserver' in window) {
+    const seen = new Set();
+    const secIO = new IntersectionObserver(entries => entries.forEach(en => {
+      const id = en.target.id;
+      if (seen.has(id) || !en.isIntersecting) return;
+      const vh = window.innerHeight || 1;
+      if (en.intersectionRatio >= 0.4 || en.intersectionRect.height >= vh * 0.4) {
+        seen.add(id); secIO.unobserve(en.target); track('section_view', { section: id });
+      }
+    }), { threshold: [0, 0.1, 0.2, 0.3, 0.4, 0.6, 0.8, 1] });
+    ['lessons', 'prices', 'prices-hokkaido', 'booking', 'method', 'contact'].forEach(id => { const el = document.getElementById(id); if (el) secIO.observe(el); });
+  }
 
   /* ---------- WeChat copy + floating contact dock ---------- */
   $$('[data-copy]').forEach(b => b.addEventListener('click', async () => {
