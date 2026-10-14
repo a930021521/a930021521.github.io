@@ -423,7 +423,14 @@
   const now = new Date(); const todayISO = iso(now);
   const minMonth = new Date(now.getFullYear(), now.getMonth(), 1);
   const maxMonth = new Date(now.getFullYear(), now.getMonth() + CONFIG.monthsAhead, 1);
-  let view = new Date(minMonth);
+  // open on the first month (from today) that contains a non-past in-season date
+  const firstSeasonMonth = (() => {
+    for (let d = new Date(now.getFullYear(), now.getMonth(), now.getDate()); d < new Date(maxMonth.getFullYear(), maxMonth.getMonth() + 1, 1); d.setDate(d.getDate() + 1)) {
+      if (seasonOf(iso(d))) return new Date(d.getFullYear(), d.getMonth(), 1);
+    }
+    return minMonth;
+  })();
+  let view = new Date(firstSeasonMonth);
   const DOW = '日一二三四五六';
   const fmtDate = s => { const d = new Date(s + 'T00:00:00'); return `${d.getMonth() + 1}/${d.getDate()}（${DOW[d.getDay()]}）`; };
   const calGrid = $('#cal-grid'), calMonth = $('#cal-month');
