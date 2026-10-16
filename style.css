@@ -128,7 +128,7 @@ button{cursor:pointer}
 .lesson-inc li::before,.lesson-exc li::before{content:"";position:absolute;left:0;top:.55em;width:7px;height:7px;border-radius:50%}
 .lesson-inc li::before{background:var(--blue-2)}
 .lesson-exc li::before{background:rgba(255,255,255,.35)}
-.lesson-next{font-size:.88rem;line-height:1.7;color:var(--mute);margin:0;max-width:42em}
+.lesson-next{font-size:.88rem;line-height:1.7;color:var(--mute);margin:0}
 .lesson-next a{color:#fff;text-decoration:underline;text-underline-offset:3px}
 .lesson-next a:hover{color:var(--blue-2)}
 @media (max-width:720px){
