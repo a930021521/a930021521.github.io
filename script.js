@@ -259,7 +259,20 @@
     return '以我們的回覆為準';
   }
 
+  // 預估費用 only after a real 雪場 is chosen; '由教練建議' / empty shows a placeholder and submits no amount
+  // 越後湯澤 resorts with an extra fee: + NT$ per lesson day per group (half or full day)
+  const YUZAWA_SURCHARGE = { '神立': 2000, '石打丸山': 2000 };
+  const NO_RESORT_TEXT = '選擇雪場後顯示';
+  const hasResort = b => { const r = String(b.resort || '').trim(); return !!r && r !== '由教練建議'; };
   function computePrice(b) {
+    const full = computePriceRaw(b);
+    if (hasResort(b)) return full;
+    b.deposit = null; b.balance = null;
+    return { ...full, amount: null, display: NO_RESORT_TEXT, deposit: null, balance: null,
+      depositDisplay: '—', balanceDisplay: '—', quoteRequired: false, hokkaido: false, earlyBird: false,
+      note: '以我們的回覆為準', needsResort: true };
+  }
+  function computePriceRaw(b) {
     const people = Number(b.totalPeople) || 0;
     const halfDays = b.dates.filter(d => slotKey(d.slot) === 'half').length;
     const fullDays = b.dates.filter(d => slotKey(d.slot) === 'full').length;
@@ -299,7 +312,8 @@
     const overMax = people > CONFIG.maxPricedPeople;
     let amount = null;
     if (!overMax && people >= 1 && b.dates.length) {
-      amount = b.dates.reduce((sum, d) => sum + CONFIG.PRICE_TABLE[slotKey(d.slot)][people - 1], 0);
+      const extra = YUZAWA_SURCHARGE[String(b.resort || '').trim()] || 0; // per lesson day per group
+      amount = b.dates.reduce((sum, d) => sum + CONFIG.PRICE_TABLE[slotKey(d.slot)][people - 1] + extra, 0);
     }
     const deposit = amount == null ? null : Math.round(amount * b.depositRate);
     const balance = amount == null ? null : amount - deposit;
@@ -584,7 +598,7 @@
     const map = { discipline: booking.discipline || '尚未選擇', level: booking.level || '—', dates: datesText(true), people: `大人 ${booking.adults}・小孩 ${booking.children}（共 ${booking.totalPeople} 人）`, price: booking.price.display };
     $$('[data-live]').forEach(el => { el.textContent = map[el.dataset.live]; });
     $$('[data-live="dates"]').forEach(el => { el.innerHTML = datesHTML(true); });
-    $$('[data-live="price"]').forEach(el => el.classList.toggle('is-quote', !!booking.price.quoteRequired));
+    $$('[data-live="price"]').forEach(el => { el.classList.toggle('is-quote', !!booking.price.quoteRequired); el.classList.toggle('is-pending', !!booking.price.needsResort); });
     const liveNote = $('#live-price-note');
     if (liveNote) liveNote.textContent = booking.price.note || '以我們的回覆為準';
   }
@@ -660,6 +674,7 @@
     $('#summary').innerHTML = rows.map(([k, v]) => `<dt>${esc(k)}</dt><dd>${k === '日期' ? datesHTML(false) : esc(v || '—')}</dd>`).join('');
     $('#est-price').textContent = price.display;
     $('#est-price').classList.toggle('is-quote', !!price.quoteRequired);
+    $('#est-price').classList.toggle('is-pending', !!price.needsResort);
     $('#est-deposit').textContent = price.depositDisplay;
     $('#est-balance').textContent = price.balanceDisplay;
     const estNote = $('#est-note');

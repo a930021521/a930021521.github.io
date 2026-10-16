@@ -45,7 +45,7 @@
 <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@200;300;400;600;700&display=swap" rel="stylesheet">
 <link rel="preload" as="image" type="image/webp" href="img/hero-yuzawa-m.webp" media="(max-width:640px)" fetchpriority="high">
 <link rel="preload" as="image" type="image/webp" href="img/hero-yuzawa-1920.webp" media="(min-width:641px)" fetchpriority="high">
-<link rel="stylesheet" href="style.css?v=fast9">
+<link rel="stylesheet" href="style.css?v=surch11">
 <link rel="stylesheet" href="hero-snow.css?v=1">
 </head>
 <body>
@@ -267,6 +267,7 @@
             </tbody>
           </table>
         </div>
+        <p class="pt-note pt-surcharge">神立、石打丸山 每天加 NT$2,000</p>
         <p class="pt-note">價格為整組總價（非每人），以 NT$ 計價；全天含1小時用餐。5 人以上或特殊需求，歡迎私訊詳談（LINE <code>@dqi1670m</code>）。雪具租借、纜車券另計，不含在課程費用內。</p>
       </div>
     </details>
@@ -474,7 +475,7 @@
           <div><dt>日期</dt><dd data-live="dates">尚未選擇</dd></div>
           <div><dt>人數</dt><dd data-live="people">大人 1・小孩 0（共 1 人）</dd></div>
         </dl>
-        <p class="live-price"><span>預估費用</span><strong data-live="price">—</strong><small id="live-price-note">以我們的回覆為準</small></p>
+        <p class="live-price"><span>預估費用</span><strong data-live="price" class="is-pending">選擇雪場後顯示</strong><small id="live-price-note">以我們的回覆為準</small></p>
       </aside>
       <p class="fine">※ 送出的是預約需求，不會收費；預約確認後支付總價 30% 訂金，付款方式與相關資訊將由學校另行提供。</p>
     </div>
@@ -579,13 +580,13 @@
         <fieldset class="step" data-step="4">
           <legend class="step-title">確認內容</legend>
           <dl class="summary" id="summary"></dl>
-          <div class="est"><span>預估費用</span><strong id="est-price">—</strong><span id="est-note" class="est-note" hidden></span><small>訂金 30%：<b id="est-deposit">—</b><br>尾款 70%：<b id="est-balance">—</b>（於上課前結清）<br>付款方式與相關資訊將由學校另行提供<br><b id="est-basis" class="est-basis">早鳥回饋價 2026–27，整組總價；實際費用以我們的回覆為準</b></small></div>
+          <div class="est"><span>預估費用</span><strong id="est-price" class="is-pending">選擇雪場後顯示</strong><span id="est-note" class="est-note" hidden></span><small>訂金 30%：<b id="est-deposit">—</b><br>尾款 70%：<b id="est-balance">—</b>（於上課前結清）<br>付款方式與相關資訊將由學校另行提供<br><b id="est-basis" class="est-basis">早鳥回饋價 2026–27，整組總價；實際費用以我們的回覆為準</b></small></div>
           <label class="agree"><input type="checkbox" name="agree" required><span>我了解這是預約「需求」，確認教練與時段後才算完成預約；並同意 SNOWMODE 的付款與取消政策：預約確認後支付總價 30% 訂金，尾款於上課前結清，付款方式與相關資訊將由學校另行提供；課程首日前 61 天以上取消全額退款、前 31–60 天退還訂金 50%、前 30 天內（含第 30 天）恕不退款，多日課程以第一天起算；若因天候或雪場關閉取消課程，可改期或全額退款；並同意 SNOWMODE 依<a href="privacy.html" target="_blank" rel="noopener">隱私權政策</a>使用上述資料與我聯繫。</span></label>
           <span class="err" data-err="agree"></span>
         </fieldset>
 
         <p class="wiz-msg" id="wiz-msg" role="status" aria-live="polite"></p>
-        <p class="wiz-est"><span>預估費用</span><strong data-live="price">—</strong></p>
+        <p class="wiz-est"><span>預估費用</span><strong data-live="price" class="is-pending">選擇雪場後顯示</strong></p>
         <div class="wiz-nav">
           <button type="button" class="btn btn-ghost" id="wiz-back" hidden>← 上一步</button>
           <button type="button" class="btn btn-main" id="wiz-next">下一步 <span aria-hidden="true">→</span></button>
@@ -1282,6 +1283,6 @@ Jay教練是我們這兩天玩的這麼愉快的大功臣！
 <div class="toast" id="toast" role="status" aria-live="polite"></div>
 <script src="hero-snow.js?v=1"></script>
 <dialog class="lightbox" id="lightbox" aria-label="放大圖片"><button type="button" class="lb-close" aria-label="關閉">×</button><img alt=""></dialog>
-<script src="script.js?v=fast9"></script>
+<script src="script.js?v=surch11"></script>
 </body>
 </html>

@@ -1309,3 +1309,5 @@ button{cursor:pointer}
 @media (max-width:640px){.prices-head{margin-top:52px}}
 .hero-bg{background-image:image-set(url(img/hero-yuzawa-1920.webp) type("image/webp"),url(img/hero-yuzawa-1920.jpg) type("image/jpeg"))}
 @media (max-width:640px){.hero-bg{background-image:image-set(url(img/hero-yuzawa-m.webp) type("image/webp"),url(img/hero-yuzawa-m.jpg) type("image/jpeg"))}}
+[data-live="price"].is-pending,#est-price.is-pending{font-size:.9rem;font-weight:500;color:rgba(255,255,255,.62);letter-spacing:.04em}
+.pt-surcharge{color:#bfe0f5;font-weight:500;margin-bottom:4px}
