@@ -1265,3 +1265,15 @@
     if (top) { top.setAttribute('tabindex', '-1'); top.focus({ preventScroll: true }); }
   });
 })();
+
+/* ---------- step images lightbox ---------- */
+(() => {
+  const dlg = document.getElementById('lightbox'); if (!dlg || !dlg.showModal) return;
+  const img = dlg.querySelector('img'); let last = null;
+  document.querySelectorAll('.zoom').forEach(b => b.addEventListener('click', () => {
+    last = b; img.src = b.dataset.full; img.alt = (b.querySelector('img') || {}).alt || '';
+    dlg.showModal(); document.documentElement.style.overflow = 'hidden';
+  }));
+  dlg.addEventListener('click', () => dlg.close());
+  dlg.addEventListener('close', () => { document.documentElement.style.overflow = ''; if (last) last.focus(); });
+})();
