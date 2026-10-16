@@ -1271,3 +1271,28 @@ button{cursor:pointer}
   .hero .lead,.hero .hero-course,.hero .hero-eb{text-shadow:0 1px 3px rgba(0,0,0,.55),0 0 14px rgba(0,0,0,.35)}
   .hero h1{text-shadow:0 2px 12px rgba(0,0,0,.4)}
 }
+.lesson-sub{font-size:1.05rem;letter-spacing:.06em;margin:6px 0 12px;color:#fff}
+.lesson-flow{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:12px;margin:0 0 26px;padding:0;list-style:none}
+.lesson-flow li{display:flex;flex-direction:column;align-items:center;gap:10px;text-align:center;padding:18px 12px;border-radius:var(--r);border:1px solid rgba(255,255,255,.12);background:linear-gradient(160deg,rgba(255,255,255,.07),rgba(255,255,255,.02));font-size:.92rem;line-height:1.5;color:rgba(255,255,255,.88)}
+.lf-ico{display:grid;place-items:center;width:46px;height:46px;border-radius:50%;background:rgba(170,210,240,.12);color:#bfe0f5}
+.lf-ico svg{width:24px;height:24px}
+.lesson-steps{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:16px;margin:0 0 26px}
+.lesson-steps figure{margin:0}
+.lesson-steps img{display:block;width:100%;height:auto;border-radius:var(--r);border:1px solid rgba(255,255,255,.12)}
+.lesson-steps figcaption{margin-top:8px;text-align:center;font-size:.92rem;letter-spacing:.08em;color:rgba(255,255,255,.8)}
+@media (max-width:900px){.lesson-flow{grid-template-columns:repeat(2,minmax(0,1fr))}.lesson-flow li:last-child{grid-column:1/-1}}
+@media (max-width:640px){.lesson-steps{grid-template-columns:minmax(0,1fr)}.lesson-flow li{flex-direction:row;text-align:left;padding:14px}}
+.about-chips{display:flex;flex-direction:column;gap:10px;margin:14px 0 18px;padding:0;list-style:none}
+.about-chips li{display:flex;align-items:center;gap:12px;font-size:.98rem;color:rgba(255,255,255,.88)}
+.lesson-points h3{display:flex;align-items:center;gap:10px}
+.lesson-points h3 .lf-ico{width:36px;height:36px;flex:none}.lesson-points h3 .lf-ico svg{width:19px;height:19px}
+.about-chips .lf-ico{width:38px;height:38px;flex:none}.about-chips .lf-ico svg{width:20px;height:20px}
+.rs-more{margin:4px 0 10px}
+.rs-more summary{cursor:pointer;list-style:none;font-size:.85rem;letter-spacing:.06em;color:#bfe0f5;padding:6px 0}
+.rs-more summary::-webkit-details-marker{display:none}
+.rs-more summary::after{content:" ＋"}.rs-more[open] summary::after{content:" －"}
+.coach-note.is-collapsed .cn-text{column-count:1;max-height:9.5em;overflow:hidden;-webkit-mask-image:linear-gradient(180deg,#000 50%,transparent);mask-image:linear-gradient(180deg,#000 50%,transparent)}
+.lf-ico{border:1px solid rgba(207,228,243,.18);background:rgba(170,210,240,.08)!important;color:#d6e8f5}
+.lf-ico,.about-chips .lf-ico,.lesson-points h3 .lf-ico{display:flex!important;align-items:center;justify-content:center;flex:none;aspect-ratio:1/1;padding:0;margin:0;line-height:0;box-sizing:border-box}
+.lf-ico svg{display:block;margin:0;flex:none}
+.lesson-flow li .lf-ico{width:46px;height:46px;min-width:46px}

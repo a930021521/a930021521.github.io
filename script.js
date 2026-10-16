@@ -950,7 +950,7 @@
   /* ---------- coach note: "繼續閱讀" collapse on small screens ---------- */
   (() => {
     const note = $('.coach-note'); if (!note) return;
-    const btn = $('.cn-more', note); const mq = matchMedia('(max-width:640px)');
+    const btn = $('.cn-more', note); const mq = matchMedia('all');
     const set = open => { note.classList.toggle('is-collapsed', !open); btn.setAttribute('aria-expanded', open ? 'true' : 'false'); btn.textContent = open ? '收合' : '繼續閱讀'; };
     const sync = () => { btn.hidden = !mq.matches; set(!mq.matches); };
     btn.addEventListener('click', () => {
