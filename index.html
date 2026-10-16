@@ -42,10 +42,10 @@
 <link rel="icon" href="/favicon.ico?v=full" sizes="any">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@200;300;400;600;700&family=Noto+Sans+TC:wght@300;400;500;700&display=swap" rel="stylesheet">
-<link rel="preload" as="image" href="img/hero-yuzawa-m.jpg" media="(max-width:640px)" fetchpriority="high">
-<link rel="preload" as="image" href="img/hero-yuzawa-1920.jpg" media="(min-width:641px)" fetchpriority="high">
-<link rel="stylesheet" href="style.css?v=nav9">
+<link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@200;300;400;600;700&display=swap" rel="stylesheet">
+<link rel="preload" as="image" type="image/webp" href="img/hero-yuzawa-m.webp" media="(max-width:640px)" fetchpriority="high">
+<link rel="preload" as="image" type="image/webp" href="img/hero-yuzawa-1920.webp" media="(min-width:641px)" fetchpriority="high">
+<link rel="stylesheet" href="style.css?v=fast9">
 <link rel="stylesheet" href="hero-snow.css?v=1">
 </head>
 <body>
@@ -173,7 +173,7 @@
     </div>
     <figure class="about-photo">
       <!-- Photo: Jeremy Bishop (@jeremybishop), Unsplash, https://unsplash.com/photos/JjT0fv5KlhM — Unsplash License (img/hero.jpg, converted to B&W). Mood image; not Yuzawa. -->
-      <img src="img/about.jpg" alt="一位滑雪者在粉雪中滑行（黑白照片）" loading="lazy" decoding="async" width="1200" height="800">
+      <picture><source type="image/webp" srcset="img/about-600.webp 600w, img/about-1100.webp 1100w" sizes="(max-width:640px) 92vw, 540px"><img src="img/about.jpg" alt="一位滑雪者在粉雪中滑行（黑白照片）" loading="lazy" decoding="async" width="1200" height="800"></picture>
     </figure>
   </div>
 </section>
@@ -212,8 +212,8 @@
       <h3 class="lesson-sub">課程會學到</h3>
       <ul class="lesson-flow">
           <li><span class="lf-ico"><svg viewBox="0.01 0 24 24" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M11.46 20.846a12 12 0 0 1 -7.96 -14.846a12 12 0 0 0 8.5 -3a12 12 0 0 0 8.5 3a12 12 0 0 1 -.09 7.06" /> <path d="M15 19l2 2l4 -4" /></svg></span><span>安全宣導與安全摔倒</span></li>
-          <li><span class="lf-ico"><svg viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M12 4a9 9 0 0 1 5.656 16h-11.312a9 9 0 0 1 5.656 -16" /> <path d="M20 9h-8.8a1 1 0 0 0 -.968 1.246c.507 2 1.596 3.418 3.268 4.254c2 1 4.333 1.5 7 1.5" /></svg></span><span>認識雪具與平地移動</span></li>
-          <li><span class="lf-ico"><svg viewBox="0 -0.3 24 24" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="3.8" r="1.9"/><path d="M12 6.5v5.5"/><path d="M7 9.5l5-1.5 5 1.5"/><path d="M12 12l-2.6 3.2 0 3M12 12l2.6 3.2 0 3"/><path d="M3.5 21.5l6-3.3M20.5 21.5l-6-3.3"/></svg></span><span>站姿與停下</span></li>
+          <li><span class="lf-ico"><svg viewBox="0.09 -0.04 24 24" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><g transform="rotate(-25 12 12)"><rect x="4" y="2" width="5.5" height="20" rx="2.75"/><path d="M4 9h5.5M4 15h5.5"/><path d="M13.5 22V4.2a1.2 1.2 0 012.4 0V22"/><path d="M17.8 22V4.2a1.2 1.2 0 012.4 0V22"/><path d="M13.5 13h2.4M17.8 13h2.4"/></g></svg></span><span>認識雪具、基本站姿</span></li>
+          <li><span class="lf-ico"><svg viewBox="0 -0.3 24 24" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="3.8" r="1.9"/><path d="M12 6.5v5.5"/><path d="M7 9.5l5-1.5 5 1.5"/><path d="M12 12l-2.6 3.2 0 3M12 12l2.6 3.2 0 3"/><path d="M3.5 21.5l6-3.3M20.5 21.5l-6-3.3"/></svg></span><span>基本滑行與如何煞車</span></li>
           <li><span class="lf-ico"><svg viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M10 4l2 1l2 -1" /> <path d="M12 2v6.5l3 1.72" /> <path d="M17.928 6.268l.134 2.232l1.866 1.232" /> <path d="M20.66 7l-5.629 3.25l.01 3.458" /> <path d="M19.928 14.268l-1.866 1.232l-.134 2.232" /> <path d="M20.66 17l-5.629 -3.25l-2.99 1.738" /> <path d="M14 20l-2 -1l-2 1" /> <path d="M12 22v-6.5l-3 -1.72" /> <path d="M6.072 17.732l-.134 -2.232l-1.866 -1.232" /> <path d="M3.34 17l5.629 -3.25l-.01 -3.458" /> <path d="M4.072 9.732l1.866 -1.232l.134 -2.232" /> <path d="M3.34 7l5.629 3.25l2.99 -1.738" /></svg></span><span>進階：刻滑・粉雪・樹林・公園</span></li>
           <li><span class="lf-ico"><svg viewBox="0 -0.25 24 24" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="6" cy="4.5" r="2"/><circle cx="18" cy="4.5" r="2"/><circle cx="12" cy="11" r="1.6"/><path d="M3 21v-9.5a3 3 0 016 0V21"/><path d="M15 21v-9.5a3 3 0 016 0V21"/><path d="M9.8 21v-4.5a2.2 2.2 0 014.4 0V21"/></svg></span><span>親子家庭，節奏放輕鬆</span></li>
       </ul>
@@ -221,37 +221,26 @@
       <h3 class="lesson-sub">入門步驟一張看懂 <span class="zoom-hint">點圖放大</span></h3>
       <div class="lesson-steps">
         <figure>
-          <button type="button" class="zoom" data-full="img/steps-snowboard-2160.webp" aria-label="放大單板入門步驟圖"><picture><source srcset="img/steps-snowboard.webp 1080w, img/steps-snowboard-2160.webp 2160w" sizes="(max-width:640px) 92vw, 560px" type="image/webp"><img src="img/steps-snowboard.jpg" width="1080" height="1350" loading="lazy" decoding="async" alt="單板入門 7 步驟：後刃推坡、後刃落葉飄、前刃推坡、前刃落葉飄、J Turn、C Turn、S Turn"></picture></button>
+          <button type="button" class="zoom" data-full="img/steps-snowboard-2160.webp" aria-label="放大單板入門步驟圖"><picture><source srcset="img/steps-snowboard.webp 1080w, img/steps-snowboard-2160.webp 2160w" sizes="(max-width:640px) 92vw, 460px" type="image/webp"><img src="img/steps-snowboard.jpg" width="1080" height="1350" loading="lazy" decoding="async" alt="單板入門 7 步驟：後刃推坡、後刃落葉飄、前刃推坡、前刃落葉飄、J Turn、C Turn、S Turn"></picture></button>
           <figcaption>單板入門</figcaption>
         </figure>
         <figure>
-          <button type="button" class="zoom" data-full="img/steps-ski-2160.webp" aria-label="放大雙板入門步驟圖"><picture><source srcset="img/steps-ski.webp 1080w, img/steps-ski-2160.webp 2160w" sizes="(max-width:640px) 92vw, 560px" type="image/webp"><img src="img/steps-ski.jpg" width="1080" height="1350" loading="lazy" decoding="async" alt="雙板入門 7 步驟：站姿與平衡、犁式滑行、犁式停止、犁式轉彎、連續犁式轉彎、犁式轉平行、基本平行轉彎"></picture></button>
+          <button type="button" class="zoom" data-full="img/steps-ski-2160.webp" aria-label="放大雙板入門步驟圖"><picture><source srcset="img/steps-ski.webp 1080w, img/steps-ski-2160.webp 2160w" sizes="(max-width:640px) 92vw, 460px" type="image/webp"><img src="img/steps-ski.jpg" width="1080" height="1350" loading="lazy" decoding="async" alt="雙板入門 7 步驟：站姿與平衡、犁式滑行、犁式停止、犁式轉彎、連續犁式轉彎、犁式轉平行、基本平行轉彎"></picture></button>
           <figcaption>雙板入門</figcaption>
         </figure>
-      </div>
-
-      <div class="lesson-scope" aria-label="課程費用範圍">
-        <div class="lesson-inc">
-          <h3>課程費用包含</h3>
-          <ul>
-            <li>教練現場指導</li>
-            <li>當日課程安排與進度調整</li>
-          </ul>
-        </div>
-        <div class="lesson-exc">
-          <h3>不含（另計）</h3>
-          <ul>
-            <li>雪具／雪鞋租借</li>
-            <li>纜車券</li>
-            <li>交通、住宿</li>
-          </ul>
-        </div>
       </div>
 
       <p class="lesson-next">看完介紹後，可對照下方價表，或直接<a href="#booking">前往預約</a>留下需求（送出不會當場收費；付款方式與相關資訊將由學校另行提供）。</p>
     </div>
 
-    <details class="glass prices" id="prices" open>
+    <div class="prices-block" id="prices">
+    <header class="sec-head prices-head">
+      <p class="kicker"><span>02</span>PRICES</p>
+      <h2 id="prices-title">課程 <b>費用</b></h2>
+      <p class="ph">早鳥回饋價・整組總價（非每人）</p>
+    </header>
+
+    <details class="glass prices" id="prices-yuzawa" open>
       <summary><span class="pt-head"><span class="pt-title">越後湯澤 早鳥回饋價 2026–27</span></span><span class="pt-sub">半天／全天・整組總價（非每人）・NT$</span><span class="pt-ico" aria-hidden="true"></span></summary>
       <div class="pt-body">
         <div class="eb-hero" role="note" aria-label="早鳥優惠">
@@ -448,6 +437,25 @@
         <p class="pt-note">費用為每位教練授課費（整組，非每人）；成人與小孩同價，每組最多 4 人。不含纜車票、雪具租借。實際以確認為準；歡迎私訊詢問（LINE <code>@dqi1670m</code>）。</p>
       </div>
     </details>
+
+      <div class="lesson-scope lesson-scope-after" aria-label="課程費用範圍">
+        <div class="lesson-inc">
+          <h3>課程費用包含</h3>
+          <ul>
+            <li>教練現場指導</li>
+            <li>當日課程安排與進度調整</li>
+          </ul>
+        </div>
+        <div class="lesson-exc">
+          <h3>不含（另計）</h3>
+          <ul>
+            <li>雪具／雪鞋租借</li>
+            <li>纜車券</li>
+            <li>交通、住宿</li>
+          </ul>
+        </div>
+      </div>
+    </div>
   </div>
 </section>
 
@@ -628,7 +636,7 @@
 <!-- ===== Photo band 1 (暫用照片，上線前替換) ===== -->
 <!-- Photo: Jeremy Bishop (@jeremybishop), Unsplash, https://unsplash.com/photos/Rc8_vVjYjuc — Unsplash License. Not Yuzawa. -->
 <section class="band band-powder" aria-label="照片：粉雪中的單板滑雪">
-  <img src="img/band-powder.jpg" srcset="img/band-powder-m.jpg 1000w, img/band-powder-1200.jpg 1200w, img/band-powder.jpg 2200w" sizes="100vw" alt="" loading="lazy" decoding="async" width="2200" height="1466">
+  <picture><source type="image/webp" srcset="img/band-powder-800.webp 800w, img/band-powder-1200.webp 1200w, img/band-powder-1800.webp 1800w" sizes="100vw"><img src="img/band-powder.jpg" srcset="img/band-powder-m.jpg 1000w, img/band-powder-1200.jpg 1200w, img/band-powder.jpg 2200w" sizes="100vw" alt="" loading="lazy" decoding="async" width="2200" height="1466"></picture>
   <div class="band-copy">
     <p class="band-eyebrow">SNOW MODE: ON</p>
     <p class="band-line">把自己切換成雪地模式。</p>
@@ -645,7 +653,7 @@
         <p class="ph">四件我們在意的事。</p>
         <figure class="method-photo">
           <!-- Photo: Walter Dziemianczyk (@wdziemia), Unsplash, https://unsplash.com/photos/0NqzMKYKZ2g — Unsplash License. 暫用照片，上線前替換。 -->
-          <img src="img/method.jpg" alt="幾位滑雪者站在雪坡上" loading="lazy" decoding="async" width="1400" height="933">
+          <picture><source type="image/webp" srcset="img/method-600.webp 600w, img/method-1100.webp 1100w" sizes="(max-width:640px) 92vw, 500px"><img src="img/method.jpg" alt="幾位滑雪者站在雪坡上" loading="lazy" decoding="async" width="1400" height="933"></picture>
         </figure>
       </header>
       <ol class="principles">
@@ -663,7 +671,7 @@
       </div>
       <div class="coach-row is-trio">
       <ul class="coach-track" aria-label="教練">
-        <li class="coach"><div class="avatar avatar-photo"><img src="img/coach/jay.jpg" alt="Jyun 教練在雪場上的照片" width="600" height="600" loading="lazy" decoding="async"></div><p class="coach-name">Jyun</p><p class="coach-role">單板／雙板</p>
+        <li class="coach"><div class="avatar avatar-photo"><picture><source type="image/webp" srcset="img/coach/jay-320.webp 320w, img/coach/jay-600.webp 600w" sizes="(max-width:640px) 110px, 330px"><img src="img/coach/jay.jpg" alt="Jyun 教練在雪場上的照片" width="600" height="600" loading="lazy" decoding="async"></picture></div><p class="coach-name">Jyun</p><p class="coach-role">單板／雙板</p>
           <ul class="coach-list">
             <li>SBINZ Lv.1｜<span>紐西蘭滑雪指導員一級</span></li>
             <li>CSIA Lv.1｜<span>加拿大滑雪指導員一級</span></li>
@@ -671,7 +679,7 @@
             <li>曾任教：<span>星野、富良野、</span><span>札幌國際、留壽都</span></li>
             <li>本季駐點：越後湯澤</li>
           </ul></li>
-        <li class="coach"><div class="avatar avatar-photo"><img src="img/coach/sky.jpg" alt="Xian 教練在雪場教小朋友滑雪的照片" width="600" height="600" loading="lazy" decoding="async"></div><p class="coach-name">Xian</p><p class="coach-role">雙板</p>
+        <li class="coach"><div class="avatar avatar-photo"><picture><source type="image/webp" srcset="img/coach/sky-320.webp 320w, img/coach/sky-600.webp 600w" sizes="(max-width:640px) 110px, 330px"><img src="img/coach/sky.jpg" alt="Xian 教練在雪場教小朋友滑雪的照片" width="600" height="600" loading="lazy" decoding="async"></picture></div><p class="coach-name">Xian</p><p class="coach-role">雙板</p>
           <ul class="coach-list">
             <li>CSIA Lv.1｜<span>加拿大滑雪指導員一級</span></li>
             <li>2 年教學經驗</li>
@@ -841,7 +849,7 @@ Jay教練是我們這兩天玩的這麼愉快的大功臣！
 <!-- Photo: Sy (@a____mundane), Unsplash, https://unsplash.com/photos/SJ8ThMm2IrI — Unsplash License.
      Tagged "Niigata, Japan" on Unsplash, exact location unknown — do NOT caption it as Yuzawa. -->
 <section class="band band-night" aria-label="照片：雪山與山谷中的城鎮夜景">
-  <img src="img/band-niigata.jpg" srcset="img/band-niigata-m.jpg 1000w, img/band-niigata-1200.jpg 1200w, img/band-niigata.jpg 2200w" sizes="100vw" alt="" loading="lazy" decoding="async" width="2200" height="1238">
+  <picture><source type="image/webp" srcset="img/band-niigata-800.webp 800w, img/band-niigata-1200.webp 1200w, img/band-niigata-1800.webp 1800w" sizes="100vw"><img src="img/band-niigata.jpg" srcset="img/band-niigata-m.jpg 1000w, img/band-niigata-1200.jpg 1200w, img/band-niigata.jpg 2200w" sizes="100vw" alt="" loading="lazy" decoding="async" width="2200" height="1238"></picture>
   <div class="band-copy">
     <p class="band-eyebrow">SNOW COUNTRY</p>
     <p class="band-line">隧道的另一端，<br>是雪國。</p>
@@ -903,7 +911,7 @@ Jay教練是我們這兩天玩的這麼愉快的大功臣！
           <p class="rs-fit"><span>適合</span>初次上板、希望在寬闊坡面穩定進階的學員與家庭</p>
           <figure class="rs-mapfig">
             <a class="rs-mapthumb" href="img/maps/iwappara.jpg" target="_blank" rel="noopener" aria-label="放大查看 岩原 雪道地圖（另開新視窗）">
-              <img src="img/maps/iwappara-sm.webp" width="800" height="550" loading="lazy" decoding="async" alt="岩原スキー場 雪道地圖（官方）">
+              <img src="img/maps/iwappara-sm.webp" srcset="img/maps/iwappara-xs.webp 680w, img/maps/iwappara-sm.webp 800w" sizes="(max-width:640px) 260px, 320px" width="800" height="550" loading="lazy" decoding="async" alt="岩原スキー場 雪道地圖（官方）">
             </a>
             <figcaption><span>圖片來源：<a href="https://iwa-ppara.com/gelande/" target="_blank" rel="noopener">岩原スキー場 官方網站</a></span><a class="rs-zoom" href="img/maps/iwappara.jpg" target="_blank" rel="noopener" aria-hidden="true" tabindex="-1">放大地圖</a></figcaption>
           </figure>
@@ -924,7 +932,7 @@ Jay教練是我們這兩天玩的這麼愉快的大功臣！
           <p class="rs-fit"><span>適合</span>初次接觸雪地的家庭與兒童，以及希望縮短移動時間的旅客</p>
           <figure class="rs-mapfig">
             <a class="rs-mapthumb" href="img/maps/nakazato.jpg" target="_blank" rel="noopener" aria-label="放大查看 中里 雪道地圖（另開新視窗）">
-              <img src="img/maps/nakazato-sm.webp" width="800" height="497" loading="lazy" decoding="async" alt="湯沢中里スノーリゾート 雪道地圖（官方）">
+              <img src="img/maps/nakazato-sm.webp" srcset="img/maps/nakazato-xs.webp 680w, img/maps/nakazato-sm.webp 800w" sizes="(max-width:640px) 260px, 320px" width="800" height="497" loading="lazy" decoding="async" alt="湯沢中里スノーリゾート 雪道地圖（官方）">
             </a>
             <figcaption><span>圖片來源：<a href="https://www.yuzawa-nakazato.com/winter/gerende/course/" target="_blank" rel="noopener">湯沢中里スノーリゾート 官方網站</a></span><a class="rs-zoom" href="img/maps/nakazato.jpg" target="_blank" rel="noopener" aria-hidden="true" tabindex="-1">放大地圖</a></figcaption>
           </figure>
@@ -945,7 +953,7 @@ Jay教練是我們這兩天玩的這麼愉快的大功臣！
           <p class="rs-fit"><span>適合</span>追求長距離與多樣坡面的中高級學員，及入住度假飯店的家庭</p>
           <figure class="rs-mapfig">
             <a class="rs-mapthumb" href="img/maps/naeba.webp" target="_blank" rel="noopener" aria-label="放大查看 苗場 雪道地圖（另開新視窗）">
-              <img src="img/maps/naeba-sm.webp" width="800" height="764" loading="lazy" decoding="async" alt="苗場スキー場 雪道地圖（官方）">
+              <img src="img/maps/naeba-sm.webp" srcset="img/maps/naeba-xs.webp 680w, img/maps/naeba-sm.webp 800w" sizes="(max-width:640px) 260px, 320px" width="800" height="764" loading="lazy" decoding="async" alt="苗場スキー場 雪道地圖（官方）">
             </a>
             <figcaption><span>圖片來源：<a href="https://www.princehotels.co.jp/ski/naeba/winter/coursemap/" target="_blank" rel="noopener">苗場スキー場 官方網站</a></span><a class="rs-zoom" href="img/maps/naeba.webp" target="_blank" rel="noopener" aria-hidden="true" tabindex="-1">放大地圖</a></figcaption>
           </figure>
@@ -966,7 +974,7 @@ Jay教練是我們這兩天玩的這麼愉快的大功臣！
           <p class="rs-fit"><span>適合</span>想滑長距離與粉雪、或希望一券暢遊多區域的中高級學員</p>
           <figure class="rs-mapfig">
             <a class="rs-mapthumb" href="img/maps/kagura.jpg" target="_blank" rel="noopener" aria-label="放大查看 神樂 雪道地圖（另開新視窗）">
-              <img src="img/maps/kagura-sm.webp" width="800" height="522" loading="lazy" decoding="async" alt="かぐらスキー場 雪道地圖（官方）">
+              <img src="img/maps/kagura-sm.webp" srcset="img/maps/kagura-xs.webp 680w, img/maps/kagura-sm.webp 800w" sizes="(max-width:640px) 260px, 320px" width="800" height="522" loading="lazy" decoding="async" alt="かぐらスキー場 雪道地圖（官方）">
             </a>
             <figcaption><span>圖片來源：<a href="https://www.princehotels.co.jp/ski/kagura/winter/coursemap/" target="_blank" rel="noopener">かぐらスキー場 官方網站</a></span><a class="rs-zoom" href="img/maps/kagura.jpg" target="_blank" rel="noopener" aria-hidden="true" tabindex="-1">放大地圖</a></figcaption>
           </figure>
@@ -987,7 +995,7 @@ Jay教練是我們這兩天玩的這麼愉快的大功臣！
           <p class="rs-fit"><span>適合</span>兼顧基礎練習與公園地形的單板學員，及重視交通效率的行程</p>
           <figure class="rs-mapfig">
             <a class="rs-mapthumb" href="img/maps/kandatsu.jpg" target="_blank" rel="noopener" aria-label="放大查看 神立 雪道地圖（另開新視窗）">
-              <img src="img/maps/kandatsu-sm.webp?v=2" width="800" height="692" loading="lazy" decoding="async" alt="神立スノーリゾート 雪道地圖（官方）">
+              <img src="img/maps/kandatsu-sm.webp?v=2" srcset="img/maps/kandatsu-xs.webp 680w, img/maps/kandatsu-sm.webp?v=2 800w" sizes="(max-width:640px) 260px, 320px" width="800" height="692" loading="lazy" decoding="async" alt="神立スノーリゾート 雪道地圖（官方）">
             </a>
             <figcaption><span>圖片來源：<a href="https://www.kandatsu.com/course-guide/" target="_blank" rel="noopener">神立スノーリゾート 官方網站</a></span><a class="rs-zoom" href="img/maps/kandatsu.jpg" target="_blank" rel="noopener" aria-hidden="true" tabindex="-1">放大地圖</a></figcaption>
           </figure>
@@ -1008,7 +1016,7 @@ Jay教練是我們這兩天玩的這麼愉快的大功臣！
           <p class="rs-fit"><span>適合</span>已能自主轉彎、希望挑戰更多地形的中級學員</p>
           <figure class="rs-mapfig">
             <a class="rs-mapthumb" href="img/maps/ishiuchi.webp" target="_blank" rel="noopener" aria-label="放大查看 石打丸山 雪道地圖（另開新視窗）">
-              <img src="img/maps/ishiuchi-sm.webp" width="800" height="564" loading="lazy" decoding="async" alt="石打丸山スキー場 雪道地圖（官方）">
+              <img src="img/maps/ishiuchi-sm.webp" srcset="img/maps/ishiuchi-xs.webp 680w, img/maps/ishiuchi-sm.webp 800w" sizes="(max-width:640px) 260px, 320px" width="800" height="564" loading="lazy" decoding="async" alt="石打丸山スキー場 雪道地圖（官方）">
             </a>
             <figcaption><span>圖片來源：<a href="https://ishiuchi.or.jp/winter/ski/lift-course/" target="_blank" rel="noopener">石打丸山スキー場 官方網站</a></span><a class="rs-zoom" href="img/maps/ishiuchi.webp" target="_blank" rel="noopener" aria-hidden="true" tabindex="-1">放大地圖</a></figcaption>
           </figure>
@@ -1036,7 +1044,7 @@ Jay教練是我們這兩天玩的這麼愉快的大功臣！
             <p class="rs-fit"><span>適合</span>想體驗粉雪、在多座雪場之間探索不同地形的學員</p>
             <figure class="rs-mapfig">
               <a class="rs-mapthumb" href="img/maps/niseko.jpg" target="_blank" rel="noopener" aria-label="放大查看 二世古 雪道地圖（另開新視窗）">
-                <img src="img/maps/niseko-sm.webp" width="800" height="577" loading="lazy" decoding="async" alt="ニセコユナイテッド 雪道地圖（官方）">
+                <img src="img/maps/niseko-sm.webp" srcset="img/maps/niseko-xs.webp 680w, img/maps/niseko-sm.webp 800w" sizes="(max-width:640px) 260px, 320px" width="800" height="577" loading="lazy" decoding="async" alt="ニセコユナイテッド 雪道地圖（官方）">
               </a>
               <figcaption><span>圖片來源：<a href="https://www.niseko.ne.jp/ja/map/" target="_blank" rel="noopener">ニセコユナイテッド 官方網站</a></span><a class="rs-zoom" href="img/maps/niseko.jpg" target="_blank" rel="noopener" aria-hidden="true" tabindex="-1">放大地圖</a></figcaption>
             </figure>
@@ -1057,7 +1065,7 @@ Jay教練是我們這兩天玩的這麼愉快的大功臣！
             <p class="rs-fit"><span>適合</span>全家同行、想住在度假村一次滑遍三座山的學員，以及想追粉雪的進階學員</p>
             <figure class="rs-mapfig">
               <a class="rs-mapthumb" href="img/maps/rusutsu.jpg" target="_blank" rel="noopener" aria-label="放大查看 留壽都 雪道地圖（另開新視窗）">
-                <img src="img/maps/rusutsu-sm.webp" width="800" height="405" loading="lazy" decoding="async" alt="ルスツリゾート 雪道地圖（官方）">
+                <img src="img/maps/rusutsu-sm.webp" srcset="img/maps/rusutsu-xs.webp 680w, img/maps/rusutsu-sm.webp 800w" sizes="(max-width:640px) 260px, 320px" width="800" height="405" loading="lazy" decoding="async" alt="ルスツリゾート 雪道地圖（官方）">
               </a>
               <figcaption><span>圖片來源：<a href="https://rusutsu.com/trail-map/" target="_blank" rel="noopener">ルスツリゾート 官方網站</a></span><a class="rs-zoom" href="img/maps/rusutsu.jpg" target="_blank" rel="noopener" aria-hidden="true" tabindex="-1">放大地圖</a></figcaption>
             </figure>
@@ -1078,7 +1086,7 @@ Jay教練是我們這兩天玩的這麼愉快的大功臣！
             <p class="rs-fit"><span>適合</span>想在長距離雪道穩定進階的學員，及入住度假飯店的家庭</p>
             <figure class="rs-mapfig">
               <a class="rs-mapthumb" href="img/maps/furano.jpg" target="_blank" rel="noopener" aria-label="放大查看 富良野 雪道地圖（另開新視窗）">
-                <img src="img/maps/furano-sm.webp" width="800" height="564" loading="lazy" decoding="async" alt="富良野スキー場 雪道地圖（官方）">
+                <img src="img/maps/furano-sm.webp" srcset="img/maps/furano-xs.webp 680w, img/maps/furano-sm.webp 800w" sizes="(max-width:640px) 260px, 320px" width="800" height="564" loading="lazy" decoding="async" alt="富良野スキー場 雪道地圖（官方）">
               </a>
               <figcaption><span>圖片來源：<a href="https://www.princehotels.co.jp/ski/furano/winter/coursemap/" target="_blank" rel="noopener">富良野スキー場 官方網站</a></span><a class="rs-zoom" href="img/maps/furano.jpg" target="_blank" rel="noopener" aria-hidden="true" tabindex="-1">放大地圖</a></figcaption>
             </figure>
@@ -1099,7 +1107,7 @@ Jay教練是我們這兩天玩的這麼愉快的大功臣！
             <p class="rs-fit"><span>適合</span>全家同行、希望住宿與滑雪一次到位的旅客，以及想挑戰粉雪的進階學員</p>
             <figure class="rs-mapfig">
               <a class="rs-mapthumb" href="img/maps/tomamu.jpg" target="_blank" rel="noopener" aria-label="放大查看 星野 雪道地圖（另開新視窗）">
-                <img src="img/maps/tomamu-sm.webp" width="800" height="474" loading="lazy" decoding="async" alt="星野リゾート トマム 雪道地圖（官方）">
+                <img src="img/maps/tomamu-sm.webp" srcset="img/maps/tomamu-xs.webp 680w, img/maps/tomamu-sm.webp 800w" sizes="(max-width:640px) 260px, 320px" width="800" height="474" loading="lazy" decoding="async" alt="星野リゾート トマム 雪道地圖（官方）">
               </a>
               <figcaption><span>圖片來源：<a href="https://www.snowtomamu.jp/winter/ski/ski-slope/" target="_blank" rel="noopener">星野リゾート トマム 官方網站</a></span><a class="rs-zoom" href="img/maps/tomamu.jpg" target="_blank" rel="noopener" aria-hidden="true" tabindex="-1">放大地圖</a></figcaption>
             </figure>
@@ -1120,7 +1128,7 @@ Jay教練是我們這兩天玩的這麼愉快的大功臣！
             <p class="rs-fit"><span>適合</span>住在札幌或定山溪、想當日往返的學員與家庭</p>
             <figure class="rs-mapfig">
               <a class="rs-mapthumb" href="img/maps/sapporo-kokusai.jpg" target="_blank" rel="noopener" aria-label="放大查看 札幌國際 雪道地圖（另開新視窗）">
-                <img src="img/maps/sapporo-kokusai-sm.webp" width="800" height="638" loading="lazy" decoding="async" alt="札幌国際スキー場 雪道地圖（官方）">
+                <img src="img/maps/sapporo-kokusai-sm.webp" srcset="img/maps/sapporo-kokusai-xs.webp 680w, img/maps/sapporo-kokusai-sm.webp 800w" sizes="(max-width:640px) 260px, 320px" width="800" height="638" loading="lazy" decoding="async" alt="札幌国際スキー場 雪道地圖（官方）">
               </a>
               <figcaption><span>圖片來源：<a href="https://www.sapporo-kokusai.jp/slopes/" target="_blank" rel="noopener">札幌国際スキー場 官方網站</a></span><a class="rs-zoom" href="img/maps/sapporo-kokusai.jpg" target="_blank" rel="noopener" aria-hidden="true" tabindex="-1">放大地圖</a></figcaption>
             </figure>
@@ -1141,7 +1149,7 @@ Jay教練是我們這兩天玩的這麼愉快的大功臣！
             <p class="rs-fit"><span>適合</span>住在札幌市區、想當日往返並挑戰多樣坡面的學員</p>
             <figure class="rs-mapfig">
               <a class="rs-mapthumb" href="img/maps/teine.jpg" target="_blank" rel="noopener" aria-label="放大查看 手稻 雪道地圖（另開新視窗）">
-                <img src="img/maps/teine-sm.webp" width="800" height="851" loading="lazy" decoding="async" alt="サッポロテイネ 雪道地圖（官方）">
+                <img src="img/maps/teine-sm.webp" srcset="img/maps/teine-xs.webp 680w, img/maps/teine-sm.webp 800w" sizes="(max-width:640px) 260px, 320px" width="800" height="851" loading="lazy" decoding="async" alt="サッポロテイネ 雪道地圖（官方）">
               </a>
               <figcaption><span>圖片來源：<a href="https://sapporo-teine.com/snow/course" target="_blank" rel="noopener">サッポロテイネ 官方網站</a></span><a class="rs-zoom" href="img/maps/teine.jpg" target="_blank" rel="noopener" aria-hidden="true" tabindex="-1">放大地圖</a></figcaption>
             </figure>
@@ -1194,7 +1202,7 @@ Jay教練是我們這兩天玩的這麼愉快的大功臣！
 <!-- ===== Photo band 3 / CTA (暫用照片，上線前替換) ===== -->
 <!-- Photo: TERRA (@terra_gallery), Unsplash, https://unsplash.com/photos/JToi54yZqRs — Unsplash License. Furano, Hokkaido — not Yuzawa. -->
 <section class="band band-cta" aria-label="預約提醒">
-  <img src="img/band-forest.jpg" srcset="img/band-forest-m.jpg 1000w, img/band-forest-1200.jpg 1200w, img/band-forest.jpg 2200w" sizes="100vw" alt="" loading="lazy" decoding="async" width="2200" height="1469">
+  <picture><source type="image/webp" srcset="img/band-forest-800.webp 800w, img/band-forest-1200.webp 1200w, img/band-forest-1800.webp 1800w" sizes="100vw"><img src="img/band-forest.jpg" srcset="img/band-forest-m.jpg 1000w, img/band-forest-1200.jpg 1200w, img/band-forest.jpg 2200w" sizes="100vw" alt="" loading="lazy" decoding="async" width="2200" height="1469"></picture>
   <div class="band-copy">
     <p class="band-eyebrow">2026–27 SEASON</p>
     <p class="band-line">準備好切換成<br>雪地模式了嗎？</p>
@@ -1274,6 +1282,6 @@ Jay教練是我們這兩天玩的這麼愉快的大功臣！
 <div class="toast" id="toast" role="status" aria-live="polite"></div>
 <script src="hero-snow.js?v=1"></script>
 <dialog class="lightbox" id="lightbox" aria-label="放大圖片"><button type="button" class="lb-close" aria-label="關閉">×</button><img alt=""></dialog>
-<script src="script.js?v=nav9"></script>
+<script src="script.js?v=fast9"></script>
 </body>
 </html>
