@@ -61,20 +61,28 @@
   // 夜滑 is priced as 半日 when that slot is present. Anything other than 全日 is half.
   const slotKey = slot => (slot === '全日' || slot === 'full') ? 'full' : 'half';
 
-  /* ---------- 北海道課程費用（預估）：淡季底價 + 季節加價，再打早鳥 ---------- */
-  const HOKKAIDO_BASE = {
-    '手稻':     { full: [12800, 13800, 14800, 15800], half: [6900, 7900, 8900, 9900] },
-    '札幌國際': { full: [14800, 15800, 16800, 17800], half: [8900, 9900, 10900, 11900] },
-    '富良野':   { full: [13800, 14800, 15800, 16800], half: [9900, 10900, 11900, 12800] },
-    '二世古':   { full: [14800, 15200, 15600, 16000], half: [8900, 9300, 9700, 10100] },
-    '留壽都':   { full: [14800, 15800, 16800, 17800], half: [8900, 9900, 10900, 11900] },
-    '星野':     { full: [14800, 15800, 16800, 17800], half: [8900, 9900, 10900, 11900] }
+  /* ---------- 北海道課程費用（預估） ----------
+   * 以日圓計：每天 (淡季底價 + 季節加價)，加總後早鳥 ×0.85 四捨五入，
+   * 再以固定匯率 1 TWD = 5.06 JPY 換成 NT$，四捨五入到百位（<NT$50 則無條件進位）。
+   * 訂金 = ceil(30% × 日圓總額) 再換算；尾款 = 總額 NT$ − 訂金 NT$。 */
+  const HOKKAIDO_BASE = { // JPY，整組總價（每位教練）
+    '手稻':     { full: [65000, 70000, 75000, 80000],  half: [35000, 40000, 45000, 50000] },
+    '札幌國際': { full: [75000, 80000, 85000, 90000],  half: [45000, 50000, 55000, 60000] },
+    '富良野':   { full: [70000, 75000, 80000, 85000],  half: [50000, 55000, 60000, 65000] },
+    '二世古':   { full: [75000, 77000, 79000, 81000],  half: [45000, 47000, 49000, 51000] },
+    '留壽都':   { full: [75000, 80000, 85000, 90000],  half: [45000, 50000, 55000, 60000] },
+    '星野':     { full: [76250, 97500, 118750, 140000], half: [45750, 58500, 71250, 84000] }
   };
-  const SEASON_SURCHARGE = {
+  const SEASON_SURCHARGE = { // JPY，每位教練每天
     low:  { full: 0, half: 0 },
-    peak: { full: 3000, half: 2000 }, // 旺季 1/3–3/2
-    super: { full: 4900, half: 4000 } // 超旺季 12/15–1/2
+    peak: { full: 15000, half: 10000 }, // 旺季 1/3–3/2
+    super: { full: 25000, half: 20000 } // 超旺季 12/15–1/2
   };
+  const JPY_PER_TWD = 5.06;
+  function jpyToTwd(jpy) {
+    const t = jpy / JPY_PER_TWD;
+    return t > 0 && t < 50 ? Math.ceil(t) : 100 * Math.round(t / 100);
+  }
   const EARLY_BIRD = { rate: 0.85, until: '2026-10-31', label: '早鳥 85 折' };
   const SEASON_LABEL = { low: '淡季', peak: '旺季', super: '超旺季' };
   const YUZAWA_BASIS = '早鳥回饋價 2026–27，整組總價；實際費用以我們的回覆為準';
@@ -165,14 +173,15 @@
       seasonLabel: SEASON_LABEL[season],
       base,
       surcharge,
-      raw,
+      raw,              // JPY
       earlyBird: early,
-      amount: early ? applyEarlyBird(raw) : raw
+      amountJpy: early ? applyEarlyBird(raw) : raw,
+      amount: jpyToTwd(early ? applyEarlyBird(raw) : raw) // per-day NT$ reference only
     };
   }
   /**
-   * Sum of per-day int(round((base + surcharge) × 0.85)) while early bird is on
-   * (through 2026-10-31 inclusive). 5+ people, unknown resort, or a date outside
+   * JPY: sum of per-day (base + surcharge), then round(× 0.85) while early bird is on
+   * (through 2026-10-31 inclusive), then jpyToTwd. 5+ people, unknown resort, or a date outside
    * the published season stays a private quote.
    */
   function estimateHokkaido({ resort, people, dates, asOf, depositRate = 0.3 }) {
@@ -214,8 +223,11 @@
       }
       days.push(one);
     }
-    const amount = days.reduce((s, d) => s + d.amount, 0);
-    const deposit = Math.round(amount * depositRate);
+    const rawJpy = days.reduce((s, d) => s + d.raw, 0);
+    const totalJpy = early ? applyEarlyBird(rawJpy) : rawJpy;
+    const depositJpy = Math.ceil(depositRate * Math.max(0, totalJpy));
+    const amount = jpyToTwd(totalJpy);
+    const deposit = jpyToTwd(depositJpy);
     const balance = amount - deposit;
     const halfDays = days.filter(d => d.slot === 'half').length;
     const fullDays = days.filter(d => d.slot === 'full').length;
@@ -233,6 +245,7 @@
       basis: basisText(early, seasonsUsed),
       earlyBird: early,
       earlyBirdRate: early ? EARLY_BIRD.rate : 1,
+      jpy: { raw: rawJpy, total: totalJpy, deposit: depositJpy, balance: totalJpy - depositJpy },
       resort: key,
       people: n,
       days,
@@ -320,7 +333,7 @@
   }
 
   window.SNOWMODE = {
-    booking, CONFIG, computePrice, buildPayload, estimateHokkaido, seasonOf,
+    booking, CONFIG, computePrice, buildPayload, estimateHokkaido, seasonOf, jpyToTwd,
     async submitBooking(payload) {
       // text/plain avoids a CORS preflight, which Apps Script doesn't support
       const r = await fetch(CONFIG.endpoint, { method: 'POST', headers: { 'Content-Type': 'text/plain;charset=utf-8' }, body: JSON.stringify(payload) });
