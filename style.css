@@ -1311,3 +1311,24 @@ button{cursor:pointer}
 @media (max-width:640px){.hero-bg{background-image:image-set(url(img/hero-yuzawa-m.webp) type("image/webp"),url(img/hero-yuzawa-m.jpg) type("image/jpeg"))}}
 [data-live="price"].is-pending,#est-price.is-pending{font-size:.9rem;font-weight:500;color:rgba(255,255,255,.62);letter-spacing:.04em}
 .pt-surcharge{color:#bfe0f5;font-weight:500;margin-bottom:4px}
+
+/* ===== booking step 3: 手機號碼 (country code + number) + WhatsApp opt-in; success: big official-LINE button ===== */
+.phone-row{display:grid;grid-template-columns:minmax(0,9.5em) minmax(0,1fr);gap:8px}
+.phone-row.has-other{grid-template-columns:minmax(0,7em) minmax(0,5em) minmax(0,1fr)}
+.phone-row .phone-cc-other{text-align:center}
+.phone-hint{font-size:.76rem;color:var(--mute);line-height:1.6}
+.phone-wa{margin-top:4px;font-size:.84rem}
+.phone-wa input{accent-color:#25D366}
+.done-btn--big{flex-wrap:wrap;max-width:340px;min-height:56px;letter-spacing:.06em;line-height:1.4;text-align:center}
+.done-btn--big .nb{display:inline-block;white-space:nowrap}
+.done-send-ref{display:flex;flex-wrap:wrap;align-items:center;justify-content:center;gap:6px 10px;margin-top:12px;font-size:.88rem;color:#E2E6EB}
+.done-send-ref-v{font-family:var(--lat);font-weight:600;letter-spacing:.04em;white-space:nowrap;color:#fff;user-select:all}
+.done-contact .done-list{margin-top:18px}
+@media (max-width:640px){
+  .phone-row{grid-template-columns:minmax(0,9.6em) minmax(0,1fr)}
+  .phone-row select{padding-left:10px;padding-right:6px}
+  .phone-row.has-other{grid-template-columns:minmax(0,9.6em) minmax(0,1fr);row-gap:8px}
+  .phone-row.has-other #phone{grid-column:1/-1}
+  .done-btn--big{font-size:.98rem;padding:12px 18px}
+  .done-send-ref .done-mini{grid-column:auto;grid-row:auto}
+}

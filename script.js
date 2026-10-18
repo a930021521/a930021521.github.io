@@ -38,6 +38,8 @@
   const booking = {
     name: '',
     contact: { method: 'LINE', id: '', email: '' },
+    phone: '',            // '+886 912345678' (required; country code + national number)
+    phoneWhatsApp: false, // customer ticked 「這支號碼可用 WhatsApp 聯繫」
     dates: [],            // [{ date: 'YYYY-MM-DD', slot: '全日' }]
     discipline: '',       // no default: the visitor must pick 單板 or 雙板
     level: '',
@@ -543,8 +545,65 @@
   /* ---------- contact method label ---------- */
   const cid = form.elements.contactId, cidL = $('#cid-l');
   const CID = { LINE: ['LINE ID', '您的 LINE ID'], WeChat: ['WeChat ID', '您的 WeChat ID'], WhatsApp: ['WhatsApp 號碼', '+886 912 345 678'], Email: ['Email', 'jpsnowmode@gmail.com'], '電話': ['電話號碼', '+886 912 345 678'] };
-  function syncMethod() { const m = form.elements.contactMethod.value; booking.contact.method = m; cidL.textContent = CID[m][0]; cid.placeholder = CID[m][1]; cid.type = m === 'Email' ? 'email' : 'text'; form.elements.email.closest('label').hidden = m === 'Email'; }
+  // 電話 / WhatsApp reuse the required 手機號碼 field, so the separate ID box is hidden for them
+  const PHONE_METHODS = ['WhatsApp', '電話'];
+  function syncMethod() {
+    const m = form.elements.contactMethod.value; booking.contact.method = m; cidL.textContent = CID[m][0]; cid.placeholder = CID[m][1]; cid.type = m === 'Email' ? 'email' : 'text'; form.elements.email.closest('label').hidden = m === 'Email';
+    $('#cid-field').hidden = PHONE_METHODS.includes(m);
+    if (m === 'WhatsApp') form.elements.phoneWhatsApp.checked = true;
+    setErr('contactId', '');
+  }
   form.elements.contactMethod.addEventListener('change', syncMethod);
+
+  /* ---------- 手機號碼: country code + number ---------- */
+  const PHONE_CC = {
+    886: { name: '台灣', ph: '0912 345 678' }, 852: { name: '香港', ph: '5123 4567', len: 8 }, 65: { name: '新加坡', ph: '8123 4567', len: 8 },
+    60: { name: '馬來西亞', ph: '012 345 6789' }, 86: { name: '中國', ph: '138 0013 8000' }, 81: { name: '日本', ph: '090 1234 5678' },
+    853: { name: '澳門', ph: '6123 4567', len: 8 }, other: { name: '', ph: '電話號碼' }
+  };
+  const phoneCc = form.elements.phoneCc, phoneCcOther = form.elements.phoneCcOther, phoneIn = form.elements.phone;
+  function syncPhoneCc() {
+    const other = phoneCc.value === 'other';
+    phoneCcOther.hidden = !other; phoneCc.closest('.phone-row').classList.toggle('has-other', other);
+    phoneIn.placeholder = PHONE_CC[phoneCc.value].ph;
+    if (!other) phoneCcOther.setAttribute('aria-invalid', 'false');
+  }
+  phoneCc.addEventListener('change', () => { syncPhoneCc(); if (phoneIn.value.trim()) checkPhone(); else setErr('phone', ''); if (phoneCc.value === 'other') phoneCcOther.focus(); });
+  /* returns { phone: '+886 912345678' } or { error: '…' } */
+  function parsePhone() {
+    let cc = phoneCc.value === 'other' ? phoneCcOther.value.replace(/[^\d]/g, '') : phoneCc.value;
+    if (phoneCc.value === 'other' && !/^\d{1,4}$/.test(cc)) return { error: '請在「+國碼」欄填寫國碼（1–4 位數字，例如英國填 44）', field: 'cc' };
+    let raw = phoneIn.value.trim();
+    if (!raw) return { error: '請填寫手機號碼，LINE 聯絡不到您時我們會用它聯繫' };
+    let d = raw.replace(/[\s\-().．－]/g, '');
+    if (/^(\+|00)/.test(d)) { // typed the country code again: accept it if it matches the selected one
+      d = d.replace(/^(\+|00)/, '');
+      if (!d.startsWith(cc)) return { error: `號碼開頭的國碼和左邊選的不一樣，請在左邊選國碼，號碼欄只要填本地號碼` };
+      d = d.slice(cc.length);
+    }
+    if (!/^\d+$/.test(d)) return { error: '號碼只能填數字（可以有空格或 -）' };
+    const n = d.length, info = PHONE_CC[phoneCc.value];
+    if (cc === '886') {
+      if (!/^0?9\d{8}$/.test(d)) return { error: (n === 10 || n === 9) ? '請填 09 開頭的台灣手機號碼（例如 0912 345 678），市話無法用來傳訊息' : `台灣手機請填 09 開頭的 10 碼（例如 0912 345 678），您目前填了 ${n} 碼` };
+    } else if (info.len) {
+      if (n !== info.len) return { error: `${info.name}號碼是 ${info.len} 碼，您目前填了 ${n} 碼` };
+    } else if (n < 6 || n > 15) {
+      return { error: `號碼長度看起來不對（需要 6–15 碼），您目前填了 ${n} 碼` };
+    }
+    d = d.replace(/^0/, ''); // E.164 drops the national trunk 0 (TW 09…, JP 090…, MY 012…, UK 07…)
+    return { phone: `+${cc} ${d}` };
+  }
+  function checkPhone() {
+    const r = parsePhone();
+    setErr('phone', r.error || '');
+    phoneCcOther.setAttribute('aria-invalid', r.field === 'cc' ? 'true' : 'false');
+    if (r.field === 'cc') phoneIn.setAttribute('aria-invalid', 'false');
+    return r;
+  }
+  phoneIn.addEventListener('blur', () => { if (phoneIn.value.trim()) checkPhone(); });
+  phoneIn.addEventListener('input', () => { if (phoneIn.getAttribute('aria-invalid') === 'true' && !parsePhone().error) setErr('phone', ''); });
+  phoneCcOther.addEventListener('blur', () => { if (phoneIn.value.trim() || phoneCcOther.value.trim()) checkPhone(); });
+  syncPhoneCc();
 
   /* ---------- read form → booking ---------- */
   form.addEventListener('input', e => {
@@ -568,7 +627,10 @@
     booking.totalPeople = booking.adults + booking.children;
     booking.name = f.name.value.trim();
     booking.contact.method = f.contactMethod.value;
-    booking.contact.id = f.contactId.value.trim();
+    const ph = parsePhone();
+    booking.phone = ph.phone || '';
+    booking.phoneWhatsApp = !!f.phoneWhatsApp.checked;
+    booking.contact.id = PHONE_METHODS.includes(f.contactMethod.value) ? booking.phone : f.contactId.value.trim();
     booking.contact.email = f.email.value.trim() || (f.contactMethod.value === 'Email' ? booking.contact.id : '');
     booking.notes = f.notes.value.trim();
     updateLive();
@@ -627,10 +689,12 @@
     }
     if (n === 3) {
       if (!booking.name) { setErr('name', '請填寫聯絡人姓名'); errs.push('name'); } else setErr('name', '');
+      const ph = checkPhone();
+      if (ph.error) errs.push(ph.field === 'cc' ? 'phoneCcOther' : 'phone');
       const m = booking.contact.method, v = booking.contact.id;
-      if (!v) { setErr('contactId', `請填寫${CID[m][0]}`); errs.push('contactId'); }
+      if (PHONE_METHODS.includes(m)) setErr('contactId', ''); // uses 手機號碼 above
+      else if (!v) { setErr('contactId', `請填寫${CID[m][0]}`); errs.push('contactId'); }
       else if (m === 'Email' && !EMAIL.test(v)) { setErr('contactId', 'Email 格式不正確'); errs.push('contactId'); }
-      else if ((m === 'WhatsApp' || m === '電話') && !/^\+?[\d\s\-()]{6,20}$/.test(v)) { setErr('contactId', '號碼格式不正確（可含國碼，例如 +886）'); errs.push('contactId'); }
       else setErr('contactId', '');
       if (booking.contact.method !== 'Email' && booking.contact.email && !EMAIL.test(booking.contact.email)) { setErr('email', 'Email 格式不正確'); errs.push('email'); } else setErr('email', '');
     }
@@ -668,7 +732,9 @@
     const agesText = booking.children ? booking.childAges.map((age, i) => `小孩 ${i + 1}：${age ? age + ' 歲' : '未填'}`).join('、') : '—';
     const rows = [['板類', booking.discipline], ['程度', booking.level], ['語言', booking.language],
       ['日期', datesText(false)], ['時數', durationText(booking) || '—'], ['大人', booking.adults + ' 人'], ['小孩', booking.children + ' 人'], ['小孩年齡', agesText], ['總人數', booking.totalPeople + ' 人'], ['雪場', booking.resort],
-      ['聯絡人', booking.name], [c.method, c.id]];
+      ['聯絡人', booking.name], ['手機', booking.phone + (booking.phoneWhatsApp ? '（可用 WhatsApp）' : '')]];
+    if (!PHONE_METHODS.includes(c.method)) rows.push([c.method, c.id]);
+    else rows.push(['偏好的聯絡方式', c.method]);
     if (c.method !== 'Email') rows.push(['Email', c.email || '（未填）']);
     rows.push(['備註', booking.notes || '（無）']);
     $('#summary').innerHTML = rows.map(([k, v]) => `<dt>${esc(k)}</dt><dd>${k === '日期' ? datesHTML(false) : esc(v || '—')}</dd>`).join('');
@@ -695,6 +761,8 @@
   function showDoneContact(ref, contact) {
     const r = String(ref || '').trim();
     $('#done-ref').textContent = r;
+    $$('[data-done-ref-copy]', done).forEach(el => { el.textContent = r; });
+    $$('[data-done-send-ref]', done).forEach(el => { el.hidden = !r; });
     $('#done-ref-box').hidden = !r;
     $('#done-ref-missing').hidden = !!r;
     const m = ['LINE', 'WhatsApp', 'WeChat'].includes(contact.method) ? contact.method : 'other';
@@ -732,7 +800,7 @@
     } finally { send.disabled = false; send.textContent = '送出預約需求'; }
   });
   $('#done-again').addEventListener('click', () => {
-    form.reset(); booking.dates = []; booking.childAges = []; setParty(1, 0); syncMethod(); setDiscipline('');
+    form.reset(); booking.dates = []; booking.childAges = []; setParty(1, 0); syncMethod(); syncPhoneCc(); setErr('phone', ''); setDiscipline('');
     renderCal(); renderDays(); readForm(); showDoneOrForm(false); go(1);
   });
 
@@ -874,10 +942,11 @@
     const target = $(b.dataset.copy);
     if (!target) return;
     const txt = target.textContent.trim();
-    try { await navigator.clipboard.writeText(txt); toast(`已複製 WeChat ID：${txt}`); }
+    const label = b.dataset.copyLabel || 'WeChat ID';
+    try { await navigator.clipboard.writeText(txt); toast(`已複製${label}：${txt}`); }
     catch (_) {
       const r = document.createRange(); r.selectNodeContents(target); const s = getSelection(); s.removeAllRanges(); s.addRange(r);
-      toast('已選取 ID，請按複製');
+      toast(`已選取${label}，請按複製`);
     }
   }));
 
