@@ -186,7 +186,41 @@
    * (through 2026-10-31 inclusive), then jpyToTwd. 5+ people, unknown resort, or a date outside
    * the published season stays a private quote.
    */
-  function estimateHokkaido({ resort, people, dates, asOf, depositRate = 0.3 }) {
+  /* 札幌國際 搶先開滑 11/20–12/14：學校自營早鳥價（NT$ 整組總價），早鳥至 10/31 */
+  const SAPPORO_EARLY = {
+    from: 1120, to: 1214, until: '2026-10-31',
+    label: '札幌國際 早鳥價',
+    table: { half: [7000, 8000, 9000, 10000], full: [12000, 13000, 14000, 15000] }
+  };
+  const inSapporoWindow = iso => { const p = parseISODate(iso); if (!p) return false; const md = p.m * 100 + p.d; return md >= SAPPORO_EARLY.from && md <= SAPPORO_EARLY.to; };
+  function estimateHokkaido(args) {
+    const { resort, people, dates, asOf, depositRate = 0.3 } = args;
+    const list0 = Array.isArray(dates) ? dates : [];
+    const n0 = Number(people) || 0;
+    if (resortKey(resort) === '札幌國際' && list0.length && list0.some(d => inSapporoWindow(d.date))) {
+      if (!list0.every(d => inSapporoWindow(d.date))) {
+        return quoteResult('out_of_season', '札幌國際 11/20–12/14 以外的日期，請私訊報價', { resort: '札幌國際', people: n0 });
+      }
+      if (n0 > 4) return quoteResult('over_max', '5 人以上請私訊報價', { resort: '札幌國際', people: n0 });
+      if (n0 >= 1) {
+        const asOfP = parseISODate(asOf) || parseISODate(hkTodayISO());
+        const ebOn = !!(asOfP && asOfP.iso <= SAPPORO_EARLY.until);
+        const amount = list0.reduce((s, d) => s + SAPPORO_EARLY.table[slotKey(d.slot)][n0 - 1], 0);
+        const deposit = Math.round(amount * depositRate);
+        const halfDays = list0.filter(d => slotKey(d.slot) === 'half').length;
+        return {
+          ok: true, quoteRequired: false, hokkaido: true, sapporoEarly: true, label: ebOn ? SAPPORO_EARLY.label : '札幌國際 搶先開滑價',
+          amount, display: ntd(amount), deposit, balance: amount - deposit,
+          depositDisplay: ntd(deposit), balanceDisplay: ntd(amount - deposit),
+          basis: (ebOn ? '札幌國際 搶先開滑早鳥價（至 2026/10/31）' : '札幌國際 搶先開滑價') + '，整組總價；實際以確認為準',
+          earlyBird: ebOn, resort: '札幌國際', people: n0, days: [],
+          breakdown: { halfDays, fullDays: list0.length - halfDays, totalPeople: n0, seasons: ['搶先開滑'] }
+        };
+      }
+    }
+    return estimateHokkaidoPartner(args);
+  }
+  function estimateHokkaidoPartner({ resort, people, dates, asOf, depositRate = 0.3 }) {
     const n = Number(people) || 0;
     const list = Array.isArray(dates) ? dates : [];
     const key = resortKey(resort);
@@ -255,6 +289,7 @@
     };
   }
   function priceNote(price) {
+    if (price && price.sapporoEarly) return (price.earlyBird ? '札幌國際早鳥價' : '札幌國際搶先開滑價') + '；實際以確認為準';
     if (price && price.hokkaido && price.amount != null && !price.quoteRequired) {
       return price.earlyBird ? '含早鳥 85 折；實際以確認為準' : '實際以確認為準';
     }
@@ -294,7 +329,7 @@
       b.balance = hk.balance;
       return {
         currency: CONFIG.currency,
-        label: hk.quoteRequired ? CONFIG.priceLabel : (hk.earlyBird ? EARLY_BIRD.label : '北海道課程費用（預估）'),
+        label: hk.quoteRequired ? CONFIG.priceLabel : hk.label ? hk.label : (hk.earlyBird ? EARLY_BIRD.label : '北海道課程費用（預估）'),
         amount: hk.amount,
         display: hk.display,
         deposit: hk.deposit,
