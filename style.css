@@ -1247,7 +1247,7 @@ button{cursor:pointer}
 /* ===== iOS polish (mobile only, <=640px): 16px inputs (no iOS zoom), 44px tap targets, legible price/explanatory text, mobile hero ===== */
 @media (max-width:640px){
   .fld input,.fld select,.fld textarea,#quick input{font-size:16px}
-  .hero-bg{background-image:url(img/hero-yuzawa-m.jpg);background-image:image-set(url(img/hero-yuzawa-m.webp) type("image/webp"),url(img/hero-yuzawa-m.jpg) type("image/jpeg"))}
+  .hero-bg{background-image:url(img/hero-yuzawa-p.jpg);background-image:image-set(url(img/hero-yuzawa-p.webp) type("image/webp"),url(img/hero-yuzawa-p.jpg) type("image/jpeg"))}
   .rs-zoom,.rs-link,.contact-card-action,.qr-toggle,.rv-more,.foot nav a,.pt-tabs button{min-height:44px}
   .lesson-next a,.foot-legal a,.foot-bottom a,.rs-mapfig figcaption span a{display:inline-block;padding:13px 0;margin:-13px 0}
   .rs-zoom,.contact-card-action,.pt-tabs button{display:inline-flex;align-items:center;justify-content:center}
@@ -1264,7 +1264,7 @@ button{cursor:pointer}
 @media (max-width:640px){
   .hero{padding-top:34svh}
   .hero .hero-btn--line{background:rgba(10,16,32,.35)}
-  .hero .eyebrow,.hero .snow-hint,.hero .facts{display:none}
+  .hero .snow-hint,.hero .facts{display:none}
   .hero::after{background:linear-gradient(180deg,rgba(10,16,32,.35) 0%,rgba(10,16,32,0) 22%,rgba(10,16,32,.05) 50%,rgba(10,16,32,.5) 78%,var(--night) 100%)}
   .hero.ss:not(.is-on)::before{opacity:.35}
   .hero.ss:not(.is-on) .hero-bg{filter:grayscale(.2) saturate(.9) brightness(.95)}
@@ -1308,7 +1308,7 @@ button{cursor:pointer}
 .lesson-scope-after{margin-top:24px}
 @media (max-width:640px){.prices-head{margin-top:52px}}
 .hero-bg{background-image:image-set(url(img/hero-yuzawa-1920.webp) type("image/webp"),url(img/hero-yuzawa-1920.jpg) type("image/jpeg"))}
-@media (max-width:640px){.hero-bg{background-image:image-set(url(img/hero-yuzawa-m.webp) type("image/webp"),url(img/hero-yuzawa-m.jpg) type("image/jpeg"))}}
+@media (max-width:640px){.hero-bg{background-image:image-set(url(img/hero-yuzawa-p.webp) type("image/webp"),url(img/hero-yuzawa-p.jpg) type("image/jpeg"))}}
 [data-live="price"].is-pending,#est-price.is-pending{font-size:.9rem;font-weight:500;color:rgba(255,255,255,.62);letter-spacing:.04em}
 .pt-surcharge{color:#bfe0f5;font-weight:500;margin-bottom:4px}
 
