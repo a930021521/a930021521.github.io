@@ -45,10 +45,36 @@
 <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@200;300;400;600;700&display=swap" rel="stylesheet">
 <link rel="preload" as="image" type="image/webp" href="img/hero-m-opt5.webp" media="(max-width:640px)" fetchpriority="high">
 <link rel="preload" as="image" type="image/webp" href="img/hero-yuzawa-1920.webp" media="(min-width:641px)" fetchpriority="high">
-<link rel="stylesheet" href="style.css?v=hero4">
+<link rel="stylesheet" href="style.css?v=hero5">
 <link rel="stylesheet" href="hero-snow.css?v=1">
 </head>
 <body>
+<!-- ===== 頂部公告列（要改文字／連結／下架日，只改這裡）=====
+  data-text   ：電腦版文字
+  data-short  ：手機版文字（≤640px）
+  data-href   ：點擊前往的位置
+  data-until  ：最後顯示日（含當天，台灣時間），之後自動隱藏；留空＝不自動隱藏
+  要整個關掉：把 data-off 改成 "1"
+-->
+<div class="announce" id="announce" hidden
+     data-text="❄️ 札幌國際 11/20 搶先開啟滑雪模式・早鳥至 10/31"
+     data-short="❄️ 札幌國際 11/20 搶先開課・早鳥至 10/31"
+     data-href="#prices-sapporo"
+     data-until="2026-12-14"
+     data-off="0">
+  <a class="announce-link" href="#"><span class="announce-full"></span><span class="announce-short"></span><span class="announce-arrow" aria-hidden="true">→</span></a>
+  <button type="button" class="announce-x" aria-label="關閉公告">✕</button>
+</div>
+<script>
+(function(){var b=document.getElementById('announce');if(!b)return;var d=b.dataset;
+try{if(sessionStorage.getItem('snowmodeAnnounceClosed')===d.text)return}catch(e){}
+if(d.off==='1')return;
+if(d.until){var n=new Date(Date.now()+8*3600e3).toISOString().slice(0,10);if(n>d.until)return}
+var a=b.querySelector('.announce-link');a.href=d.href;b.querySelector('.announce-full').textContent=d.text;b.querySelector('.announce-short').textContent=d.short||d.text;
+b.hidden=false;document.documentElement.classList.add('has-announce');
+a.addEventListener('click',function(){var t=document.querySelector(d.href);if(t&&t.tagName==='DETAILS')t.open=true});
+b.querySelector('.announce-x').addEventListener('click',function(){b.hidden=true;document.documentElement.classList.remove('has-announce');try{sessionStorage.setItem('snowmodeAnnounceClosed',d.text)}catch(e){}});})();
+</script>
 <!--
   ===== 照片來源（全部為 暫用照片，上線前替換 成 SNOWMODE 自己的照片）=====
   img/hero-yuzawa.jpg (used as the hero background): Takuya ASADA, CC BY 2.0 — https://commons.wikimedia.org/wiki/File:Yuzawa_(31203392313).jpg (credited in the footer; resized).
@@ -1336,6 +1362,6 @@ Jay教練是我們這兩天玩的這麼愉快的大功臣！
 <div class="toast" id="toast" role="status" aria-live="polite"></div>
 <script src="hero-snow.js?v=1"></script>
 <dialog class="lightbox" id="lightbox" aria-label="放大圖片"><button type="button" class="lb-close" aria-label="關閉">×</button><img alt=""></dialog>
-<script src="script.js?v=hero4"></script>
+<script src="script.js?v=hero5"></script>
 </body>
 </html>

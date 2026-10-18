@@ -1332,3 +1332,23 @@ button{cursor:pointer}
   .done-btn--big{font-size:.98rem;padding:12px 18px}
   .done-send-ref .done-mini{grid-column:auto;grid-row:auto}
 }
+
+/* ===== 頂部公告列 ===== */
+:root{--announce-h:36px}
+.announce{position:fixed;top:0;left:0;right:0;z-index:51;height:var(--announce-h);display:flex;align-items:center;justify-content:center;padding:0 44px;background:linear-gradient(90deg,#0a1020,#13213f 50%,#0a1020);border-bottom:1px solid rgba(207,220,255,.22);color:#E2E6EB;font-size:.86rem;letter-spacing:.04em}
+.announce[hidden]{display:none}
+.announce-link{display:inline-flex;align-items:center;gap:8px;color:inherit;text-decoration:none;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:100%}
+.announce-link:hover{color:#fff}
+.announce-link:hover .announce-arrow{transform:translateX(3px)}
+.announce-arrow{color:#cfdcff;transition:transform .2s}
+.announce-short{display:none}
+.announce-x{position:absolute;right:10px;top:50%;transform:translateY(-50%);width:28px;height:28px;border:0;border-radius:50%;background:transparent;color:rgba(226,230,235,.7);font-size:13px;line-height:1;cursor:pointer}
+.announce-x:hover{color:#fff;background:rgba(255,255,255,.08)}
+.has-announce .nav{top:var(--announce-h)}
+html.has-announce{scroll-padding-top:calc(84px + var(--announce-h))}
+@media (max-width:640px){
+  :root{--announce-h:32px}
+  .announce{font-size:.78rem;padding:0 38px 0 14px;letter-spacing:.02em}
+  .announce-full{display:none}.announce-short{display:inline}
+  .announce-x{right:6px}
+}
