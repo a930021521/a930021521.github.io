@@ -394,6 +394,19 @@
     }
   };
 
+  /* ---------- backup: email the booking (FormSubmit) when the Apps Script backend fails ---------- */
+  const BACKUP_EMAIL = 'a930021521@gmail.com';
+  async function emailBooking(p) {
+    const ref = 'SM-' + new Date().toISOString().slice(5, 10).replace('-', '') + '-' + Math.random().toString(36).slice(2, 6).toUpperCase();
+    const r = await fetch('https://formsubmit.co/ajax/' + BACKUP_EMAIL, {
+      method: 'POST', headers: { 'Content-Type': 'application/json', Accept: 'application/json' },
+      body: JSON.stringify({ _subject: '【SNOWMODE 網站預約】' + (p.name || '') + ' ' + ref, _template: 'box', _captcha: 'false', 預約編號: ref, 內容: bookingText(p) })
+    });
+    const d = await r.json().catch(() => ({}));
+    if (!r.ok || String(d.success) !== 'true') throw new Error('email backup failed');
+    return { ok: true, ref };
+  }
+
   /* ---------- fallback: send the booking via LINE when the form backend fails ---------- */
   const LINE_OA = '@dqi1670m';
   function bookingText(p) {
@@ -839,7 +852,9 @@
     send.disabled = true; send.textContent = '送出中…';
     const payload = buildPayload();
     try {
-      const res = await window.SNOWMODE.submitBooking(payload);
+      let res;
+      try { res = await window.SNOWMODE.submitBooking(payload); }
+      catch (e1) { res = await emailBooking(payload); }
       window.SNOWMODE.lastSubmission = res;
       showDoneContact(res && res.ref, booking.contact);
       showDoneOrForm(true); done.focus();
