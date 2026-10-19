@@ -394,6 +394,34 @@
     }
   };
 
+  /* ---------- fallback: send the booking via LINE when the form backend fails ---------- */
+  const LINE_OA = '@dqi1670m';
+  function bookingText(p) {
+    const c = p.contact || {};
+    const days = (p.dates || []).map(d => d.date + ' ' + (d.slot || '')).join('、');
+    const kids = p.children ? '，小孩 ' + p.children + ' 位（' + (p.childAges || []).join('、') + ' 歲）' : '';
+    return ['【SNOWMODE 預約需求】',
+      '姓名：' + (p.name || ''),
+      '電話：' + (p.phone || '') + (p.phoneWhatsApp ? '（可 WhatsApp）' : ''),
+      '聯絡方式：' + (c.method || '') + ' ' + (c.id || c.email || ''),
+      '日期：' + days,
+      '雪場：' + (p.resort || ''),
+      '板類：' + (p.discipline || '') + '　程度：' + (p.level || ''),
+      '人數：大人 ' + (p.adults || 0) + ' 位' + kids,
+      '預估費用：' + ((p.price && p.price.display) || '—'),
+      p.notes ? '備註：' + p.notes : ''].filter(Boolean).join('\n');
+  }
+  function showLineFallback(p) {
+    const text = bookingText(p);
+    let box = $('#line-fallback');
+    if (!box) { box = document.createElement('div'); box.id = 'line-fallback'; msgEl.after(box); }
+    box.innerHTML = '<p>您填寫的內容已整理好，按下方按鈕會開啟 LINE 並帶入內容，送出即可。</p>' +
+      '<a class="lf-btn" target="_blank" rel="noopener" href="https://line.me/R/oaMessage/' + LINE_OA + '/?' + encodeURIComponent(text) + '">用 LINE 傳送預約內容</a>' +
+      '<button type="button" class="lf-copy">複製內容</button><pre>' + esc(text) + '</pre>';
+    box.querySelector('.lf-copy').onclick = () => { navigator.clipboard?.writeText(text).then(() => toast('已複製'), () => {}); };
+    track('booking_line_fallback', { resort: p.resort || '' });
+  }
+
   /* ---------- toast ---------- */
   const toastEl = $('#toast'); let tt;
   const toast = m => { toastEl.textContent = m; toastEl.classList.add('show'); clearTimeout(tt); tt = setTimeout(() => toastEl.classList.remove('show'), 2400); };
@@ -831,7 +859,8 @@
       if (typeof amount === 'number' && isFinite(amount)) { lead.currency = CONFIG.currency; lead.value = amount; }
       track('generate_lead', lead);
     } catch (err) {
-      msg('送出失敗，請稍後再試，或直接用 LINE 聯絡我們。');
+      msg('網站預約系統暫時無法送出，請改用 LINE 傳送預約內容給我們。', 'err');
+      showLineFallback(payload);
     } finally { send.disabled = false; send.textContent = '送出預約需求'; }
   });
   $('#done-again').addEventListener('click', () => {
