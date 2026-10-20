@@ -31,7 +31,7 @@
     maxPricedPeople: 4,
     durations: { half: '半日（3 小時）', full: '全日（6 小時，含午休 1 小時）' },
     // Google Apps Script web app (jpsnowmode@gmail.com) → Sheet「SNOWMODE 預約」+ email notification
-    endpoint: 'https://script.google.com/macros/s/AKfycbyD39ReMO2oVTR2xeL7jdfpwYkeOgSsJrtw1Qgy2IilnJnvKLG9VS2c0twrH7DG68T7/exec'
+    endpoint: 'https://script.google.com/macros/s/AKfycbyX7NthGOMOO0p3lh9YbrCJ37tdIx_CVK5tn4EBSbrvdMSMNbGzemTmV90QBG8O-5pyRw/exec'
   };
 
   /* ---------- the booking data object ---------- */
