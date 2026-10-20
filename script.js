@@ -30,7 +30,7 @@
     },
     maxPricedPeople: 4,
     durations: { half: '半日（3 小時）', full: '全日（6 小時，含午休 1 小時）' },
-    // Google Apps Script web app (jpsnowmode@gmail.com) → Sheet「SNOWMODE 預約」+ email notification
+    // Google Apps Script web app → Sheet「SNOWMODE 預約」+ email notification
     endpoint: 'https://script.google.com/macros/s/AKfycbyX7NthGOMOO0p3lh9YbrCJ37tdIx_CVK5tn4EBSbrvdMSMNbGzemTmV90QBG8O-5pyRw/exec'
   };
 
@@ -620,7 +620,7 @@
 
   /* ---------- contact method label ---------- */
   const cid = form.elements.contactId, cidL = $('#cid-l');
-  const CID = { LINE: ['LINE ID', '您的 LINE ID'], WeChat: ['WeChat ID', '您的 WeChat ID'], WhatsApp: ['WhatsApp 號碼', '+886 912 345 678'], Email: ['Email', 'jpsnowmode@gmail.com'], '電話': ['電話號碼', '+886 912 345 678'] };
+  const CID = { LINE: ['LINE ID', '您的 LINE ID'], WeChat: ['WeChat ID', '您的 WeChat ID'], WhatsApp: ['WhatsApp 號碼', '+886 912 345 678'], Email: ['Email', 'name@example.com'], '電話': ['電話號碼', '+886 912 345 678'] };
   // 電話 / WhatsApp reuse the required 手機號碼 field, so the separate ID box is hidden for them
   const PHONE_METHODS = ['WhatsApp', '電話'];
   function syncMethod() {
