@@ -772,7 +772,10 @@
       else if (!v) { setErr('contactId', `請填寫${CID[m][0]}`); errs.push('contactId'); }
       else if (m === 'Email' && !EMAIL.test(v)) { setErr('contactId', 'Email 格式不正確'); errs.push('contactId'); }
       else setErr('contactId', '');
-      if (booking.contact.method !== 'Email' && booking.contact.email && !EMAIL.test(booking.contact.email)) { setErr('email', 'Email 格式不正確'); errs.push('email'); } else setErr('email', '');
+      if (booking.contact.method !== 'Email') {
+        if (!booking.contact.email) { setErr('email', '請填寫 Email（用來寄確認信）'); errs.push('email'); }
+        else if (!EMAIL.test(booking.contact.email)) { setErr('email', 'Email 格式不正確'); errs.push('email'); } else setErr('email', '');
+      } else setErr('email', '');
     }
     if (n === 4) { if (!form.elements.agree.checked) { setErr('agree', '請勾選同意後再送出'); errs.push('agree'); } else setErr('agree', ''); }
     if (errs.length) {
