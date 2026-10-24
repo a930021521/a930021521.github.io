@@ -48,7 +48,7 @@
     children: 0,
     childAges: [],
     totalPeople: 1,
-    resort: '由教練建議',
+    resort: '湯澤由教練建議',
     notes: '',
     price: { currency: CONFIG.currency, amount: null, display: '—' },
     duration: null,       // 'half' | 'full' | 'mixed' (per-day slot lives in dates[].slot)
@@ -300,7 +300,7 @@
   // 越後湯澤 resorts with an extra fee: + NT$ per lesson day per group (half or full day)
   const YUZAWA_SURCHARGE = { '神立': 2000, '石打丸山': 2000 };
   const NO_RESORT_TEXT = '選擇雪場後顯示';
-  const hasResort = b => { const r = String(b.resort || '').trim(); return !!r && r !== '由教練建議'; };
+  const hasResort = b => { const r = String(b.resort || '').trim(); return !!r && !/由教練建議/.test(r); };
   function computePrice(b) {
     const full = computePriceRaw(b);
     if (hasResort(b)) return full;
@@ -867,7 +867,7 @@
       const lead = {
         form: 'booking',
         resort,
-        area: resort.startsWith('北海道・') ? '北海道' : (resort && resort !== '由教練建議' ? '越後湯澤' : '未指定'),
+        area: resort.startsWith('北海道・') ? '北海道' : (resort ? '越後湯澤' : '未指定'),
         discipline: payload.discipline || '',
         lesson_duration: payload.duration || '',
         lesson_days: (payload.dates || []).length,
