@@ -48,7 +48,7 @@
     children: 0,
     childAges: [],
     totalPeople: 1,
-    resort: '湯澤由教練建議',
+    resort: '',
     notes: '',
     price: { currency: CONFIG.currency, amount: null, display: '—' },
     duration: null,       // 'half' | 'full' | 'mixed' (per-day slot lives in dates[].slot)
@@ -298,7 +298,7 @@
 
   // 預估費用 only after a real 雪場 is chosen; '由教練建議' / empty shows a placeholder and submits no amount
   // 越後湯澤 resorts with an extra fee: + NT$ per lesson day per group (half or full day)
-  const YUZAWA_SURCHARGE = { '神立': 2000, '石打丸山': 2000 };
+  const YUZAWA_SURCHARGE = { '神立': 2000, '石打丸山': 2000, '神樂': 2000 };
   const NO_RESORT_TEXT = '選擇雪場後顯示';
   const hasResort = b => { const r = String(b.resort || '').trim(); return !!r && !/由教練建議/.test(r); };
   function computePrice(b) {
@@ -762,6 +762,7 @@
     if (n === 2) {
       if (!booking.dates.length) { setErr('dates', '請至少選擇一天上課日期'); errs.push('dates'); }
       if (booking.dates.some(d => d.date < todayISO)) { setErr('dates', '有日期已經過去，請重新選擇'); errs.push('dates'); }
+      if (!String(form.elements.resort.value || '').trim()) { setErr('resort', '請選擇雪場'); errs.push('resort'); } else setErr('resort', '');
     }
     if (n === 3) {
       if (!booking.name) { setErr('name', '請填寫聯絡人姓名'); errs.push('name'); } else setErr('name', '');
