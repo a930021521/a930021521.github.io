@@ -21,9 +21,9 @@
     slotLabels: { '半日（上午）': '上午（9:00–12:00）', '半日（下午）': '下午（13:00–16:00）', '全日': '全天（6小時，含1小時用餐）' },
     // display text for durations (payload durationLabel keeps the 半日／全日 wording the backend stores)
     durationsDisplay: { half: '半天（3小時）', full: '全天（6小時，含1小時用餐）' },
-    // 早鳥回饋價 2026–27 — PRICE_TABLE[half|full][totalPeople - 1] = group total in TWD (not per person).
+    // 2026–27 課程費用 — PRICE_TABLE[half|full][totalPeople - 1] = group total in TWD (not per person).
     // half = 半日 3 小時, full = 全日 6 小時（含午休 1 小時）. 5 人以上 → 私訊報價.
-    priceLabel: '早鳥回饋價 2026–27',
+    priceLabel: '2026–27 課程費用',
     PRICE_TABLE: {
       half: [7000, 8000, 9000, 10000],
       full: [12000, 13000, 14000, 14000]
@@ -64,7 +64,7 @@
   const slotKey = slot => (slot === '全日' || slot === 'full') ? 'full' : 'half';
 
   /* ---------- 北海道課程費用（預估） ----------
-   * 以日圓計：每天 (淡季底價 + 季節加價)，加總後早鳥 ×0.85 四捨五入，
+   * 以日圓計：每天 (淡季底價 + 季節加價)，加總後（HOKKAIDO_DISCOUNT_ON 時）×0.85 四捨五入，
    * 再以固定匯率 1 TWD = 5.06 JPY 換成 NT$，四捨五入到百位（<NT$50 則無條件進位）。
    * 訂金 = ceil(30% × 日圓總額) 再換算；尾款 = 總額 NT$ − 訂金 NT$。 */
   const HOKKAIDO_BASE = { // JPY，整組總價（每位教練）
@@ -85,9 +85,11 @@
     const t = jpy / JPY_PER_TWD;
     return t > 0 && t < 50 ? Math.ceil(t) : 100 * Math.round(t / 100);
   }
-  const EARLY_BIRD = { rate: 0.85, until: '2026-10-31', label: '早鳥 85 折' };
+  /* 北海道 85 折開關：true = 價表顯示划線原價＋85 折、預估費用打 85 折；false = 全部回原價（價表改顯示原價、隱藏 85 折字樣） */
+  const HOKKAIDO_DISCOUNT_ON = true;
+  const EARLY_BIRD = { rate: 0.85, label: '85 折優惠' };
   const SEASON_LABEL = { low: '淡季', peak: '旺季', super: '超旺季' };
-  const YUZAWA_BASIS = '早鳥回饋價 2026–27，整組總價；實際費用以我們的回覆為準';
+  const YUZAWA_BASIS = '2026–27 課程費用，整組總價；實際費用以我們的回覆為準';
 
   function parseISODate(iso) {
     const m = String(iso || '').match(/^(\d{4})-(\d{2})-(\d{2})/);
@@ -116,15 +118,18 @@
     const key = s.slice('北海道・'.length);
     return HOKKAIDO_BASE[key] ? key : null;
   }
-  function isEarlyBirdOn(asOfISO) {
-    const asOf = parseISODate(asOfISO) || parseISODate(hkTodayISO());
-    const until = parseISODate(EARLY_BIRD.until);
-    return !!(asOf && until && asOf.iso <= until.iso);
+  function isEarlyBirdOn() { return HOKKAIDO_DISCOUNT_ON; }
+  if (!HOKKAIDO_DISCOUNT_ON) {
+    document.querySelectorAll('.hk-disc-only').forEach(el => { el.hidden = true; el.style.display = 'none'; });
+    document.querySelectorAll('#prices-hokkaido .price-cell').forEach(c => {
+      const was = c.querySelector('s.was'), now = c.querySelector('.now');
+      if (was && now) { now.textContent = was.textContent; was.remove(); }
+    });
   }
   function applyEarlyBird(raw) { return Math.round(raw * EARLY_BIRD.rate); }
   function basisText(early, seasons) {
     const bits = [];
-    if (early) bits.push('含早鳥 85 折（至 2026/10/31）');
+    if (early) bits.push('含 85 折');
     if (seasons && seasons.length) bits.push('季節：' + seasons.join('・'));
     bits.push('實際以確認為準');
     return bits.join('；');
@@ -182,14 +187,14 @@
     };
   }
   /**
-   * JPY: sum of per-day (base + surcharge), then round(× 0.85) while early bird is on
-   * (through 2026-10-31 inclusive), then jpyToTwd. 5+ people, unknown resort, or a date outside
+   * JPY: sum of per-day (base + surcharge), then round(× 0.85) while HOKKAIDO_DISCOUNT_ON,
+   * then jpyToTwd. 5+ people, unknown resort, or a date outside
    * the published season stays a private quote.
    */
-  /* 札幌國際 搶先開滑 11/20–12/14：學校自營早鳥價（NT$ 整組總價），早鳥至 10/31 */
+  /* 札幌國際 搶先開滑 11/20–12/14：學校自營價（NT$ 整組總價） */
   const SAPPORO_EARLY = {
-    from: 1120, to: 1214, until: '2026-10-31',
-    label: '札幌國際 早鳥價',
+    from: 1120, to: 1214,
+    label: '札幌國際 搶先開滑價',
     table: { half: [7000, 8000, 9000, 10000], full: [12000, 13000, 14000, 15000] }
   };
   const inSapporoWindow = iso => { const p = parseISODate(iso); if (!p) return false; const md = p.m * 100 + p.d; return md >= SAPPORO_EARLY.from && md <= SAPPORO_EARLY.to; };
@@ -203,17 +208,15 @@
       }
       if (n0 > 4) return quoteResult('over_max', '5 人以上請私訊報價', { resort: '札幌國際', people: n0 });
       if (n0 >= 1) {
-        const asOfP = parseISODate(asOf) || parseISODate(hkTodayISO());
-        const ebOn = !!(asOfP && asOfP.iso <= SAPPORO_EARLY.until);
         const amount = list0.reduce((s, d) => s + SAPPORO_EARLY.table[slotKey(d.slot)][n0 - 1], 0);
         const deposit = Math.round(amount * depositRate);
         const halfDays = list0.filter(d => slotKey(d.slot) === 'half').length;
         return {
-          ok: true, quoteRequired: false, hokkaido: true, sapporoEarly: true, label: ebOn ? SAPPORO_EARLY.label : '札幌國際 搶先開滑價',
+          ok: true, quoteRequired: false, hokkaido: true, sapporoEarly: true, label: SAPPORO_EARLY.label,
           amount, display: ntd(amount), deposit, balance: amount - deposit,
           depositDisplay: ntd(deposit), balanceDisplay: ntd(amount - deposit),
-          basis: (ebOn ? '札幌國際 搶先開滑早鳥價（至 2026/10/31）' : '札幌國際 搶先開滑價') + '，整組總價；實際以確認為準',
-          earlyBird: ebOn, resort: '札幌國際', people: n0, days: [],
+          basis: '札幌國際 搶先開滑價，整組總價；實際以確認為準',
+          earlyBird: false, resort: '札幌國際', people: n0, days: [],
           breakdown: { halfDays, fullDays: list0.length - halfDays, totalPeople: n0, seasons: ['搶先開滑'] }
         };
       }
@@ -289,9 +292,9 @@
     };
   }
   function priceNote(price) {
-    if (price && price.sapporoEarly) return (price.earlyBird ? '札幌國際早鳥價' : '札幌國際搶先開滑價') + '；實際以確認為準';
+    if (price && price.sapporoEarly) return '札幌國際搶先開滑價；實際以確認為準';
     if (price && price.hokkaido && price.amount != null && !price.quoteRequired) {
-      return price.earlyBird ? '含早鳥 85 折；實際以確認為準' : '實際以確認為準';
+      return price.earlyBird ? '含 85 折；實際以確認為準' : '實際以確認為準';
     }
     return '以我們的回覆為準';
   }
