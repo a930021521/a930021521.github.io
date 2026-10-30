@@ -4,7 +4,7 @@
   var Y='ECHIGO-YUZAWA', H='HOKKAIDO';
   var R=[
     {g:'yz',r:Y,n:'岩原',en:'IWAPPARA',d:'谷川連峰景觀前的寬闊主坡，循序進階的理想場地。',t:'主坡最寬約 200 公尺',img:'iwappara',v:'岩原'},
-    {g:'yz',r:Y,n:'中里',en:'YUZAWA NAKAZATO',d:'與 JR 越後中里站直結，下車即是雪場。',t:'車站直結',img:'nakazato',v:'中里'},
+    {g:'yz',r:Y,n:'中里',en:'YUZAWA NAKAZATO',d:'緊鄰 JR 越後中里站，出站走幾步就能開滑。',t:'下車即雪場',img:'nakazato',v:'中里'},
     {g:'yz',r:Y,n:'苗場',en:'NAEBA',d:'緊鄰苗場王子大飯店的大型山域，從入門坡到世界盃賽道。',t:'世界盃賽道',img:'naeba',v:'苗場'},
     {g:'yz',r:Y,n:'神樂',en:'KAGURA',d:'かぐら・みつまた・田代三大區域組成的大型山域，雪季長、標高差大。',t:'三大區域',img:'kagura',v:'神樂'},
     {g:'yz',r:Y,n:'神立',en:'KANDATSU',d:'距車站 7 分鐘、100% 天然雪的機動型雪場。',t:'100% 天然雪',img:'kandatsu',v:'神立'},
