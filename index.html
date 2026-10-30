@@ -47,6 +47,7 @@
 <link rel="preload" as="image" type="image/webp" href="img/hero-yuzawa-1920.webp" media="(min-width:641px)" fetchpriority="high">
 <link rel="stylesheet" href="style.css?v=hero7">
 <link rel="stylesheet" href="hero-snow.css?v=1">
+<link rel="stylesheet" href="resort-carousel.css?v=1">
 </head>
 <body>
 <!-- ===== 頂部公告列（要改文字／連結／下架日，只改這裡）=====
@@ -973,6 +974,24 @@ Jay教練是我們這兩天玩的這麼愉快的大功臣！
         <figcaption>路線示意（非實際比例）</figcaption>
       </figure>
     </div>
+    <section class="rc" id="rc" aria-roledescription="carousel" aria-labelledby="rc-title" tabindex="-1">
+      <div class="rc-head">
+        <div><p class="rc-k">EXPLORE RESORTS</p><h3 id="rc-title">探索雪場</h3></div>
+        <div class="rc-filters" role="group" aria-label="篩選地區">
+          <button type="button" class="rc-pill" data-f="all" aria-pressed="true">全部</button>
+          <button type="button" class="rc-pill" data-f="hk" aria-pressed="false">北海道</button>
+          <button type="button" class="rc-pill" data-f="yz" aria-pressed="false">湯澤</button>
+        </div>
+      </div>
+      <div class="rc-stage"><ul class="rc-track"></ul></div>
+      <div class="rc-nav">
+        <button type="button" class="rc-arrow rc-prev" aria-label="上一個雪場">&#8249;</button>
+        <p class="rc-count" aria-hidden="true"></p>
+        <button type="button" class="rc-arrow rc-next" aria-label="下一個雪場">&#8250;</button>
+      </div>
+      <div class="rc-dots"></div>
+      <p class="sr-only rc-live" aria-live="polite"></p>
+    </section>
     <div class="resorts" id="hokkaido" aria-labelledby="rs-title">
       <div class="rs-head">
         <h3 id="rs-title">雪場介紹<span class="rs-en" lang="en">RESORTS</span></h3>
@@ -1370,5 +1389,6 @@ Jay教練是我們這兩天玩的這麼愉快的大功臣！
 <script src="hero-snow.js?v=1"></script>
 <dialog class="lightbox" id="lightbox" aria-label="放大圖片"><button type="button" class="lb-close" aria-label="關閉">×</button><img alt=""></dialog>
 <script src="script.js?v=hero11"></script>
+<script src="resort-carousel.js?v=1"></script>
 </body>
 </html>
