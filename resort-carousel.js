@@ -41,21 +41,27 @@
     var price=o.p||(o.g==='yz'?'prices-yuzawa':'prices-hokkaido');
     var c=CR[o.img], front=c?'<img class="rc-photo" src="img/resorts/'+o.img+'-600.webp" srcset="img/resorts/'+o.img+'-600.webp 600w, img/resorts/'+o.img+'-1080.webp 1080w" sizes="(max-width:640px) 80vw, 540px" alt="" loading="lazy" decoding="async">':bg(o,i);
     var credit=c?'<p class="rc-credit">Photo: <a href="'+c.u+'" target="_blank" rel="noopener">'+c.a+'</a> / <a href="'+c.lu+'" target="_blank" rel="noopener license">'+c.l+'</a></p>':'';
-    li.innerHTML='<div class="rc-flip"><div class="rc-face rc-front"><div class="rc-bg" aria-hidden="true">'+front+'</div>'+credit+'<div class="rc-body"><p class="rc-region">'+o.r+'</p><h4 class="rc-name">'+o.n+'<small>'+o.en+'</small></h4><p class="rc-desc">'+o.d+'</p><span class="rc-tag">'+o.t+'</span><div class="rc-btns"><a class="rc-price" href="#'+price+'">看課程費用</a><button type="button" class="rc-mapbtn" aria-pressed="false">看地圖</button><a class="rc-book" href="#booking" data-resort="'+o.v+'">預約</a></div></div></div><div class="rc-face rc-back" aria-hidden="true"><p class="rc-back-t">'+o.n+' 雪道地圖</p><div class="rc-map"><img src="img/maps/'+o.img+'-sm.webp" alt="'+o.n+'雪道地圖" loading="lazy" decoding="async"></div><button type="button" class="rc-backbtn">返回</button></div></div>';
+    li.innerHTML='<div class="rc-flip"><div class="rc-face rc-front"><div class="rc-media"><div class="rc-bg" aria-hidden="true">'+front+'</div>'+credit+'</div><div class="rc-body"><p class="rc-region">'+o.r+'</p><h4 class="rc-name">'+o.n+'</h4><p class="rc-en">'+o.en+'</p><p class="rc-desc">'+o.d+'</p><span class="rc-tag">'+o.t+'</span><div class="rc-btns"><a class="rc-book" href="#booking" data-resort="'+o.v+'">預約</a><a class="rc-price rc-link" href="#'+price+'">看課程費用<span aria-hidden="true"> →</span></a><button type="button" class="rc-mapbtn rc-link" aria-pressed="false"><svg aria-hidden="true" viewBox="0 0 16 16" width="13" height="13"><path d="M1 3.5l4.5-2 5 2 4.5-2v11l-4.5 2-5-2-4.5 2z M5.5 1.5v11 M10.5 3.5v11" fill="none" stroke="currentColor" stroke-width="1.3" stroke-linejoin="round"/></svg>看地圖</button></div></div></div><div class="rc-face rc-back" aria-hidden="true"><p class="rc-back-t">'+o.n+' 雪道地圖</p><div class="rc-map"><img src="img/maps/'+o.img+'-sm.webp" alt="'+o.n+'雪道地圖" loading="lazy" decoding="async"></div><button type="button" class="rc-backbtn">返回</button></div></div>';
     track.appendChild(li); return li;
   });
   var filter='all', list=[], idx=0;
   function vis(){return R.map(function(o,i){return i}).filter(function(i){return filter==='all'||R[i].g===filter})}
   function render(){
-    var mobile=innerWidth<=640, gap=mobile?innerWidth*0.74:400;
+    var mobile=innerWidth<=640, gap=mobile?innerWidth*0.7:390, n=list.length;
     list.forEach(function(ci,k){
-      var c=cards[ci], off=k-idx, a=Math.abs(off);
+      var c=cards[ci], off=k-idx;
+      if(n>2){off=((off%n)+n)%n; if(off>n/2) off-=n;}
+      var a=Math.abs(off), prev=c._off;
       c.hidden=false;
-      var x=off*gap*(a>1?(mobile?1:0.78):1), rot=off===0?0:(off<0?(mobile?18:38):(mobile?-18:-38)), z=-a*(mobile?120:200);
+      // jump without animation when wrapping around the far side
+      if(prev!==undefined&&Math.abs(prev-off)>1){c.style.transition='none';}
+      c._off=off;
+      var x=off*gap*(a>1?(mobile?1:0.82):1), rot=off===0?0:(off<0?(mobile?16:28):(mobile?-16:-28)), z=-a*(mobile?110:170);
       c.style.transform='translateX('+x+'px) translateZ('+z+'px) rotateY('+rot+'deg)';
-      c.style.zIndex=100-a; c.style.opacity=a>3?0:(a===0?1:1-a*0.2);
-      c.style.filter=a?'brightness('+(1-a*0.18)+')':'none';
-      c.style.pointerEvents=a>3?'none':'';
+      c.style.zIndex=100-a; c.style.opacity=a>2?0:(a===2?0.55:1);
+      c.style.filter=a?'brightness('+(a===1?0.7:0.55)+')':'none';
+      c.style.pointerEvents=a>2?'none':'';
+      if(c.style.transition==='none'){void c.offsetWidth;c.style.transition='';}
       c.classList.toggle('is-active',a===0);
       c.setAttribute('aria-hidden',a?'true':'false');
       if(a&&c.classList.contains('flipped'))flip(c,false);
