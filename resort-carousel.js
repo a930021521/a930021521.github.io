@@ -17,6 +17,7 @@
     {g:'hk',r:H+' · SAPPORO',n:'手稻',en:'SAPPORO TEINE',d:'1972 年札幌冬季奧運高山滑雪會場，距札幌市區約 15 公里。',t:'1972 冬奧會場',img:'teine',v:'北海道・手稻'}
   ];
 
+  var CR={"iwappara": {"a": "Famifamifami", "l": "Public domain", "u": "https://commons.wikimedia.org/wiki/File:Iwappara.jpg", "lu": "https://creativecommons.org/publicdomain/mark/1.0/"}, "nakazato": {"a": "Abasaa", "l": "Public domain", "u": "https://commons.wikimedia.org/wiki/File:Yuzawa_Nakazato_Snow_Resort_on_5_January_2020.JPG", "lu": "https://creativecommons.org/publicdomain/mark/1.0/"}, "naeba": {"a": "Syced", "l": "CC0", "u": "https://commons.wikimedia.org/wiki/File:Naeba_ski_resort,_January_2026_(27332).jpg", "lu": "https://creativecommons.org/publicdomain/zero/1.0/"}, "kagura": {"a": "senngokujidai4434", "l": "CC BY 2.0", "u": "https://commons.wikimedia.org/wiki/File:Kagura_Ski_Resort_(41113004182).jpg", "lu": "https://creativecommons.org/licenses/by/2.0/"}, "kandatsu": {"a": "苗場山", "l": "CC BY-SA 3.0", "u": "https://commons.wikimedia.org/wiki/File:Kandatu.jpg", "lu": "https://creativecommons.org/licenses/by-sa/3.0/"}, "ishiuchi": {"a": "Syced", "l": "CC0", "u": "https://commons.wikimedia.org/wiki/File:Ishiuchi_skiing_resort_(32599).jpg", "lu": "https://creativecommons.org/publicdomain/zero/1.0/"}, "niseko": {"a": "Alisterio1010", "l": "CC BY-SA 4.0", "u": "https://commons.wikimedia.org/wiki/File:Niseko_United_Ski_Resort_in_Hokkaido_Japan.jpg", "lu": "https://creativecommons.org/licenses/by-sa/4.0/"}, "rusutsu": {"a": "alonfloc", "l": "CC BY 3.0", "u": "https://commons.wikimedia.org/wiki/File:%E3%83%AB%E3%82%B9%E3%83%84%E3%83%AA%E3%82%BE%E3%83%BC%E3%83%88_-_panoramio.jpg", "lu": "https://creativecommons.org/licenses/by/3.0/"}, "furano": {"a": "wakimasa", "l": "Public domain", "u": "https://commons.wikimedia.org/wiki/File:Furano_Snow_Resort_view2.JPG", "lu": "https://creativecommons.org/publicdomain/mark/1.0/"}, "tomamu": {"a": "Masahiro TAKAGI", "l": "CC BY 2.0", "u": "https://commons.wikimedia.org/wiki/File:Tomamu_ski_resort_01.jpg", "lu": "https://creativecommons.org/licenses/by/2.0/"}, "sapporo-kokusai": {"a": "MIKI Yoshihito", "l": "CC BY 2.0", "u": "https://commons.wikimedia.org/wiki/File:SAPPORO_KOKUSAI_ski_area._(16049261484).jpg", "lu": "https://creativecommons.org/licenses/by/2.0/"}, "teine": {"a": "MIKI Yoshihito", "l": "CC BY 2.0", "u": "https://commons.wikimedia.org/wiki/File:Sapporo_Teine_Ski_Resort._(31250544382).jpg", "lu": "https://creativecommons.org/licenses/by/2.0/"}};
   function rnd(s){return function(){s=(s*9301+49297)%233280;return s/233280}}
   function ridge(r,y,amp,n,soft){var p='M0 '+y,step=600/n;for(var k=1;k<=n;k++){var x=k*step,yy=y-(r()*amp)+(k%2?0:amp*0.35);p+=soft?' Q'+(x-step/2).toFixed(0)+' '+(yy-amp*0.6).toFixed(0)+' '+x.toFixed(0)+' '+yy.toFixed(0):' L'+(x-step/2).toFixed(0)+' '+(yy-amp*0.7).toFixed(0)+' L'+x.toFixed(0)+' '+yy.toFixed(0)}return p}
   function bg(o,i){
@@ -24,9 +25,9 @@
     var top='hsl('+h+',38%,'+(hk?30:26)+'%)', mid='hsl('+(h+6)+',34%,17%)', bot='hsl('+(h+10)+',40%,9%)';
     var s='<svg viewBox="0 0 600 440" preserveAspectRatio="xMidYMid slice"><defs><linearGradient id="'+id+'" x1="0" y1="0" x2=".3" y2="1"><stop offset="0" stop-color="'+top+'"/><stop offset=".55" stop-color="'+mid+'"/><stop offset="1" stop-color="'+bot+'"/></linearGradient><radialGradient id="'+id+'g" cx="'+(0.25+r()*0.5)+'" cy=".12" r=".6"><stop offset="0" stop-color="#cfe3f6" stop-opacity=".22"/><stop offset="1" stop-color="#cfe3f6" stop-opacity="0"/></radialGradient></defs><rect width="600" height="440" fill="url(#'+id+')"/><rect width="600" height="440" fill="url(#'+id+'g)"/>';
     if(hk&&(o.img==='niseko'||o.img==='rusutsu')){ // Mt Yotei cone
-      var cx=380-r()*120; s+='<path d="M'+(cx-230)+' 300 Q'+(cx-90)+' 200 '+(cx-30)+' 112 L'+(cx+30)+' 112 Q'+(cx+90)+' 200 '+(cx+230)+' 300" fill="none" stroke="#dbe9f6" stroke-opacity=".5" stroke-width="1.6"/><path d="M'+(cx-30)+' 112 l14 18 l12 -8 l14 14 l20 -24" fill="none" stroke="#e8f2fb" stroke-opacity=".45" stroke-width="1.2"/>';
+      var cx=380-r()*120; s+='<path d="M'+(cx-230)+' 300 Q'+(cx-90)+' 200 '+(cx-30)+' 112 L'+(cx+30)+' 112 Q'+(cx+90)+' 200 '+(cx+230)+' 300" fill="none" stroke="#dbe9f6" stroke-opacity=".25" stroke-width="1.4"/><path d="M'+(cx-30)+' 112 l14 18 l12 -8 l14 14 l20 -24" fill="none" stroke="#e8f2fb" stroke-opacity=".22" stroke-width="1.1"/>';
     }
-    var lines=hk?[[250,60,5,1,.42],[290,40,7,1,.28],[330,30,9,1,.16]]:[[230,110,6,0,.45],[285,70,8,0,.28],[330,40,11,0,.16]];
+    var lines=hk?[[250,60,5,1,.2],[290,40,7,1,.12],[330,30,9,1,.07]]:[[230,110,6,0,.2],[285,70,8,0,.12],[330,40,11,0,.07]];
     lines.forEach(function(L){s+='<path d="'+ridge(r,L[0],L[1],L[2],L[3])+'" fill="none" stroke="#d6e6f5" stroke-opacity="'+L[4]+'" stroke-width="1.4" stroke-linejoin="round"/>'});
     for(var k=0;k<18;k++)s+='<circle cx="'+(r()*600).toFixed(0)+'" cy="'+(r()*200).toFixed(0)+'" r="'+(0.6+r()*1.2).toFixed(1)+'" fill="#eaf3fb" opacity="'+(0.15+r()*0.35).toFixed(2)+'"/>';
     s+='<text x="570" y="60" text-anchor="end" font-family="Montserrat,sans-serif" font-size="12" letter-spacing="5" fill="#cfe3f6" fill-opacity=".35">'+(hk?'HOKKAIDO':'YUZAWA')+'</text>';
@@ -38,7 +39,9 @@
     var li=document.createElement('li'); li.className='rc-card'; li.setAttribute('aria-roledescription','slide');
     li.setAttribute('aria-label',o.n+'（'+(i+1)+'／'+R.length+'）');
     var price=o.p||(o.g==='yz'?'prices-yuzawa':'prices-hokkaido');
-    li.innerHTML='<div class="rc-bg" aria-hidden="true">'+bg(o,i)+'</div><div class="rc-body"><p class="rc-region">'+o.r+'</p><h4 class="rc-name">'+o.n+'<small>'+o.en+'</small></h4><p class="rc-desc">'+o.d+'</p><span class="rc-tag">'+o.t+'</span><div class="rc-btns"><a class="rc-price" href="#'+price+'">看課程費用</a><a class="rc-book" href="#booking" data-resort="'+o.v+'">預約</a></div></div>';
+    var c=CR[o.img], front=c?'<img class="rc-photo" src="img/resorts/'+o.img+'-600.webp" srcset="img/resorts/'+o.img+'-600.webp 600w, img/resorts/'+o.img+'-1080.webp 1080w" sizes="(max-width:640px) 80vw, 540px" alt="" loading="lazy" decoding="async">':bg(o,i);
+    var credit=c?'<p class="rc-credit">Photo: <a href="'+c.u+'" target="_blank" rel="noopener">'+c.a+'</a> / <a href="'+c.lu+'" target="_blank" rel="noopener license">'+c.l+'</a></p>':'';
+    li.innerHTML='<div class="rc-flip"><div class="rc-face rc-front"><div class="rc-bg" aria-hidden="true">'+front+'</div>'+credit+'<div class="rc-body"><p class="rc-region">'+o.r+'</p><h4 class="rc-name">'+o.n+'<small>'+o.en+'</small></h4><p class="rc-desc">'+o.d+'</p><span class="rc-tag">'+o.t+'</span><div class="rc-btns"><a class="rc-price" href="#'+price+'">看課程費用</a><button type="button" class="rc-mapbtn" aria-pressed="false">看地圖</button><a class="rc-book" href="#booking" data-resort="'+o.v+'">預約</a></div></div></div><div class="rc-face rc-back" aria-hidden="true"><p class="rc-back-t">'+o.n+' 雪道地圖</p><div class="rc-map"><img src="img/maps/'+o.img+'-sm.webp" alt="'+o.n+'雪道地圖" loading="lazy" decoding="async"></div><button type="button" class="rc-backbtn">返回</button></div></div>';
     track.appendChild(li); return li;
   });
   var filter='all', list=[], idx=0;
@@ -55,7 +58,9 @@
       c.style.pointerEvents=a>3?'none':'';
       c.classList.toggle('is-active',a===0);
       c.setAttribute('aria-hidden',a?'true':'false');
-      c.querySelectorAll('a').forEach(function(l){l.tabIndex=a?-1:0});
+      if(a&&c.classList.contains('flipped'))flip(c,false);
+      c.querySelectorAll('.rc-front a,.rc-front button').forEach(function(l){l.tabIndex=(a||c.classList.contains('flipped'))?-1:0});
+      c.querySelectorAll('.rc-back button').forEach(function(l){l.tabIndex=(a||!c.classList.contains('flipped'))?-1:0});
     });
     cards.forEach(function(c,ci){if(list.indexOf(ci)<0){c.hidden=true;c.classList.remove('is-active')}});
     var cur=R[list[idx]];
@@ -68,6 +73,20 @@
     list.forEach(function(ci,k){var b=document.createElement('button');b.type='button';b.className='rc-dot';b.setAttribute('aria-label','前往 '+R[ci].n);b.onclick=function(){go(k)};dotsEl.appendChild(b)});
     render();
   }
+  function flip(c,on){
+    c.classList.toggle('flipped',on);
+    c.querySelector('.rc-mapbtn').setAttribute('aria-pressed',on?'true':'false');
+    c.querySelector('.rc-front').setAttribute('aria-hidden',on?'true':'false');
+    c.querySelector('.rc-back').setAttribute('aria-hidden',on?'false':'true');
+    c.querySelectorAll('.rc-front a,.rc-front button').forEach(function(l){l.tabIndex=on?-1:0});
+    c.querySelector('.rc-backbtn').tabIndex=on?0:-1;
+  }
+  root.addEventListener('click',function(e){
+    var c=e.target.closest('.rc-card'); if(!c||!c.classList.contains('is-active')) return;
+    if(e.target.closest('.rc-mapbtn')){flip(c,true);c.querySelector('.rc-backbtn').focus({preventScroll:true});return}
+    if(e.target.closest('.rc-backbtn')){flip(c,false);c.querySelector('.rc-mapbtn').focus({preventScroll:true});return}
+    if(c.classList.contains('flipped')&&e.target.closest('.rc-back')&&!e.target.closest('a')){flip(c,false)}
+  });
   function go(k){idx=(k+list.length)%list.length;render()}
   root.querySelector('.rc-prev').onclick=function(){go(idx-1)};
   root.querySelector('.rc-next').onclick=function(){go(idx+1)};
