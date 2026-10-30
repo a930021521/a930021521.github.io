@@ -47,7 +47,7 @@
   var filter='all', list=[], idx=0;
   function vis(){return R.map(function(o,i){return i}).filter(function(i){return filter==='all'||R[i].g===filter})}
   function render(){
-    var mobile=innerWidth<=640, gap=mobile?innerWidth*0.7:Math.min(660,innerWidth*0.48)*0.92, n=list.length;
+    var mobile=innerWidth<=640, gap=mobile?innerWidth*0.7:Math.min(440,innerWidth*0.36)*0.82, n=list.length;
     list.forEach(function(ci,k){
       var c=cards[ci], off=k-idx;
       if(n>2){off=((off%n)+n)%n; if(off>n/2) off-=n;}
@@ -58,8 +58,8 @@
       c._off=off;
       var x=off*gap*(a>1?(mobile?1:0.82):1), rot=off===0?0:(off<0?(mobile?16:28):(mobile?-16:-28)), z=-a*(mobile?110:280);
       c.style.transform='translateX('+x+'px) translateZ('+z+'px) rotateY('+rot+'deg)';
-      c.style.zIndex=100-a; c.style.opacity=a>2?0:(a===2?0.55:1);
-      c.style.filter=a?'brightness('+(a===1?0.7:0.55)+')':'none';
+      c.style.zIndex=100-a; c.style.opacity=a>2?0:(a===2?(mobile?0.55:0.06):1);
+      c.style.filter=a?'brightness('+(a===1?(mobile?0.7:0.62):0.5)+')':'none';
       c.style.pointerEvents=a>2?'none':'';
       if(c.style.transition==='none'){void c.offsetWidth;c.style.transition='';}
       c.classList.toggle('is-active',a===0);
