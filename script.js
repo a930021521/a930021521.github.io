@@ -64,7 +64,7 @@
   const slotKey = slot => (slot === '全日' || slot === 'full') ? 'full' : 'half';
 
   /* ---------- 北海道課程費用（預估） ----------
-   * 以日圓計：每天 (淡季底價 + 季節加價)，加總後（HOKKAIDO_DISCOUNT_ON 時）×0.9 四捨五入，
+   * 以日圓計：每天 (淡季底價 + 季節加價)，加總後（HOKKAIDO_DISCOUNT_ON 時）×0.85 四捨五入，
    * 再以固定匯率 1 TWD = 5.06 JPY 換成 NT$，四捨五入到百位（<NT$50 則無條件進位）。
    * 訂金 = ceil(30% × 日圓總額) 再換算；尾款 = 總額 NT$ − 訂金 NT$。 */
   const HOKKAIDO_BASE = { // JPY，整組總價（每位教練）
@@ -85,9 +85,9 @@
     const t = jpy / JPY_PER_TWD;
     return t > 0 && t < 50 ? Math.ceil(t) : 100 * Math.round(t / 100);
   }
-  /* 北海道 9 折開關：true = 價表顯示划線原價＋9 折、預估費用打 9 折；false = 全部回原價（價表改顯示原價、隱藏 9 折字樣） */
+  /* 北海道 85 折開關：true = 價表顯示划線原價＋85 折、預估費用打 85 折；false = 全部回原價（價表改顯示原價、隱藏 85 折字樣） */
   const HOKKAIDO_DISCOUNT_ON = true;
-  const EARLY_BIRD = { rate: 0.9, label: '9 折優惠' };
+  const EARLY_BIRD = { rate: 0.85, label: '85 折優惠' };
   const SEASON_LABEL = { low: '淡季', peak: '旺季', super: '超旺季' };
   const YUZAWA_BASIS = '2026–27 課程費用，整組總價；實際費用以我們的回覆為準';
 
@@ -129,7 +129,7 @@
   function applyEarlyBird(raw) { return Math.round(raw * EARLY_BIRD.rate); }
   function basisText(early, seasons) {
     const bits = [];
-    if (early) bits.push('含 9 折');
+    if (early) bits.push('含 85 折');
     if (seasons && seasons.length) bits.push('季節：' + seasons.join('・'));
     bits.push('實際以確認為準');
     return bits.join('；');
@@ -187,7 +187,7 @@
     };
   }
   /**
-   * JPY: sum of per-day (base + surcharge), then round(× 0.9) while HOKKAIDO_DISCOUNT_ON,
+   * JPY: sum of per-day (base + surcharge), then round(× 0.85) while HOKKAIDO_DISCOUNT_ON,
    * then jpyToTwd. 5+ people, unknown resort, or a date outside
    * the published season stays a private quote.
    */
@@ -294,7 +294,7 @@
   function priceNote(price) {
     if (price && price.sapporoEarly) return '札幌國際搶先開滑價；實際以確認為準';
     if (price && price.hokkaido && price.amount != null && !price.quoteRequired) {
-      return price.earlyBird ? '含 9 折；實際以確認為準' : '實際以確認為準';
+      return price.earlyBird ? '含 85 折；實際以確認為準' : '實際以確認為準';
     }
     return '以我們的回覆為準';
   }
