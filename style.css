@@ -368,18 +368,29 @@ button{cursor:pointer}
 .yuzawa{background:linear-gradient(180deg,var(--night),var(--night-2))}
 .yz-head{max-width:720px}
 .yz-lead{font-size:1.1rem;font-weight:300;color:rgba(255,255,255,.85);margin-top:18px}
-.yz-grid{display:grid;grid-template-columns:minmax(0,1.3fr) minmax(0,1fr);gap:56px;align-items:center}
-.yz-facts{display:grid;grid-template-columns:1fr 1fr;gap:18px}
+.yz-grid{display:grid;grid-template-columns:minmax(0,1fr);gap:18px}
+.yz-facts{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:18px}
 .yz-facts li{padding:26px 24px;border-radius:var(--r);border:1px solid var(--line);background:rgba(255,255,255,.035)}
 .yz-k{font-family:var(--lat);font-size:.7rem;letter-spacing:.3em;color:var(--blue-2)}
 .yz-facts h3{font-size:1.15rem;margin:6px 0 6px}
 .yz-facts li p:last-child{font-size:.9rem;color:rgba(255,255,255,.72)}
-.yz-access{padding:30px 28px;border-radius:var(--r);border:1px solid var(--line);background:radial-gradient(400px 260px at 85% 0%,rgba(47,107,255,.16),transparent 70%),rgba(255,255,255,.035)}
-.yz-access h3{font-size:1.25rem;margin:6px 0 16px}
-.yz-access ul{display:grid;gap:12px}
-.yz-access li{font-size:.9rem;color:rgba(255,255,255,.78);line-height:1.6;padding-top:12px;border-top:1px solid var(--line)}
-.yz-access li b{display:block;font-family:var(--lat);font-size:.72rem;font-weight:600;letter-spacing:.12em;color:#fff;margin-bottom:2px}
-.yz-access .yz-note{font-size:.74rem;color:var(--mute);margin-top:14px}
+.yz-access{padding:36px 40px 28px;border-radius:var(--r);border:1px solid var(--line);background:linear-gradient(180deg,rgba(143,176,255,.06),rgba(255,255,255,.02))}
+.ya-head h3{font-size:1.3rem;margin:6px 0 0;font-weight:600}
+.ya-line{display:grid;grid-template-columns:auto 1fr auto 1fr auto;align-items:start;margin:34px 0 26px;position:relative}
+.ya-line::before{content:"";position:absolute;left:6px;right:6px;top:6px;height:1px;background:linear-gradient(90deg,rgba(220,230,255,.5),rgba(143,176,255,.35),rgba(220,230,255,.5))}
+.ya-stop{position:relative;display:flex;flex-direction:column;gap:4px;min-width:0}
+.ya-stop:nth-child(3){align-items:center;text-align:center}
+.ya-end{align-items:flex-end;text-align:right}
+.ya-dot{width:13px;height:13px;border-radius:50%;background:#0b1428;border:1.5px solid #dfe7f7;margin-bottom:10px;position:relative;z-index:1}
+.ya-end .ya-dot{background:#c9d8ff;border-color:#c9d8ff}
+.ya-en{font-family:var(--lat);font-size:.62rem;letter-spacing:.24em;color:rgba(200,214,240,.55)}
+.ya-stop b{font-size:1.02rem;font-weight:600;color:#fff;white-space:nowrap}
+.ya-leg{display:flex;flex-direction:column;align-items:center;text-align:center;padding:22px 8px 0}
+.ya-num{font-family:var(--lat);font-size:2.3rem;font-weight:300;line-height:1;color:#eef3ff;letter-spacing:-.01em;white-space:nowrap}
+.ya-num small{font-family:inherit;font-size:.85rem;font-weight:400;margin-left:4px;color:rgba(200,214,240,.75)}
+.ya-lbl{font-size:.76rem;letter-spacing:.06em;color:#9fb6e6;margin-top:8px;white-space:nowrap}
+.ya-gala{font-size:.86rem;color:rgba(255,255,255,.72);padding-top:16px;border-top:1px solid var(--line)}
+.yz-access .yz-note{font-size:.72rem;color:var(--mute);margin-top:6px}
 .yz-fine{margin-top:28px}
 
 /* voices */
@@ -524,7 +535,6 @@ button{cursor:pointer}
   .step[data-step="4"].on ~ .wiz-est{display:none}
   .method-grid{gap:40px}
   .method-photo{max-width:620px}
-  .yz-access{max-width:560px}
   .sec{padding:96px var(--pad)}
 }
 @media (max-width:860px){
@@ -581,8 +591,16 @@ button{cursor:pointer}
   .coach-bio,.coach-lang{font-size:.78rem}
   .yz-facts{grid-template-columns:minmax(0,1fr);gap:12px}
   .yz-facts li{padding:20px}
-  .yz-access{padding:22px 20px}
+  .yz-access{padding:24px 22px 20px}
   .yz-grid{gap:12px}
+  .ya-line{grid-template-columns:minmax(0,1fr);margin:24px 0 18px;padding-left:30px}
+  .ya-line::before{left:6px;right:auto;top:8px;bottom:8px;width:1px;height:auto;background:linear-gradient(180deg,rgba(220,230,255,.5),rgba(143,176,255,.35),rgba(220,230,255,.5))}
+  .ya-stop,.ya-stop:nth-child(3),.ya-end{flex-direction:row;align-items:baseline;gap:10px;text-align:left}
+  .ya-dot{position:absolute;left:-30px;top:3px;margin:0}
+  .ya-stop b{order:-1}
+  .ya-leg{flex-direction:row;align-items:baseline;gap:12px;padding:18px 0 20px;text-align:left}
+  .ya-num{font-size:2rem}
+  .ya-lbl{margin-top:0}
   .voice{padding:28px 22px 22px}
   .after{padding:26px 20px}
   .line-card{padding:28px 22px}
