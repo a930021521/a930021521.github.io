@@ -16,23 +16,39 @@
     {g:'hk',r:H+' · SAPPORO',n:'札幌國際',en:'SAPPORO KOKUSAI',d:'距札幌市中心約 60 分鐘車程，100% 天然雪的雪場。',t:'札幌當日往返',img:'sapporo-kokusai',v:'北海道・札幌國際',p:'prices-sapporo'},
     {g:'hk',r:H+' · SAPPORO',n:'手稻',en:'SAPPORO TEINE',d:'1972 年札幌冬季奧運高山滑雪會場，距札幌市區約 15 公里。',t:'1972 冬奧會場',img:'teine',v:'北海道・手稻'}
   ];
+
+  function rnd(s){return function(){s=(s*9301+49297)%233280;return s/233280}}
+  function ridge(r,y,amp,n,soft){var p='M0 '+y,step=600/n;for(var k=1;k<=n;k++){var x=k*step,yy=y-(r()*amp)+(k%2?0:amp*0.35);p+=soft?' Q'+(x-step/2).toFixed(0)+' '+(yy-amp*0.6).toFixed(0)+' '+x.toFixed(0)+' '+yy.toFixed(0):' L'+(x-step/2).toFixed(0)+' '+(yy-amp*0.7).toFixed(0)+' L'+x.toFixed(0)+' '+yy.toFixed(0)}return p}
+  function bg(o,i){
+    var hk=o.g==='hk', r=rnd(i*37+11), h=(hk?200:218)+((i%3)-1)*6, id='rcg'+i;
+    var top='hsl('+h+',38%,'+(hk?30:26)+'%)', mid='hsl('+(h+6)+',34%,17%)', bot='hsl('+(h+10)+',40%,9%)';
+    var s='<svg viewBox="0 0 600 440" preserveAspectRatio="xMidYMid slice"><defs><linearGradient id="'+id+'" x1="0" y1="0" x2=".3" y2="1"><stop offset="0" stop-color="'+top+'"/><stop offset=".55" stop-color="'+mid+'"/><stop offset="1" stop-color="'+bot+'"/></linearGradient><radialGradient id="'+id+'g" cx="'+(0.25+r()*0.5)+'" cy=".12" r=".6"><stop offset="0" stop-color="#cfe3f6" stop-opacity=".22"/><stop offset="1" stop-color="#cfe3f6" stop-opacity="0"/></radialGradient></defs><rect width="600" height="440" fill="url(#'+id+')"/><rect width="600" height="440" fill="url(#'+id+'g)"/>';
+    if(hk&&(o.img==='niseko'||o.img==='rusutsu')){ // Mt Yotei cone
+      var cx=380-r()*120; s+='<path d="M'+(cx-230)+' 300 Q'+(cx-90)+' 200 '+(cx-30)+' 112 L'+(cx+30)+' 112 Q'+(cx+90)+' 200 '+(cx+230)+' 300" fill="none" stroke="#dbe9f6" stroke-opacity=".5" stroke-width="1.6"/><path d="M'+(cx-30)+' 112 l14 18 l12 -8 l14 14 l20 -24" fill="none" stroke="#e8f2fb" stroke-opacity=".45" stroke-width="1.2"/>';
+    }
+    var lines=hk?[[250,60,5,1,.42],[290,40,7,1,.28],[330,30,9,1,.16]]:[[230,110,6,0,.45],[285,70,8,0,.28],[330,40,11,0,.16]];
+    lines.forEach(function(L){s+='<path d="'+ridge(r,L[0],L[1],L[2],L[3])+'" fill="none" stroke="#d6e6f5" stroke-opacity="'+L[4]+'" stroke-width="1.4" stroke-linejoin="round"/>'});
+    for(var k=0;k<18;k++)s+='<circle cx="'+(r()*600).toFixed(0)+'" cy="'+(r()*200).toFixed(0)+'" r="'+(0.6+r()*1.2).toFixed(1)+'" fill="#eaf3fb" opacity="'+(0.15+r()*0.35).toFixed(2)+'"/>';
+    s+='<text x="570" y="60" text-anchor="end" font-family="Montserrat,sans-serif" font-size="12" letter-spacing="5" fill="#cfe3f6" fill-opacity=".35">'+(hk?'HOKKAIDO':'YUZAWA')+'</text>';
+    return s+'</svg>';
+  }
   var reduce=window.matchMedia&&matchMedia('(prefers-reduced-motion: reduce)').matches;
   var track=root.querySelector('.rc-track'), dotsEl=root.querySelector('.rc-dots'), count=root.querySelector('.rc-count'), stage=root.querySelector('.rc-stage'), live=root.querySelector('.rc-live');
   var cards=R.map(function(o,i){
     var li=document.createElement('li'); li.className='rc-card'; li.setAttribute('aria-roledescription','slide');
     li.setAttribute('aria-label',o.n+'（'+(i+1)+'／'+R.length+'）');
     var price=o.p||(o.g==='yz'?'prices-yuzawa':'prices-hokkaido');
-    li.innerHTML='<div class="rc-bg" style="background-image:url(img/maps/'+o.img+'-sm.webp)"></div><div class="rc-body"><p class="rc-region">'+o.r+'</p><h4 class="rc-name">'+o.n+'<small>'+o.en+'</small></h4><p class="rc-desc">'+o.d+'</p><span class="rc-tag">'+o.t+'</span><div class="rc-btns"><a class="rc-price" href="#'+price+'">看課程費用</a><a class="rc-book" href="#booking" data-resort="'+o.v+'">預約</a></div></div>';
+    li.innerHTML='<div class="rc-bg" aria-hidden="true">'+bg(o,i)+'</div><div class="rc-body"><p class="rc-region">'+o.r+'</p><h4 class="rc-name">'+o.n+'<small>'+o.en+'</small></h4><p class="rc-desc">'+o.d+'</p><span class="rc-tag">'+o.t+'</span><div class="rc-btns"><a class="rc-price" href="#'+price+'">看課程費用</a><a class="rc-book" href="#booking" data-resort="'+o.v+'">預約</a></div></div>';
     track.appendChild(li); return li;
   });
   var filter='all', list=[], idx=0;
   function vis(){return R.map(function(o,i){return i}).filter(function(i){return filter==='all'||R[i].g===filter})}
   function render(){
-    var mobile=innerWidth<=640, gap=mobile?150:230;
+    var mobile=innerWidth<=640, gap=mobile?innerWidth*0.74:400;
     list.forEach(function(ci,k){
       var c=cards[ci], off=k-idx, a=Math.abs(off);
       c.hidden=false;
-      var x=off*gap*(a>1?0.82:1), rot=off===0?0:(off<0?42:-42), z=-a*160;
+      var x=off*gap*(a>1?(mobile?1:0.78):1), rot=off===0?0:(off<0?(mobile?18:38):(mobile?-18:-38)), z=-a*(mobile?120:200);
       c.style.transform='translateX('+x+'px) translateZ('+z+'px) rotateY('+rot+'deg)';
       c.style.zIndex=100-a; c.style.opacity=a>3?0:(a===0?1:1-a*0.2);
       c.style.filter=a?'brightness('+(1-a*0.18)+')':'none';
