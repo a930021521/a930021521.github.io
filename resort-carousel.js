@@ -57,7 +57,7 @@
       if(prev!==undefined&&Math.abs(prev-off)>1){c.style.transition='none';}
       c._off=off;
       var x=off*gap*(a>1?(mobile?1:0.82):1), rot=off===0?0:(off<0?(mobile?40:28):(mobile?-40:-28)), z=-a*(mobile?200:280);
-      c.style.transform='translateX('+x+'px) translateZ('+z+'px) rotateY('+rot+'deg)';
+      c.style.transform='perspective('+(mobile?900:1600)+'px) translateX('+x+'px) translateZ('+z+'px) rotateY('+rot+'deg)';
       c.style.zIndex=100-a; c.style.opacity=a>2?0:(a===2?(mobile?0:0):1);
       c.style.setProperty('--dim',a?(a===1?(mobile?0.62:0.38):0.7):0);
       c.style.pointerEvents=a>2?'none':'';
