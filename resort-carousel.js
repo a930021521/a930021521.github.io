@@ -59,7 +59,7 @@
       var x=off*gap*(a>1?(mobile?1:0.82):1), rot=off===0?0:(off<0?(mobile?40:28):(mobile?-40:-28)), z=-a*(mobile?200:280);
       c.style.transform='translateX('+x+'px) translateZ('+z+'px) rotateY('+rot+'deg)';
       c.style.zIndex=100-a; c.style.opacity=a>2?0:(a===2?(mobile?0:0):1);
-      c.style.filter=a?'brightness('+(a===1?(mobile?0.38:0.62):0.3)+')':'none';
+      c.style.setProperty('--dim',a?(a===1?(mobile?0.62:0.38):0.7):0);
       c.style.pointerEvents=a>2?'none':'';
       if(c.style.transition==='none'){void c.offsetWidth;c.style.transition='';}
       c.classList.toggle('is-active',a===0);
