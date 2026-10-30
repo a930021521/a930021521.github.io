@@ -82,3 +82,8 @@
 }
 .rc-card.flipped .rc-front{pointer-events:none}.rc-card:not(.flipped) .rc-back{pointer-events:none}
 @media (max-width:640px){.rc-card{height:500px;margin-top:-250px}.rc-media{height:52%}.rc-body{top:52%}.rc-stage{height:540px}}
+/* v5: wider desktop */
+@media (min-width:641px){
+  .rc{width:min(1440px,96vw);margin-left:calc(50% - min(1440px,96vw)/2)}
+  .rc-card{width:min(660px,48vw);height:520px;margin:-260px 0 0 calc(min(660px,48vw)/-2)}
+}
