@@ -1108,7 +1108,7 @@
 
   /* ---------- reveal on scroll ---------- */
   if ('IntersectionObserver' in window && !matchMedia('(prefers-reduced-motion: reduce)').matches) {
-    const els = $$('.pkg,.principles li,.coach,.coach-note,.yz-facts li,.voice,.qa details,.timeline li,.ct-list li,.line-card,.route,.method-photo');
+    const els = $$('.pkg,.principles li,.coach,.coach-note,.yz-facts li,.yz-access,.voice,.qa details,.timeline li,.ct-list li,.line-card,.method-photo');
     els.forEach(el => el.classList.add('rv'));
     const io = new IntersectionObserver(es => es.forEach(en => { if (en.isIntersecting) { en.target.classList.add('in'); io.unobserve(en.target); } }), { threshold: .08, rootMargin: '0px 0px -40px 0px' });
     els.forEach(el => io.observe(el));

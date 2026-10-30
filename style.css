@@ -374,9 +374,12 @@ button{cursor:pointer}
 .yz-k{font-family:var(--lat);font-size:.7rem;letter-spacing:.3em;color:var(--blue-2)}
 .yz-facts h3{font-size:1.15rem;margin:6px 0 6px}
 .yz-facts li p:last-child{font-size:.9rem;color:rgba(255,255,255,.72)}
-.route{padding:22px;border-radius:var(--r);border:1px solid var(--line);background:radial-gradient(400px 260px at 80% 20%,rgba(47,107,255,.2),transparent 70%),rgba(255,255,255,.02)}
-.route svg{width:100%;height:auto;display:block}
-.route figcaption{font-size:.76rem;color:var(--mute);margin-top:6px}
+.yz-access{padding:30px 28px;border-radius:var(--r);border:1px solid var(--line);background:radial-gradient(400px 260px at 85% 0%,rgba(47,107,255,.16),transparent 70%),rgba(255,255,255,.035)}
+.yz-access h3{font-size:1.25rem;margin:6px 0 16px}
+.yz-access ul{display:grid;gap:12px}
+.yz-access li{font-size:.9rem;color:rgba(255,255,255,.78);line-height:1.6;padding-top:12px;border-top:1px solid var(--line)}
+.yz-access li b{display:block;font-family:var(--lat);font-size:.72rem;font-weight:600;letter-spacing:.12em;color:#fff;margin-bottom:2px}
+.yz-access .yz-note{font-size:.74rem;color:var(--mute);margin-top:14px}
 .yz-fine{margin-top:28px}
 
 /* voices */
@@ -521,7 +524,7 @@ button{cursor:pointer}
   .step[data-step="4"].on ~ .wiz-est{display:none}
   .method-grid{gap:40px}
   .method-photo{max-width:620px}
-  .route{max-width:560px}
+  .yz-access{max-width:560px}
   .sec{padding:96px var(--pad)}
 }
 @media (max-width:860px){
@@ -578,6 +581,8 @@ button{cursor:pointer}
   .coach-bio,.coach-lang{font-size:.78rem}
   .yz-facts{grid-template-columns:minmax(0,1fr);gap:12px}
   .yz-facts li{padding:20px}
+  .yz-access{padding:22px 20px}
+  .yz-grid{gap:12px}
   .voice{padding:28px 22px 22px}
   .after{padding:26px 20px}
   .line-card{padding:28px 22px}
