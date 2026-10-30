@@ -73,7 +73,7 @@
 .rc-link{transition:color .2s}.rc-link:hover{color:#eef3f8}
 .rc-card:not(.is-active) .rc-btns{visibility:hidden}
 @media (max-width:640px){
-  .rc-stage{height:520px}
+  .rc-stage{height:520px;perspective:900px}
   .rc-card{width:78vw;height:480px;margin:-240px 0 0 -39vw}
   .rc-name{font-size:1.8rem}
   .rc-body{padding:18px 20px 18px}
