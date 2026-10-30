@@ -98,3 +98,36 @@
 
 /* v9: dim via overlay (WebKit drops filter on 3D cards) */
 .rc-card::after{content:"";position:absolute;inset:0;border-radius:inherit;background:#050b16;opacity:var(--dim,0);transition:opacity .6s;pointer-events:none;z-index:20;transform:translateZ(2px)}
+/* v12: iOS flip fix — hide the face that is turned away */
+.rc-face{-webkit-backface-visibility:hidden;backface-visibility:hidden}
+.rc-front{visibility:visible;transition:visibility 0s .3s}
+.rc-back{visibility:hidden;transition:visibility 0s .3s}
+.rc-card.flipped .rc-front{visibility:hidden}
+.rc-card.flipped .rc-back{visibility:visible}
+.rc-card.flipped::after{opacity:0}
+/* v13: back face = map + resort info (replaces old 雪場介紹 section) */
+.rc-anchor{display:block;position:relative;top:-80px;height:0}
+.rc-lead{margin:10px 44px 0;font-size:.86rem;line-height:1.7;color:#9fb3c8;font-weight:300}
+.rc-lead b{color:#e2e6eb;font-weight:500;margin-right:.6em}
+.rc-fine{margin:14px 44px 0;font-size:.74rem;line-height:1.7;color:#7f93a8}
+.rc-back{background:linear-gradient(180deg,#13213a 0%,#0b1426 100%);padding:18px 18px 14px;gap:0;color:#e2e6eb;border:1px solid rgba(207,227,246,.14)}
+.rc-bhead{display:flex;align-items:baseline;justify-content:space-between;gap:10px;padding:0 2px 10px;border-bottom:1px solid rgba(207,227,246,.12)}
+.rc-bk{order:2;font-size:.6rem;letter-spacing:.28em;color:#8fb0d4;text-align:right}
+.rc-back .rc-back-t{color:#f2f6fa;font-size:1.15rem;font-weight:600;letter-spacing:.14em}
+.rc-scroll{flex:1;min-height:0;overflow-y:auto;-webkit-overflow-scrolling:touch;overscroll-behavior:contain;touch-action:pan-y;padding:12px 2px 6px;scrollbar-width:thin;scrollbar-color:rgba(207,227,246,.25) transparent}
+.rc-zoom{position:relative;display:block;width:100%;padding:0;border:1px solid rgba(207,227,246,.18);border-radius:12px;overflow:hidden;background:#fff;cursor:zoom-in;aspect-ratio:16/11}
+.rc-zoom img{display:block;width:100%;height:100%;object-fit:cover}
+.rc-zoomtag{position:absolute;right:8px;bottom:8px;padding:4px 10px;border-radius:999px;background:rgba(11,20,38,.82);color:#eef3f8;font-size:.7rem;letter-spacing:.08em}
+.rc-src{margin:6px 2px 12px;font-size:.66rem;color:#7f93a8}
+.rc-src a{color:#a9c7e4;border-bottom:1px solid rgba(169,199,228,.3)}
+.rc-facts{display:grid;gap:8px;margin:0}
+.rc-facts div{display:grid;grid-template-columns:2.4em 1fr;gap:10px;align-items:baseline}
+.rc-facts dt{font-size:.68rem;letter-spacing:.16em;color:#8fb0d4;white-space:nowrap}
+.rc-facts dd{margin:0;font-size:.8rem;line-height:1.6;color:rgba(238,243,248,.82)}
+.rc-facts .rc-fit{margin-top:4px;padding:10px 12px;border-radius:10px;background:rgba(207,227,246,.06);border:1px solid rgba(207,227,246,.12)}
+.rc-facts .rc-fit dd{color:#eef3f8}
+.rc-bfoot{display:flex;align-items:center;justify-content:space-between;gap:10px;padding-top:12px;border-top:1px solid rgba(207,227,246,.12)}
+.rc-site{font-size:.8rem;letter-spacing:.08em;color:#cfe3f6;border-bottom:1px solid rgba(207,227,246,.35);padding-bottom:1px}
+.rc-back .rc-backbtn{background:#eef3f8;color:#0f1a2c;padding:8px 26px;font-size:.84rem}
+.rc-site:focus-visible,.rc-zoom:focus-visible{outline:2px solid #cfe3f6;outline-offset:2px}
+@media (max-width:640px){.rc-lead,.rc-fine{margin-left:20px;margin-right:20px}.rc-back{padding:16px 14px 12px}}

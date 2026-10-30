@@ -1373,42 +1373,6 @@
   });
 })();
 
-// ===== Resorts: area tabs (越後湯澤 / 北海道) =====
-(function () {
-  const list = document.querySelector('.rs-tabs');
-  if (!list) return;
-  const tabs = [...list.querySelectorAll('[role="tab"]')];
-  function select(tab, focus) {
-    tabs.forEach(t => {
-      const on = t === tab;
-      t.setAttribute('aria-selected', on ? 'true' : 'false');
-      t.tabIndex = on ? 0 : -1;
-      const panel = document.getElementById(t.getAttribute('aria-controls'));
-      if (panel) panel.hidden = !on;
-    });
-    if (focus) tab.focus();
-  }
-  /* 「北海道」 nav links (#hokkaido = the resorts block): open the 北海道 tab; the browser scrolls to the block */
-  const hk = tabs.find(t => t.id === 'rs-tab-hk');
-  const openHk = () => { if (hk) select(hk, false); };
-  if (location.hash === '#hokkaido') openHk();
-  addEventListener('hashchange', () => { if (location.hash === '#hokkaido') openHk(); });
-  document.querySelectorAll('a[href="#hokkaido"]').forEach(a => a.addEventListener('click', openHk));
-  tabs.forEach((t, i) => {
-    t.addEventListener('click', () => select(t, false));
-    t.addEventListener('keydown', e => {
-      let j = null;
-      if (e.key === 'ArrowRight') j = (i + 1) % tabs.length;
-      else if (e.key === 'ArrowLeft') j = (i - 1 + tabs.length) % tabs.length;
-      else if (e.key === 'Home') j = 0;
-      else if (e.key === 'End') j = tabs.length - 1;
-      if (j === null) return;
-      e.preventDefault();
-      select(tabs[j], true);
-    });
-  });
-})();
-
 // ===== back-to-top button: shows after ~1 viewport of scrolling =====
 (function () {
   const btn = document.getElementById('to-top');
