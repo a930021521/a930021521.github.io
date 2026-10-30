@@ -58,7 +58,7 @@
       c._off=off;
       var x=off*gap*(a>1?(mobile?1:0.82):1), rot=off===0?0:(off<0?(mobile?16:28):(mobile?-16:-28)), z=-a*(mobile?110:280);
       c.style.transform='translateX('+x+'px) translateZ('+z+'px) rotateY('+rot+'deg)';
-      c.style.zIndex=100-a; c.style.opacity=a>2?0:(a===2?(mobile?0.55:0.06):1);
+      c.style.zIndex=100-a; c.style.opacity=a>2?0:(a===2?(mobile?0.55:0):1);
       c.style.filter=a?'brightness('+(a===1?(mobile?0.7:0.62):0.5)+')':'none';
       c.style.pointerEvents=a>2?'none':'';
       if(c.style.transition==='none'){void c.offsetWidth;c.style.transition='';}
