@@ -191,11 +191,12 @@
    * then jpyToTwd. 5+ people, unknown resort, or a date outside
    * the published season stays a private quote.
    */
-  /* 札幌國際 搶先開滑 11/20–12/14：學校自營價（NT$ 整組總價） */
+  /* 札幌國際 搶先開滑 11/20–12/16：同越後湯澤價（NT$ 整組總價，1–4 人、5–6 人） */
   const SAPPORO_EARLY = {
-    from: 1120, to: 1214,
+    from: 1120, to: 1216,
     label: '札幌國際 搶先開滑價',
-    table: { half: [7000, 8000, 9000, 10000], full: [12000, 13000, 14000, 15000] }
+    table: { half: [9000, 10000, 11000, 12000, 13000], full: [13000, 14000, 15000, 16000, 17000] },
+    maxPeople: 6
   };
   const inSapporoWindow = iso => { const p = parseISODate(iso); if (!p) return false; const md = p.m * 100 + p.d; return md >= SAPPORO_EARLY.from && md <= SAPPORO_EARLY.to; };
   function estimateHokkaido(args) {
@@ -204,11 +205,11 @@
     const n0 = Number(people) || 0;
     if (resortKey(resort) === '札幌國際' && list0.length && list0.some(d => inSapporoWindow(d.date))) {
       if (!list0.every(d => inSapporoWindow(d.date))) {
-        return quoteResult('out_of_season', '札幌國際 11/20–12/14 以外的日期，請私訊報價', { resort: '札幌國際', people: n0 });
+        return quoteResult('out_of_season', '札幌國際 11/20–12/16 以外的日期，請私訊報價', { resort: '札幌國際', people: n0 });
       }
-      if (n0 > 4) return quoteResult('over_max', '5 人以上請私訊報價', { resort: '札幌國際', people: n0 });
+      if (n0 > SAPPORO_EARLY.maxPeople) return quoteResult('over_max', '請私訊報價', { resort: '札幌國際', people: n0 });
       if (n0 >= 1) {
-        const amount = list0.reduce((s, d) => s + SAPPORO_EARLY.table[slotKey(d.slot)][n0 - 1], 0);
+        const amount = list0.reduce((s, d) => { const t = SAPPORO_EARLY.table[slotKey(d.slot)]; return s + t[Math.min(n0, t.length) - 1]; }, 0);
         const deposit = Math.round(amount * depositRate);
         const halfDays = list0.filter(d => slotKey(d.slot) === 'half').length;
         return {
@@ -568,7 +569,7 @@
       booking.dates.push({ date: s, slot: '全日' });
     }
     booking.dates.sort((a, b) => a.date.localeCompare(b.date));
-    renderCal(); renderDays(); setErr('dates', ''); updateLive();
+    renderCal(); renderDays(); setErr('dates', ''); setParty(booking.adults, booking.children);
   }
   calGrid.addEventListener('click', e => { const b = e.target.closest('[data-date]'); if (b && !b.disabled) toggleDate(b.dataset.date); });
 
@@ -595,7 +596,11 @@
     }).join('');
   }
   // 越後湯澤 groups max 6 (大人+小孩); 北海道 keeps its own rule
-  const partyCap = () => { const r = String(booking.resort || '').trim(); return r && !r.startsWith('北海道・') ? CONFIG.maxPricedPeople : Infinity; };
+  const partyCap = () => {
+    const r = String(booking.resort || '').trim();
+    if (r === '北海道・札幌國際') return booking.dates.length && booking.dates.every(d => inSapporoWindow(d.date)) ? SAPPORO_EARLY.maxPeople : Infinity; // 搶先開滑 only
+    return r && !r.startsWith('北海道・') ? CONFIG.maxPricedPeople : Infinity;
+  };
   function setParty(adults, children) {
     const cap = partyCap();
     booking.adults = Math.min(count(adults), cap);
