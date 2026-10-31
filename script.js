@@ -22,13 +22,13 @@
     // display text for durations (payload durationLabel keeps the 半日／全日 wording the backend stores)
     durationsDisplay: { half: '半天（3小時）', full: '全天（6小時，含1小時用餐）' },
     // 2026–27 課程費用 — PRICE_TABLE[half|full][totalPeople - 1] = group total in TWD (not per person).
-    // half = 半日 3 小時, full = 全日 6 小時（含午休 1 小時）. 5 人以上 → 私訊報價.
+    // half = 半日 3 小時, full = 全日 6 小時（含午休 1 小時）. Last entry = 5 人以上 fixed price.
     priceLabel: '2026–27 課程費用',
     PRICE_TABLE: {
-      half: [7000, 8000, 9000, 10000],
-      full: [12000, 13000, 14000, 14000]
+      half: [9000, 10000, 11000, 12000, 13000],
+      full: [13000, 14000, 15000, 16000, 17000]
     },
-    maxPricedPeople: 4,
+    maxPricedPeople: Infinity, // 5 人以上 uses the last PRICE_TABLE entry
     durations: { half: '半日（3 小時）', full: '全日（6 小時，含午休 1 小時）' },
     // Google Apps Script web app → Sheet「SNOWMODE 預約」+ email notification
     endpoint: 'https://script.google.com/macros/s/AKfycbyX7NthGOMOO0p3lh9YbrCJ37tdIx_CVK5tn4EBSbrvdMSMNbGzemTmV90QBG8O-5pyRw/exec'
@@ -353,7 +353,7 @@
     let amount = null;
     if (!overMax && people >= 1 && b.dates.length) {
       const extra = YUZAWA_SURCHARGE[String(b.resort || '').trim()] || 0; // per lesson day per group
-      amount = b.dates.reduce((sum, d) => sum + CONFIG.PRICE_TABLE[slotKey(d.slot)][people - 1] + extra, 0);
+      amount = b.dates.reduce((sum, d) => sum + (t => t[Math.min(people, t.length) - 1])(CONFIG.PRICE_TABLE[slotKey(d.slot)]) + extra, 0);
     }
     const deposit = amount == null ? null : Math.round(amount * b.depositRate);
     const balance = amount == null ? null : amount - deposit;
