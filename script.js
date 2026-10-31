@@ -594,9 +594,12 @@
       return `<label class="age-field">小孩 ${i + 1} 年齡<select name="${prefix}-${i}" data-child-age="${i}" required aria-label="小孩 ${i + 1} 年齡">${ageOptions(value)}</select></label>`;
     }).join('');
   }
+  // 越後湯澤 groups max 6 (大人+小孩); 北海道 keeps its own rule
+  const partyCap = () => { const r = String(booking.resort || '').trim(); return r && !r.startsWith('北海道・') ? CONFIG.maxPricedPeople : Infinity; };
   function setParty(adults, children) {
-    booking.adults = count(adults);
-    booking.children = count(children);
+    const cap = partyCap();
+    booking.adults = Math.min(count(adults), cap);
+    booking.children = Math.min(count(children), cap - booking.adults);
     booking.childAges = booking.childAges.slice(0, booking.children);
     booking.totalPeople = booking.adults + booking.children;
     ['#adults', '#q-adults'].forEach(q => { const el = $(q); if (el) el.value = booking.adults; });
@@ -604,6 +607,7 @@
     renderChildAges($('#child-ages'), booking.children, 'child-age');
     renderChildAges($('#q-child-ages'), booking.children, 'q-child-age');
     setErr('people', ''); setErr('childAges', ''); setErr('q-party', '');
+    $$('[data-person][data-n="1"]').forEach(btn => { btn.disabled = booking.adults + booking.children >= cap; });
     updateLive();
   }
   function syncQuickParty() {
@@ -693,6 +697,7 @@
     if (e.target.name === 'level') setErr('level', '');
     if (e.target.matches('[data-person-input]')) setParty($('#adults').value, $('#children').value);
     readForm();
+    if (e.target.name === 'resort') setParty(booking.adults, booking.children);
   });
   $('#q-child-ages').addEventListener('change', syncQuickParty);
   function readForm() {
