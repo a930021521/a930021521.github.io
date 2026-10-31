@@ -22,13 +22,13 @@
     // display text for durations (payload durationLabel keeps the 半日／全日 wording the backend stores)
     durationsDisplay: { half: '半天（3小時）', full: '全天（6小時，含1小時用餐）' },
     // 2026–27 課程費用 — PRICE_TABLE[half|full][totalPeople - 1] = group total in TWD (not per person).
-    // half = 半日 3 小時, full = 全日 6 小時（含午休 1 小時）. Last entry = 5 人以上 fixed price.
+    // half = 半日 3 小時, full = 全日 6 小時（含午休 1 小時）. Last entry = 5–6 人.
     priceLabel: '2026–27 課程費用',
     PRICE_TABLE: {
       half: [9000, 10000, 11000, 12000, 13000],
       full: [13000, 14000, 15000, 16000, 17000]
     },
-    maxPricedPeople: Infinity, // 5 人以上 uses the last PRICE_TABLE entry
+    maxPricedPeople: 6, // 5–6 人 use the last PRICE_TABLE entry
     durations: { half: '半日（3 小時）', full: '全日（6 小時，含午休 1 小時）' },
     // Google Apps Script web app → Sheet「SNOWMODE 預約」+ email notification
     endpoint: 'https://script.google.com/macros/s/AKfycbyX7NthGOMOO0p3lh9YbrCJ37tdIx_CVK5tn4EBSbrvdMSMNbGzemTmV90QBG8O-5pyRw/exec'
