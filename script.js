@@ -183,7 +183,7 @@
       raw,              // JPY
       earlyBird: early,
       amountJpy: early ? applyEarlyBird(raw) : raw,
-      amount: jpyToTwd(early ? applyEarlyBird(raw) : raw) // per-day NT$ reference only
+      amount: early ? applyEarlyBird(jpyToTwd(raw)) : jpyToTwd(raw) // per-day NT$ reference only (9 折 on the NT$ list price, same as 價表)
     };
   }
   /**
@@ -266,7 +266,7 @@
     const rawJpy = days.reduce((s, d) => s + d.raw, 0);
     const totalJpy = early ? applyEarlyBird(rawJpy) : rawJpy;
     const depositJpy = Math.ceil(depositRate * Math.max(0, totalJpy));
-    const amount = jpyToTwd(totalJpy);
+    const amount = early ? applyEarlyBird(jpyToTwd(rawJpy)) : jpyToTwd(rawJpy); // 9 折 on NT$ list price → matches 價表
     const deposit = jpyToTwd(depositJpy);
     const balance = amount - deposit;
     const halfDays = days.filter(d => d.slot === 'half').length;
