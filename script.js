@@ -303,6 +303,9 @@
   // 預估費用 only after a real 雪場 is chosen; '由教練建議' / empty shows a placeholder and submits no amount
   // 越後湯澤 resorts with an extra fee: + NT$ per lesson day per group (half or full day)
   const YUZAWA_SURCHARGE = { '神立': 2000, '石打丸山': 2000, '神樂': 2000 };
+  // 越後湯澤 淡季優惠：每堂（半天／全天）現折 NT$1,000；12/24–3/2 一般價格
+  const YUZAWA_OFFSEASON = { off: 1000, ranges: [['2026-12-18', '2026-12-23'], ['2027-03-03', '2027-04-15']] };
+  const isYuzawaOffseason = iso => YUZAWA_OFFSEASON.ranges.some(([a, z]) => iso >= a && iso <= z);
   const NO_RESORT_TEXT = '選擇雪場後顯示';
   const hasResort = b => { const r = String(b.resort || '').trim(); return !!r && !/由教練建議/.test(r); };
   function computePrice(b) {
@@ -351,11 +354,13 @@
       };
     }
     const overMax = people > CONFIG.maxPricedPeople;
-    let amount = null;
+    let amount = null, offDays = 0;
     if (!overMax && people >= 1 && b.dates.length) {
       const extra = YUZAWA_SURCHARGE[String(b.resort || '').trim()] || 0; // per lesson day per group
-      amount = b.dates.reduce((sum, d) => sum + (t => t[Math.min(people, t.length) - 1])(CONFIG.PRICE_TABLE[slotKey(d.slot)]) + extra, 0);
+      offDays = b.dates.filter(d => isYuzawaOffseason(d.date)).length;
+      amount = b.dates.reduce((sum, d) => sum + (t => t[Math.min(people, t.length) - 1])(CONFIG.PRICE_TABLE[slotKey(d.slot)]) + extra, 0) - offDays * YUZAWA_OFFSEASON.off;
     }
+    const offNote = offDays ? `淡季優惠 −${ntd(offDays * YUZAWA_OFFSEASON.off)}${offDays > 1 ? `（NT$1,000 × ${offDays} 天）` : ''}` : '';
     const deposit = amount == null ? null : Math.round(amount * b.depositRate);
     const balance = amount == null ? null : amount - deposit;
     b.deposit = deposit;
@@ -375,8 +380,10 @@
       quoteRequired: overMax,
       hokkaido: false,
       earlyBird: false,
+      offseasonDays: offDays,
+      offseasonNote: offNote,
       basis: YUZAWA_BASIS,
-      note: '以我們的回覆為準',
+      note: offNote || '以我們的回覆為準',
       duration,
       durationLabel: b.durationLabel,
       breakdown: { halfDays, fullDays, totalPeople: people }
@@ -752,6 +759,7 @@
     $$('[data-live="price"]').forEach(el => { el.classList.toggle('is-quote', !!booking.price.quoteRequired); el.classList.toggle('is-pending', !!booking.price.needsResort); });
     const liveNote = $('#live-price-note');
     if (liveNote) liveNote.textContent = booking.price.note || '以我們的回覆為準';
+    $$('.wiz-est-off').forEach(el => { el.textContent = booking.price.offseasonNote || ''; el.hidden = !booking.price.offseasonNote || booking.price.amount == null; });
   }
 
   /* ---------- validation ---------- */
@@ -838,7 +846,7 @@
     $('#est-balance').textContent = price.balanceDisplay;
     const estNote = $('#est-note');
     if (estNote) {
-      const showNote = !!(price.hokkaido && price.amount != null && !price.quoteRequired);
+      const showNote = !!((price.hokkaido || price.offseasonDays) && price.amount != null && !price.quoteRequired);
       estNote.hidden = !showNote;
       estNote.textContent = showNote ? price.note : '';
     }

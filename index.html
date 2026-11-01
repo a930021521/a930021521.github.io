@@ -45,7 +45,7 @@
 <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@200;300;400;600;700&display=swap" rel="stylesheet">
 <link rel="preload" as="image" type="image/webp" href="img/hero-m-opt5.webp" media="(max-width:640px)" fetchpriority="high">
 <link rel="preload" as="image" type="image/webp" href="img/hero-yuzawa-1920.webp" media="(min-width:641px)" fetchpriority="high">
-<link rel="stylesheet" href="style.css?v=hero11">
+<link rel="stylesheet" href="style.css?v=hero12">
 <link rel="stylesheet" href="hero-snow.css?v=1">
 <link rel="stylesheet" href="resort-carousel.css?v=13">
 </head>
@@ -282,6 +282,12 @@ b.querySelector('.announce-x').addEventListener('click',function(){b.hidden=true
               <tr><th scope="row">5–6 人</th><td>NT$13,000</td><td>NT$17,000</td></tr>
             </tbody>
           </table>
+        </div>
+        <div class="yz-off" role="note" aria-label="淡季優惠">
+          <span class="yz-off-tag">OFF-SEASON</span>
+          <p class="yz-off-title">沒搶到早鳥沒關係，淡季每堂現折 <b>NT$1,000</b></p>
+          <dl class="yz-off-dates"><dt>淡季期間</dt><dd>2026/12/18–12/23</dd><dd>2027/3/3–4/15</dd></dl>
+          <p class="yz-off-hint">半天、全天皆適用，每堂課程折抵 NT$1,000；12/24–3/2 為一般價格。</p>
         </div>
         <p class="pt-note pt-surcharge">神立、石打丸山、神樂需額外加收車馬費一天 NT$2,000</p>
         <p class="pt-note">價格為整組總價（非每人），以 NT$ 計價；全天含1小時用餐。特殊需求歡迎私訊詳談（LINE <code>@dqi1670m</code>）。雪具租借、纜車券另計，不含在課程費用內。</p>
@@ -642,7 +648,7 @@ b.querySelector('.announce-x').addEventListener('click',function(){b.hidden=true
         </fieldset>
 
         <p class="wiz-msg" id="wiz-msg" role="status" aria-live="polite"></p>
-        <p class="wiz-est"><span>預估費用</span><strong data-live="price" class="is-pending">選擇雪場後顯示</strong></p>
+        <p class="wiz-est"><span>預估費用</span><strong data-live="price" class="is-pending">選擇雪場後顯示</strong><small class="wiz-est-off" hidden></small></p>
         <div class="wiz-nav">
           <button type="button" class="btn btn-ghost" id="wiz-back" hidden>← 上一步</button>
           <button type="button" class="btn btn-main" id="wiz-next">下一步 <span aria-hidden="true">→</span></button>
@@ -1096,7 +1102,7 @@ Jay教練是我們這兩天玩的這麼愉快的大功臣！
 <div class="toast" id="toast" role="status" aria-live="polite"></div>
 <script src="hero-snow.js?v=1"></script>
 <dialog class="lightbox" id="lightbox" aria-label="放大圖片"><button type="button" class="lb-close" aria-label="關閉">×</button><img alt=""></dialog>
-<script src="script.js?v=yz5"></script>
+<script src="script.js?v=yz6"></script>
 <script src="resort-carousel.js?v=15"></script>
 </body>
 </html>
