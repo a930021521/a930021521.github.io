@@ -1454,3 +1454,15 @@ html.has-announce{scroll-padding-top:calc(84px + var(--announce-h))}
 .days .d-chip b{font-size:.86rem;font-weight:700;letter-spacing:.02em}
 .days .d-chip small{font-size:.64rem;line-height:1.35}
 .days .d-chip .nw{display:inline-block;font-size:1em;letter-spacing:0}
+/* matched chip visuals (night-style treatment for all) */
+.days .d-chip{--tc:255,226,160;--bg1:60,84,150;position:relative;border-radius:12px;border:1px solid rgba(var(--tc),.28);background:linear-gradient(160deg,rgba(var(--bg1),.32),rgba(14,22,52,.55));color:rgba(var(--tc),.92)}
+.days .d-chip small{color:rgba(var(--tc),.62)}
+.days .d-chip-full{--tc:176,206,255;--bg1:52,92,170}
+.days .d-chip-am{--tc:255,214,160;--bg1:120,92,140}
+.days .d-chip-pm{--tc:255,176,150;--bg1:130,70,110}
+.days .d-chip-night{--tc:255,226,160;--bg1:60,84,150}
+.days .d-chip[aria-pressed=true]{background:radial-gradient(circle at 30% 20%,rgba(var(--bg1),.95),rgba(14,22,52,.95));border-color:rgba(var(--tc),.65);color:rgb(var(--tc));box-shadow:0 0 14px rgba(var(--tc),.35)}
+.days .d-chip[aria-pressed=true] small{color:rgba(var(--tc),.9)}
+.days .d-chip b{display:inline-flex;align-items:center;gap:4px}
+.days .d-ico{display:inline-flex;width:14px;height:14px;font-style:normal}
+.days .d-ico svg{width:100%;height:100%}

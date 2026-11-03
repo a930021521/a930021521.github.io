@@ -71,6 +71,12 @@
   const SLOT_UNITS = { '全日': ['full'], '全日＋夜場': ['full', 'half'], '半日（上午）': ['half'], '半日（下午）': ['half'], '夜場': ['half'], '上午＋下午': ['half', 'half'], '上午＋夜場': ['half', 'half'], '下午＋夜場': ['half', 'half'], '上午＋下午＋夜場': ['half', 'half', 'half'] };
   const slotUnits = slot => SLOT_UNITS[slot] || [slotKey(slot)];
   // 複選時段：全天 與 上午／下午 互斥；夜場（僅岩原）可與任一組合
+  const CHIP_ICONS = {
+    full: '<svg viewBox="0 0 24 24"><path d="M2 20 9 8l4 6 3-4 6 10z" fill="currentColor" opacity=".9"/><path d="M9 8l1.8 3H7.2z" fill="#fff" opacity=".85"/></svg>',
+    am: '<svg viewBox="0 0 24 24"><path d="M3 18h18" stroke="currentColor" stroke-width="2" stroke-linecap="round"/><path d="M6.5 18a5.5 5.5 0 0 1 11 0z" fill="currentColor"/><path d="M12 6v2.5M5.6 9.6l1.6 1.6M18.4 9.6l-1.6 1.6" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>',
+    pm: '<svg viewBox="0 0 24 24"><path d="M3 15h18M6 19h12" stroke="currentColor" stroke-width="2" stroke-linecap="round"/><path d="M7 15a5 5 0 0 1 10 0z" fill="currentColor"/><path d="M12 10.5v-2" stroke="currentColor" stroke-width="2" stroke-linecap="round" opacity="0"/></svg>',
+    night: '<svg viewBox="0 0 24 24"><path d="M15.5 3.5a8.5 8.5 0 1 0 5 15A9 9 0 0 1 15.5 3.5z" fill="currentColor"/><circle cx="19" cy="6" r="1" fill="currentColor"/></svg>'
+  };
   const PARTS = [['full', '全天', '9:00–15:00<span class="nw">（中間休息 1 小時）</span>'], ['am', '上午', '9:00–12:00'], ['pm', '下午', '13:00–16:00'], ['night', '夜場 3 小時', '時數可彈性調整']];
   const SLOT_PARTS = { '全日': ['full'], '全日＋夜場': ['full', 'night'], '半日（上午）': ['am'], '半日（下午）': ['pm'], '上午＋下午': ['am', 'pm'], '夜場': ['night'], '上午＋夜場': ['am', 'night'], '下午＋夜場': ['pm', 'night'], '上午＋下午＋夜場': ['am', 'pm', 'night'] };
   const partsFromSlot = s => SLOT_PARTS[s] || ['full'];
@@ -602,7 +608,7 @@
   const daysEl = $('#days'), daysEmpty = $('#days-empty');
   function renderDays() {
     daysEl.innerHTML = booking.dates.map((d, i) => `<li><span class="d-date">${fmtDate(d.date)}</span>
-      <span class="d-slots" role="group" aria-label="${fmtDate(d.date)} 的時段（可複選）">${PARTS.filter(([k]) => k !== 'night' || isNightResort(booking.resort)).map(([k, t, sub]) => `<button type="button" class="d-chip${k === 'night' ? ' d-chip-night' : ''}" data-day="${i}" data-part="${k}" aria-pressed="${partsFromSlot(d.slot).includes(k)}"><b>${t}</b><small>${sub}</small></button>`).join('')}</span>
+      <span class="d-slots" role="group" aria-label="${fmtDate(d.date)} 的時段（可複選）">${PARTS.filter(([k]) => k !== 'night' || isNightResort(booking.resort)).map(([k, t, sub]) => `<button type="button" class="d-chip d-chip-${k}${k === 'night' ? ' d-chip-night' : ''}" data-day="${i}" data-part="${k}" aria-pressed="${partsFromSlot(d.slot).includes(k)}"><b><i class="d-ico" aria-hidden="true">${CHIP_ICONS[k]}</i>${t}</b><small>${sub}</small></button>`).join('')}</span>
       <button type="button" class="d-del" data-del="${d.date}" aria-label="移除 ${fmtDate(d.date)}">✕</button></li>`).join('');
     daysEmpty.textContent = booking.dates.length ? `已選 ${booking.dates.length} 天` : '還沒有選日期。';
     const nn = $('#night-note'); if (nn) nn.hidden = !isNightResort(booking.resort);
