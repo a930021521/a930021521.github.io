@@ -64,11 +64,15 @@
   const slotKey = slot => (slot === '全日' || slot === 'full' || slot === '全日＋夜場') ? 'full' : 'half';
   // 岩原 夜場：夜場 = 半天價；全日＋夜場 = 全天價＋半天價（淡季每堂各折 NT$1,000）
   const NIGHT_RESORT = '岩原';
-  const NIGHT_SLOTS = ['夜場', '全日＋夜場'];
-  const NIGHT_LABELS = { '全日': '全天（9:00–16:00）', '半日（上午）': '上午（9:00–12:00）', '半日（下午）': '下午（13:00–16:00）', '夜場': '夜場 3 小時（時間由教練確認）', '全日＋夜場': '全天＋夜場' };
+  const NIGHT_SLOTS = ['夜場', '全日＋夜場', '上午＋夜場', '下午＋夜場'];
+  const NIGHT_LABELS = { '全日': '全天（9:00–16:00）', '半日（上午）': '上午（9:00–12:00）', '半日（下午）': '下午（13:00–16:00）', '夜場': '夜場 3 小時（時間由教練確認）', '全日＋夜場': '全天＋夜場', '上午＋夜場': '上午＋夜場', '下午＋夜場': '下午＋夜場' };
   const isNightResort = r => String(r || '').trim() === NIGHT_RESORT;
-  const slotUnits = slot => slot === '全日＋夜場' ? ['full', 'half'] : [slotKey(slot)];
-  const slotsFor = r => isNightResort(r) ? ['全日', '半日（上午）', '半日（下午）', '夜場', '全日＋夜場'] : CONFIG.slots;
+  const slotUnits = slot => slot === '全日＋夜場' ? ['full', 'half'] : (slot === '上午＋夜場' || slot === '下午＋夜場') ? ['half', 'half'] : [slotKey(slot)];
+  // 複選時段：每天勾 上午／下午／夜場（夜場僅岩原）→ 組合成既有的 slot 字串（半日/全日 值不變，後台照舊）
+  const PARTS = [['am', '上午', '9:00–12:00'], ['pm', '下午', '13:00–16:00'], ['night', '夜場 3 小時', '時間由教練確認']];
+  const slotFromParts = p => { const a = p.includes('am'), b = p.includes('pm'), n = p.includes('night');
+    return a && b ? (n ? '全日＋夜場' : '全日') : a ? (n ? '上午＋夜場' : '半日（上午）') : b ? (n ? '下午＋夜場' : '半日（下午）') : '夜場'; };
+  const partsFromSlot = s => ({ '全日': ['am', 'pm'], '半日（上午）': ['am'], '半日（下午）': ['pm'], '夜場': ['night'], '全日＋夜場': ['am', 'pm', 'night'], '上午＋夜場': ['am', 'night'], '下午＋夜場': ['pm', 'night'] })[s] || ['am', 'pm'];
   const slotLabel = s => (isNightResort(booking.resort) && NIGHT_LABELS[s]) || CONFIG.slotLabels[s] || s;
 
   /* ---------- 北海道課程費用（預估） ----------
@@ -594,17 +598,21 @@
   const daysEl = $('#days'), daysEmpty = $('#days-empty');
   function renderDays() {
     daysEl.innerHTML = booking.dates.map((d, i) => `<li><span class="d-date">${fmtDate(d.date)}</span>
-      <select data-slot="${i}" aria-label="${fmtDate(d.date)} 的時段">${slotsFor(booking.resort).map(s => `<option value="${s}"${s === d.slot ? ' selected' : ''}>${slotLabel(s)}</option>`).join('')}</select>
+      <span class="d-slots" role="group" aria-label="${fmtDate(d.date)} 的時段（可複選）">${PARTS.filter(([k]) => k !== 'night' || isNightResort(booking.resort)).map(([k, t, sub]) => `<button type="button" class="d-chip${k === 'night' ? ' d-chip-night' : ''}" data-day="${i}" data-part="${k}" aria-pressed="${partsFromSlot(d.slot).includes(k)}"><b>${t}</b><small>${sub}</small></button>`).join('')}</span>
       <button type="button" class="d-del" data-del="${d.date}" aria-label="移除 ${fmtDate(d.date)}">✕</button></li>`).join('');
     daysEmpty.textContent = booking.dates.length ? `已選 ${booking.dates.length} 天` : '還沒有選日期。';
     const nn = $('#night-note'); if (nn) nn.hidden = !isNightResort(booking.resort);
   }
   // leaving 岩原: 夜場 options disappear → 夜場 → 下午 / 全日＋夜場 → 全日
   function syncNightSlots() {
-    if (!isNightResort(booking.resort)) booking.dates.forEach(d => { if (NIGHT_SLOTS.includes(d.slot)) d.slot = d.slot === '夜場' ? '半日（下午）' : '全日'; });
+    if (!isNightResort(booking.resort)) booking.dates.forEach(d => { if (NIGHT_SLOTS.includes(d.slot)) { const p = partsFromSlot(d.slot).filter(k => k !== 'night'); d.slot = slotFromParts(p.length ? p : ['pm']); } });
     renderDays();
   }
-  daysEl.addEventListener('change', e => { const s = e.target.closest('[data-slot]'); if (s) { booking.dates[+s.dataset.slot].slot = s.value; updateLive(); } });
+  daysEl.addEventListener('click', e => { const c = e.target.closest('[data-part]'); if (!c) return;
+    const d = booking.dates[+c.dataset.day], k = c.dataset.part; let p = partsFromSlot(d.slot);
+    p = p.includes(k) ? p.filter(x => x !== k) : p.concat(k);
+    if (!p.length) { toast('每天至少選一個時段'); return; }
+    d.slot = slotFromParts(p); renderDays(); updateLive(); });
   daysEl.addEventListener('click', e => { const b = e.target.closest('[data-del]'); if (b) toggleDate(b.dataset.del, false); });
 
   /* ---------- adults, children, and child ages ---------- */
