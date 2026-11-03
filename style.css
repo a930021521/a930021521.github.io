@@ -1466,3 +1466,9 @@ html.has-announce{scroll-padding-top:calc(84px + var(--announce-h))}
 .days .d-chip b{display:inline-flex;align-items:center;gap:4px}
 .days .d-ico{display:inline-flex;width:14px;height:14px;font-style:normal}
 .days .d-ico svg{width:100%;height:100%}
+/* chip legibility */
+.days .d-chip b{font-size:.95rem;color:rgb(var(--tc));text-shadow:0 1px 2px rgba(0,0,0,.35)}
+.days .d-chip small,.days .d-chip[aria-pressed=true] small{font-size:13px;font-weight:500;color:rgba(255,255,255,.85);line-height:1.35}
+.days .d-chip .nw{font-size:12px}
+.days .d-chip[aria-pressed=true] b{color:#fff}
+.days .d-chip-night[aria-pressed=true] b{color:#ffe3a3}
