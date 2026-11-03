@@ -134,45 +134,15 @@
 @media (max-width:640px){.rc-lead,.rc-fine{margin-left:20px;margin-right:20px}.rc-back{padding:16px 14px 12px}}
 .rc-card:has(.rc-night) .rc-media{height:50%}.rc-card:has(.rc-night) .rc-body{top:50%}
 @media (max-width:640px){.rc-card:has(.rc-night) .rc-media{height:43%}.rc-card:has(.rc-night) .rc-body{top:43%}}
-/* ===== 岩原 夜場 visual variants (data-nv=a|b|c|d) ===== */
+/* ===== 岩原 夜場：glowing moon badge ===== */
 .rc-nfx{position:absolute;inset:0;z-index:1;pointer-events:none}
-.rc-nfx>*{display:none}
-.rc-nfx svg{position:absolute;inset:0;width:100%;height:100%}
-.nfx-badge{position:absolute;top:14px;left:14px;align-items:center;gap:8px;padding:6px 12px 6px 8px;border-radius:999px;background:rgba(8,16,38,.55);backdrop-filter:blur(8px);-webkit-backdrop-filter:blur(8px);border:1px solid rgba(255,226,160,.35);color:#ffe3a3;font:600 .64rem/1 Montserrat,sans-serif;letter-spacing:.22em;box-shadow:0 0 18px rgba(255,200,110,.25)}
-.nfx-badge svg{position:static;width:16px;height:16px;filter:drop-shadow(0 0 6px rgba(255,214,140,.9))}
-.nfx-badge small{margin-left:7px;letter-spacing:.08em;font-size:.68rem;color:#fff2d4;font-family:inherit}
-.rc-night{display:flex;gap:8px;align-items:flex-start}
+.rc-nfx::before{content:"";position:absolute;top:2px;right:2px;width:86px;height:86px;background:radial-gradient(circle,rgba(255,210,130,.28),transparent 65%);border-radius:50%}
+.rc-nfx::after{content:"✦  ·  ✦";position:absolute;top:84px;right:20px;color:#ffe9bd;font-size:.55rem;letter-spacing:.2em;animation:nfxTw 2.6s ease-in-out infinite}
+.nfx-badge{position:absolute;top:14px;right:14px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:6px;width:62px;height:62px;border-radius:50%;background:radial-gradient(circle at 40% 35%,rgba(40,62,120,.85),rgba(6,12,32,.9));color:#ffe3a3;font:600 .5rem/1 Montserrat,sans-serif;letter-spacing:.18em;padding-left:.18em;animation:nfxGlow 3.6s ease-in-out infinite}
+.nfx-badge svg{width:22px;height:22px;filter:drop-shadow(0 0 6px rgba(255,214,140,.9))}
+.rc-night{display:flex;gap:8px;align-items:flex-start;color:#cfdcff}
 .rc-night i{flex:none;width:15px;height:15px;margin-top:2px;color:#ffd98a;filter:drop-shadow(0 0 5px rgba(255,200,110,.7))}
 .rc-night i svg{width:100%;height:100%;display:block}
-.rc-night{color:#cfdcff}
 @keyframes nfxTw{0%,100%{opacity:.2}50%{opacity:1}}
 @keyframes nfxGlow{0%,100%{box-shadow:0 0 0 1px rgba(255,226,160,.4),0 0 16px 2px rgba(255,200,110,.35)}50%{box-shadow:0 0 0 1px rgba(255,226,160,.6),0 0 26px 6px rgba(255,200,110,.55)}}
-.nfx-tw{animation:nfxTw 3.2s ease-in-out infinite}
-/* A: night-graded photo + slope lamps */
-[data-nv=a] .rc-card:has(.rc-nfx) .rc-bg .rc-photo{filter:brightness(.5) saturate(.6) contrast(1.1) hue-rotate(10deg)}
-[data-nv=a] .rc-card:has(.rc-nfx) .rc-bg::after{content:"";position:absolute;inset:0;background:linear-gradient(180deg,rgba(6,14,40,.75),rgba(20,44,100,.35) 60%,rgba(15,26,44,.2));mix-blend-mode:multiply}
-[data-nv=a] .nfx-lamps,[data-nv=a] .nfx-badge{display:flex}
-[data-nv=a] .nfx-lamps{display:block}
-/* B: photo kept, glowing moon badge with halo + twinkle */
-[data-nv=b] .nfx-badge{display:flex;top:14px;left:auto;right:14px;flex-direction:column;gap:6px;width:62px;height:62px;padding:0;justify-content:center;border-radius:50%;background:radial-gradient(circle at 40% 35%,rgba(40,62,120,.85),rgba(6,12,32,.9));animation:nfxGlow 3.6s ease-in-out infinite;letter-spacing:.18em;font-size:.5rem}
-[data-nv=b] .nfx-badge svg{width:22px;height:22px}
-[data-nv=b] .nfx-badge small{display:none}
-[data-nv=b] .rc-nfx::before{content:"";position:absolute;top:2px;right:2px;width:86px;height:86px;background:radial-gradient(circle,rgba(255,210,130,.28),transparent 65%);border-radius:50%}
-[data-nv=b] .rc-nfx::after{content:"✦  ·  ✦";position:absolute;top:84px;right:20px;color:#ffe9bd;font-size:.55rem;letter-spacing:.2em;animation:nfxTw 2.6s ease-in-out infinite}
-/* C: day → night diagonal split */
-[data-nv=c] .nfx-night,[data-nv=c] .nfx-lamps,[data-nv=c] .nfx-split,[data-nv=c] .nfx-dn,[data-nv=c] .nfx-badge{display:block}
-[data-nv=c] .nfx-night{position:absolute;inset:0;clip-path:polygon(62% 0,100% 0,100% 100%,30% 100%)}
-[data-nv=c] .nfx-night .rc-photo{width:100%;height:100%;object-fit:cover;filter:brightness(.42) saturate(.55) hue-rotate(12deg)}
-[data-nv=c] .nfx-night::after{content:"";position:absolute;inset:0;background:linear-gradient(200deg,rgba(6,14,44,.7),rgba(30,60,130,.2))}
-[data-nv=c] .nfx-lamps{clip-path:polygon(62% 0,100% 0,100% 100%,30% 100%)}
-[data-nv=c] .nfx-split{position:absolute;inset:0;background:linear-gradient(to bottom right,transparent calc(50% - 1px),rgba(255,226,160,.85) 50%,transparent calc(50% + 1px));clip-path:polygon(61.6% 0,62.4% 0,30.4% 100%,29.6% 100%);background:linear-gradient(180deg,rgba(255,236,190,.95),rgba(255,200,120,.3));filter:drop-shadow(0 0 6px rgba(255,210,130,.9))}
-[data-nv=c] .nfx-dn{position:absolute;top:16px;left:16px;right:16px;font:600 .6rem/1 Montserrat,sans-serif;letter-spacing:.3em}
-[data-nv=c] .nfx-dn b{position:absolute;top:0;font-weight:600}
-[data-nv=c] .nfx-dn b:first-child{left:0;color:#1d2f52;background:rgba(255,255,255,.7);padding:5px 9px;border-radius:999px}
-[data-nv=c] .nfx-dn b:last-child{right:0;color:#ffe3a3;background:rgba(8,16,38,.55);padding:5px 9px;border-radius:999px;border:1px solid rgba(255,226,160,.35)}
-[data-nv=c] .nfx-badge{display:none}
-/* D: illustrated night scene replaces photo */
-[data-nv=d] .nfx-scene,[data-nv=d] .nfx-badge{display:flex}
-[data-nv=d] .nfx-scene{display:block}
-[data-nv=d] .rc-card:has(.rc-nfx) .rc-credit{display:none}
-@media (prefers-reduced-motion:reduce){.nfx-tw,[data-nv=b] .nfx-badge,[data-nv=b] .rc-nfx::after{animation:none}}
+@media (prefers-reduced-motion:reduce){.nfx-badge,.rc-nfx::after{animation:none}}

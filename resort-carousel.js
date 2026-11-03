@@ -44,17 +44,8 @@
     s+='<text x="570" y="60" text-anchor="end" font-family="Montserrat,sans-serif" font-size="12" letter-spacing="5" fill="#cfe3f6" fill-opacity=".35">'+(hk?'HOKKAIDO':'YUZAWA')+'</text>';
     return s+'</svg>';
   }
-  var NV=(location.search.match(/[?&]nv=([abcd])/)||[])[1]||'a';
-  document.documentElement.setAttribute('data-nv',NV);
   var MOON='<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M15.5 3.2a8.6 8.6 0 1 0 5.3 14.6A7.2 7.2 0 0 1 15.5 3.2z" fill="currentColor"/></svg>';
-  var NFX=(function(){
-    var lamps='';[[60,250,330,120],[150,262,420,150],[260,268,520,190]].forEach(function(L,j){for(var k=0;k<9;k++){var t=k/8,x=L[0]+(L[2]-L[0])*t,y=L[1]+(L[3]-L[1])*t;lamps+='<circle cx="'+x.toFixed(0)+'" cy="'+y.toFixed(0)+'" r="'+(2.6-t*1.2).toFixed(1)+'" fill="#ffe7b0"/><circle cx="'+x.toFixed(0)+'" cy="'+y.toFixed(0)+'" r="'+(11-t*5).toFixed(1)+'" fill="url(#nfxG)"/>';}});
-    var stars='';for(var k=0;k<26;k++){stars+='<circle class="nfx-tw" style="animation-delay:'+(k%7*0.6).toFixed(1)+'s" cx="'+((k*97)%600)+'" cy="'+((k*53)%120+6)+'" r="'+(k%3?0.8:1.4)+'" fill="#fff"/>';}
-    var defs='<defs><radialGradient id="nfxG"><stop offset="0" stop-color="#ffd98a" stop-opacity=".75"/><stop offset="1" stop-color="#ffb84d" stop-opacity="0"/></radialGradient><linearGradient id="nfxSky" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#050b1e"/><stop offset=".55" stop-color="#0f2350"/><stop offset="1" stop-color="#27427a"/></linearGradient><linearGradient id="nfxSnow" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#3b5487"/><stop offset="1" stop-color="#9fb4d8"/></linearGradient><radialGradient id="nfxPool" cx=".55" cy=".75" r=".6"><stop offset="0" stop-color="#ffcf7a" stop-opacity=".35"/><stop offset="1" stop-color="#ffcf7a" stop-opacity="0"/></radialGradient></defs>';
-    var scene='<svg class="nfx-scene" viewBox="0 0 600 340" preserveAspectRatio="xMidYMid slice">'+defs+'<rect width="600" height="340" fill="url(#nfxSky)"/>'+stars+'<circle cx="470" cy="62" r="34" fill="#fff6dc" opacity=".12"/><path d="M478 40a24 24 0 1 0 16 40 20 20 0 0 1-16-40z" fill="#fff3d1"/><path d="M0 170 L80 120 L140 150 L230 70 L300 130 L360 100 L440 150 L520 110 L600 150 V340 H0z" fill="#16295a"/><path d="M0 230 C150 180 330 140 600 120 V340 H0z" fill="url(#nfxSnow)"/><rect width="600" height="340" fill="url(#nfxPool)"/><path d="M40 300 L560 105" stroke="#c9d6ee" stroke-opacity=".35" stroke-width="1"/>'+lamps+'</svg>';
-    var lights='<svg class="nfx-lamps" viewBox="0 0 600 340" preserveAspectRatio="xMidYMid slice">'+defs+'<rect width="600" height="340" fill="url(#nfxPool)"/>'+lamps+stars.replace(/cy="(\d+)"/g,function(m,a){return 'cy="'+(+a*0.7)+'"'})+'</svg>';
-    return '<div class="rc-nfx">'+scene+lights+'<div class="nfx-night"><img class="rc-photo" src="img/resorts/iwappara-600.webp" alt="" loading="lazy" decoding="async"></div><span class="nfx-split" aria-hidden="true"></span><span class="nfx-dn" aria-hidden="true"><b>DAY</b><b>NIGHT</b></span><span class="nfx-badge">'+MOON+'<span>NIGHT<small>夜場</small></span></span></div>';
-  })();
+  var NFX='<div class="rc-nfx" aria-hidden="true"><span class="nfx-badge">'+MOON+'<span>NIGHT</span></span></div>';
   var reduce=window.matchMedia&&matchMedia('(prefers-reduced-motion: reduce)').matches;
   var track=root.querySelector('.rc-track'), dotsEl=root.querySelector('.rc-dots'), count=root.querySelector('.rc-count'), stage=root.querySelector('.rc-stage'), live=root.querySelector('.rc-live');
   var cards=R.map(function(o,i){
