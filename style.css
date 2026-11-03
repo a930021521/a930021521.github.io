@@ -1420,3 +1420,6 @@ html.has-announce{scroll-padding-top:calc(84px + var(--announce-h))}
 .wiz-est-off[hidden]{display:none}
 .days-note{margin:8px 0 0;padding:10px 14px;border-radius:12px;font-size:.8rem;line-height:1.6;color:var(--mute);background:rgba(47,107,255,.1);border:1px solid rgba(143,176,255,.25)}
 .days-note[hidden]{display:none}
+.yz-night{margin:0 0 18px;border-color:rgba(190,170,255,.4);background:radial-gradient(120% 160% at 100% 0%,rgba(122,92,255,.28) 0%,rgba(122,92,255,0) 60%),radial-gradient(90% 120% at 0% 100%,rgba(47,107,255,.18) 0%,rgba(47,107,255,0) 60%),rgba(10,14,32,.6)}
+.yz-night .yz-off-tag{color:#C9BEFF}
+.yz-night .yz-off-hint{font-size:.84rem;line-height:1.7}
