@@ -39,7 +39,7 @@
     name: '',
     contact: { method: 'LINE', id: '', email: '' },
     phone: '',            // '+886 912345678' (required; country code + national number)
-    phoneWhatsApp: false, // customer ticked 「這支號碼可用 WhatsApp 聯繫」
+    phoneWhatsApp: false, // checkbox removed; kept false for the sheet schema
     dates: [],            // [{ date: 'YYYY-MM-DD', slot: '全日' }]
     discipline: '',       // no default: the visitor must pick 單板 or 雙板
     level: '',
@@ -675,12 +675,11 @@
   /* ---------- contact method label ---------- */
   const cid = form.elements.contactId, cidL = $('#cid-l');
   const CID = { LINE: ['LINE ID', '您的 LINE ID'], WeChat: ['WeChat ID', '您的 WeChat ID'], WhatsApp: ['WhatsApp 號碼', '+886 912 345 678'], Email: ['Email', 'name@example.com'], '電話': ['電話號碼', '+886 912 345 678'] };
-  // 電話 / WhatsApp reuse the required 手機號碼 field, so the separate ID box is hidden for them
-  const PHONE_METHODS = ['WhatsApp', '電話'];
+  // 電話 reuses the required 手機號碼 field, so the separate ID box is hidden for it
+  const PHONE_METHODS = ['電話']; // WhatsApp now has its own number box (contactId)
   function syncMethod() {
     const m = form.elements.contactMethod.value; booking.contact.method = m; cidL.textContent = CID[m][0]; cid.placeholder = CID[m][1]; cid.type = m === 'Email' ? 'email' : 'text'; form.elements.email.closest('label').hidden = m === 'Email';
     $('#cid-field').hidden = PHONE_METHODS.includes(m);
-    if (m === 'WhatsApp') form.elements.phoneWhatsApp.checked = true;
     setErr('contactId', '');
   }
   form.elements.contactMethod.addEventListener('change', syncMethod);
@@ -760,7 +759,7 @@
     booking.contact.method = f.contactMethod.value;
     const ph = parsePhone();
     booking.phone = ph.phone || '';
-    booking.phoneWhatsApp = !!f.phoneWhatsApp.checked;
+    booking.phoneWhatsApp = false; // checkbox removed; the WhatsApp number (if chosen) is sent as contact.id
     booking.contact.id = PHONE_METHODS.includes(f.contactMethod.value) ? booking.phone : f.contactId.value.trim();
     booking.contact.email = f.email.value.trim() || (f.contactMethod.value === 'Email' ? booking.contact.id : '');
     booking.notes = f.notes.value.trim();
