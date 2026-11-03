@@ -65,7 +65,7 @@
   // 岩原 夜場：夜場 = 半天價；全日＋夜場 = 全天價＋半天價（淡季每堂各折 NT$1,000）
   const NIGHT_RESORT = '岩原';
   const NIGHT_SLOTS = ['夜場', '全日＋夜場'];
-  const NIGHT_LABELS = { '全日': '全天（9:00–16:00）', '半日（上午）': '上午（9:00–12:00）', '半日（下午）': '下午（13:00–16:00）', '夜場': '夜場（時間由教練確認）', '全日＋夜場': '全天＋夜場' };
+  const NIGHT_LABELS = { '全日': '全天（9:00–16:00）', '半日（上午）': '上午（9:00–12:00）', '半日（下午）': '下午（13:00–16:00）', '夜場': '夜場 3 小時（時間由教練確認）', '全日＋夜場': '全天＋夜場' };
   const isNightResort = r => String(r || '').trim() === NIGHT_RESORT;
   const slotUnits = slot => slot === '全日＋夜場' ? ['full', 'half'] : [slotKey(slot)];
   const slotsFor = r => isNightResort(r) ? ['全日', '半日（上午）', '半日（下午）', '夜場', '全日＋夜場'] : CONFIG.slots;
