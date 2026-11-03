@@ -680,8 +680,23 @@
   function syncMethod() {
     const m = form.elements.contactMethod.value; booking.contact.method = m; cidL.textContent = CID[m][0]; cid.placeholder = CID[m][1]; cid.type = m === 'Email' ? 'email' : 'text'; form.elements.email.closest('label').hidden = m === 'Email';
     $('#cid-field').hidden = PHONE_METHODS.includes(m);
+    const wa = m === 'WhatsApp', same = $('#wa-same');
+    $('#wa-same-wrap').hidden = !wa;
+    if (wa && !waTouched) { same.checked = true; waTouched = true; }
+    if (!wa && (same.checked || prevMethod === 'WhatsApp')) { same.checked = false; cid.value = ''; } // a phone number must not stay in the LINE / WeChat ID box
+    prevMethod = m;
+    syncWaSame();
     setErr('contactId', '');
   }
+  // WhatsApp「同手機號碼」: checked = mirror the phone field (read-only), unchecked = manual entry
+  let waTouched = false, prevMethod = '';
+  function syncWaSame() {
+    const on = form.elements.contactMethod.value === 'WhatsApp' && $('#wa-same').checked;
+    cid.readOnly = on; cid.classList.toggle('is-synced', on);
+    if (on) { const ph = parsePhone(); cid.value = ph.phone || ''; }
+  }
+  $('#wa-same').addEventListener('change', () => { if (!$('#wa-same').checked) cid.value = ''; syncWaSame(); if (!$('#wa-same').checked) cid.focus(); setErr('contactId', ''); });
+  ['input', 'change'].forEach(ev => ['#phone', '#phone-cc', '#phone-cc-other'].forEach(q => { const el = $(q); if (el) el.addEventListener(ev, syncWaSame); }));
   form.elements.contactMethod.addEventListener('change', syncMethod);
 
   /* ---------- 手機號碼: country code + number ---------- */
@@ -760,6 +775,7 @@
     const ph = parsePhone();
     booking.phone = ph.phone || '';
     booking.phoneWhatsApp = false; // checkbox removed; the WhatsApp number (if chosen) is sent as contact.id
+    syncWaSame();
     booking.contact.id = PHONE_METHODS.includes(f.contactMethod.value) ? booking.phone : f.contactId.value.trim();
     booking.contact.email = f.email.value.trim() || (f.contactMethod.value === 'Email' ? booking.contact.id : '');
     booking.notes = f.notes.value.trim();
@@ -975,7 +991,7 @@
     } finally { send.disabled = false; send.textContent = '送出預約需求'; }
   });
   $('#done-again').addEventListener('click', () => {
-    form.reset(); booking.dates = []; booking.childAges = []; setParty(1, 0); syncMethod(); syncPhoneCc(); setErr('phone', ''); setDiscipline('');
+    form.reset(); booking.dates = []; booking.childAges = []; setParty(1, 0); waTouched = false; syncMethod(); syncPhoneCc(); setErr('phone', ''); setDiscipline('');
     renderCal(); renderDays(); readForm(); showDoneOrForm(false); go(1);
   });
 

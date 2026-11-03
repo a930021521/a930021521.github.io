@@ -1524,3 +1524,6 @@ html.has-announce{scroll-padding-top:calc(84px + var(--announce-h))}
 @media (prefers-reduced-motion:reduce){.msum-sheet{animation:none}.msum-chev{transition:none}}
 .notes-hint{display:block;margin:2px 0 8px;font-size:.8rem;line-height:1.6;color:#c9d2dc;font-weight:400}
 .lv-note{margin:10px 2px 0;font-size:.8rem;color:#c9d2dc}
+.wa-same{margin-top:8px;font-size:.84rem}
+.wa-same input{accent-color:#25D366}
+#cid-field input.is-synced{opacity:.8;cursor:default}
