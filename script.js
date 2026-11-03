@@ -61,7 +61,15 @@
 
   const ntd = v => 'NT$' + Math.round(v).toLocaleString('en-US');
   // 夜滑 is priced as 半日 when that slot is present. Anything other than 全日 is half.
-  const slotKey = slot => (slot === '全日' || slot === 'full') ? 'full' : 'half';
+  const slotKey = slot => (slot === '全日' || slot === 'full' || slot === '全日＋夜場') ? 'full' : 'half';
+  // 岩原 夜場：夜場 = 半天價；全日＋夜場 = 全天價＋半天價（淡季每堂各折 NT$1,000）
+  const NIGHT_RESORT = '岩原';
+  const NIGHT_SLOTS = ['夜場', '全日＋夜場'];
+  const NIGHT_LABELS = { '全日': '全天（9:00–16:00）', '半日（上午）': '上午（9:00–12:00）', '半日（下午）': '下午（13:00–16:00）', '夜場': '夜場（時間由教練確認）', '全日＋夜場': '全天＋夜場' };
+  const isNightResort = r => String(r || '').trim() === NIGHT_RESORT;
+  const slotUnits = slot => slot === '全日＋夜場' ? ['full', 'half'] : [slotKey(slot)];
+  const slotsFor = r => isNightResort(r) ? ['全日', '半日（上午）', '半日（下午）', '夜場', '全日＋夜場'] : CONFIG.slots;
+  const slotLabel = s => (isNightResort(booking.resort) && NIGHT_LABELS[s]) || CONFIG.slotLabels[s] || s;
 
   /* ---------- 北海道課程費用（預估） ----------
    * 以日圓計：每天 (淡季底價 + 季節加價)，加總後（HOKKAIDO_DISCOUNT_ON 時）×0.9 四捨五入，
@@ -323,6 +331,8 @@
     const duration = !b.dates.length ? null : (halfDays && fullDays ? 'mixed' : (fullDays ? 'full' : 'half'));
     b.duration = duration;
     b.durationLabel = duration === 'mixed' ? `半日 ${halfDays} 天・全日 ${fullDays} 天` : (duration ? `${CONFIG.durations[duration]} × ${b.dates.length} 天` : '');
+    const nightDays = isNightResort(b.resort) ? b.dates.filter(d => NIGHT_SLOTS.includes(d.slot)) : [];
+    if (nightDays.length) b.durationLabel += `（含岩原夜場：${nightDays.map(d => d.date + ' ' + d.slot).join('、')}）`;
     const hokkaido = String(b.resort || '').startsWith('北海道・');
     if (hokkaido) {
       const hk = estimateHokkaido({
@@ -357,10 +367,11 @@
     let amount = null, offDays = 0;
     if (!overMax && people >= 1 && b.dates.length) {
       const extra = YUZAWA_SURCHARGE[String(b.resort || '').trim()] || 0; // per lesson day per group
-      offDays = b.dates.filter(d => isYuzawaOffseason(d.date)).length;
-      amount = b.dates.reduce((sum, d) => sum + (t => t[Math.min(people, t.length) - 1])(CONFIG.PRICE_TABLE[slotKey(d.slot)]) + extra, 0) - offDays * YUZAWA_OFFSEASON.off;
+      const units = d => isNightResort(b.resort) ? slotUnits(d.slot) : [slotKey(d.slot)];
+      offDays = b.dates.reduce((s, d) => s + (isYuzawaOffseason(d.date) ? units(d).length : 0), 0); // 淡季 per lesson (全日＋夜場 = 2)
+      amount = b.dates.reduce((sum, d) => sum + units(d).reduce((s, k) => s + (t => t[Math.min(people, t.length) - 1])(CONFIG.PRICE_TABLE[k]), 0) + extra, 0) - offDays * YUZAWA_OFFSEASON.off;
     }
-    const offNote = offDays ? `淡季優惠 −${ntd(offDays * YUZAWA_OFFSEASON.off)}${offDays > 1 ? `（NT$1,000 × ${offDays} 天）` : ''}` : '';
+    const offNote = offDays ? `淡季優惠 −${ntd(offDays * YUZAWA_OFFSEASON.off)}${offDays > 1 ? `（NT$1,000 × ${offDays} 堂）` : ''}` : '';
     const deposit = amount == null ? null : Math.round(amount * b.depositRate);
     const balance = amount == null ? null : amount - deposit;
     b.deposit = deposit;
@@ -583,9 +594,15 @@
   const daysEl = $('#days'), daysEmpty = $('#days-empty');
   function renderDays() {
     daysEl.innerHTML = booking.dates.map((d, i) => `<li><span class="d-date">${fmtDate(d.date)}</span>
-      <select data-slot="${i}" aria-label="${fmtDate(d.date)} 的時段">${CONFIG.slots.map(s => `<option value="${s}"${s === d.slot ? ' selected' : ''}>${CONFIG.slotLabels[s] || s}</option>`).join('')}</select>
+      <select data-slot="${i}" aria-label="${fmtDate(d.date)} 的時段">${slotsFor(booking.resort).map(s => `<option value="${s}"${s === d.slot ? ' selected' : ''}>${slotLabel(s)}</option>`).join('')}</select>
       <button type="button" class="d-del" data-del="${d.date}" aria-label="移除 ${fmtDate(d.date)}">✕</button></li>`).join('');
     daysEmpty.textContent = booking.dates.length ? `已選 ${booking.dates.length} 天` : '還沒有選日期。';
+    const nn = $('#night-note'); if (nn) nn.hidden = !isNightResort(booking.resort);
+  }
+  // leaving 岩原: 夜場 options disappear → 夜場 → 下午 / 全日＋夜場 → 全日
+  function syncNightSlots() {
+    if (!isNightResort(booking.resort)) booking.dates.forEach(d => { if (NIGHT_SLOTS.includes(d.slot)) d.slot = d.slot === '夜場' ? '半日（下午）' : '全日'; });
+    renderDays();
   }
   daysEl.addEventListener('change', e => { const s = e.target.closest('[data-slot]'); if (s) { booking.dates[+s.dataset.slot].slot = s.value; updateLive(); } });
   daysEl.addEventListener('click', e => { const b = e.target.closest('[data-del]'); if (b) toggleDate(b.dataset.del, false); });
@@ -709,7 +726,7 @@
     if (e.target.name === 'level') setErr('level', '');
     if (e.target.matches('[data-person-input]')) setParty($('#adults').value, $('#children').value);
     readForm();
-    if (e.target.name === 'resort') setParty(booking.adults, booking.children);
+    if (e.target.name === 'resort') { syncNightSlots(); setParty(booking.adults, booking.children); }
   });
   $('#q-child-ages').addEventListener('change', syncQuickParty);
   function readForm() {
@@ -736,19 +753,20 @@
   // customer-facing duration text (booking.durationLabel is left as-is for the payload)
   function durationText(b) {
     const days = b.dates || [], n = days.length; if (!n) return '';
+    const night = days.filter(d => NIGHT_SLOTS.includes(d.slot)).length, nightTxt = night ? `（含夜場 ${night} 天）` : '';
     const half = days.filter(d => slotKey(d.slot) === 'half').length, full = n - half;
-    if (half && full) return `半天 ${half} 天・全天 ${full} 天`;
-    return `${CONFIG.durationsDisplay[full ? 'full' : 'half']} × ${n} 天`;
+    if (half && full) return `半天 ${half} 天・全天 ${full} 天${nightTxt}`;
+    return `${CONFIG.durationsDisplay[full ? 'full' : 'half']} × ${n} 天${nightTxt}`;
   }
   function datesText(short) {
     if (!booking.dates.length) return '尚未選擇';
-    const t = booking.dates.map(d => `${fmtDate(d.date)} ${CONFIG.slotLabels[d.slot] || d.slot}`);
+    const t = booking.dates.map(d => `${fmtDate(d.date)} ${slotLabel(d.slot)}`);
     return short && t.length > 3 ? t.slice(0, 3).join('、') + ` 等 ${t.length} 天` : t.join('\n');
   }
   // same dates as markup: one row per day; date and time label are kept whole so a long label wraps as a unit
   function datesHTML(short) {
     if (!booking.dates.length) return esc('尚未選擇');
-    const rows = booking.dates.map(d => `<span class="dt-row"><span class="dt-d">${esc(fmtDate(d.date))}</span> <span class="dt-s">${esc(CONFIG.slotLabels[d.slot] || d.slot)}</span></span>`);
+    const rows = booking.dates.map(d => `<span class="dt-row"><span class="dt-d">${esc(fmtDate(d.date))}</span> <span class="dt-s">${esc(slotLabel(d.slot))}</span></span>`);
     return short && rows.length > 3 ? rows.slice(0, 3).join('') + `<span class="dt-row dt-more">等 ${rows.length} 天</span>` : rows.join('');
   }
   function updateLive() {
