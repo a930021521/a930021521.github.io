@@ -1449,3 +1449,8 @@ html.has-announce{scroll-padding-top:calc(84px + var(--announce-h))}
 .days .d-slots:not(:has(.d-chip-night)) .d-chip{flex-basis:calc(33.3% - 4px)}
 .days .d-chip .nw{white-space:nowrap;font-size:.92em;letter-spacing:-.02em}
 #night-note{margin-bottom:14px}
+/* unified two-line chips */
+.days .d-chip{justify-content:center;gap:3px;padding:9px 6px;min-height:58px}
+.days .d-chip b{font-size:.86rem;font-weight:700;letter-spacing:.02em}
+.days .d-chip small{font-size:.64rem;line-height:1.35}
+.days .d-chip .nw{display:inline-block;font-size:1em;letter-spacing:0}

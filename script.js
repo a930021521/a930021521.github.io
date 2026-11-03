@@ -71,7 +71,7 @@
   const SLOT_UNITS = { '全日': ['full'], '全日＋夜場': ['full', 'half'], '半日（上午）': ['half'], '半日（下午）': ['half'], '夜場': ['half'], '上午＋下午': ['half', 'half'], '上午＋夜場': ['half', 'half'], '下午＋夜場': ['half', 'half'], '上午＋下午＋夜場': ['half', 'half', 'half'] };
   const slotUnits = slot => SLOT_UNITS[slot] || [slotKey(slot)];
   // 複選時段：全天 與 上午／下午 互斥；夜場（僅岩原）可與任一組合
-  const PARTS = [['full', '全天', '9:00–15:00<br><span class="nw">（中間休息 1 小時）</span>'], ['am', '上午', '9:00–12:00'], ['pm', '下午', '13:00–16:00'], ['night', '夜場 3 小時', '時數可彈性調整']];
+  const PARTS = [['full', '全天', '9:00–15:00<span class="nw">（中間休息 1 小時）</span>'], ['am', '上午', '9:00–12:00'], ['pm', '下午', '13:00–16:00'], ['night', '夜場 3 小時', '時數可彈性調整']];
   const SLOT_PARTS = { '全日': ['full'], '全日＋夜場': ['full', 'night'], '半日（上午）': ['am'], '半日（下午）': ['pm'], '上午＋下午': ['am', 'pm'], '夜場': ['night'], '上午＋夜場': ['am', 'night'], '下午＋夜場': ['pm', 'night'], '上午＋下午＋夜場': ['am', 'pm', 'night'] };
   const partsFromSlot = s => SLOT_PARTS[s] || ['full'];
   const slotFromParts = p => Object.keys(SLOT_PARTS).find(k => { const q = SLOT_PARTS[k]; return q.length === p.length && q.every(x => p.includes(x)); }) || '全日';
