@@ -18,7 +18,7 @@
     monthsAhead: 12,
     slots: ['半日（上午）', '半日（下午）', '全日'],
     // display text for each slot option; the option VALUE stays the slot above (backend / sheet / calendar parse these)
-    slotLabels: { '半日（上午）': '上午（9:00–12:00）', '半日（下午）': '下午（13:00–16:00）', '全日': '全天（6小時，含1小時用餐）' },
+    slotLabels: { '半日（上午）': '上午（9:00–12:00）', '半日（下午）': '下午（13:00–16:00）', '全日': '全天（6小時，含1小時用餐）', '上午＋下午': '上午＋下午' },
     // display text for durations (payload durationLabel keeps the 半日／全日 wording the backend stores)
     durationsDisplay: { half: '半天（3小時）', full: '全天（6小時，含1小時用餐）' },
     // 2026–27 課程費用 — PRICE_TABLE[half|full][totalPeople - 1] = group total in TWD (not per person).
@@ -64,15 +64,17 @@
   const slotKey = slot => (slot === '全日' || slot === 'full' || slot === '全日＋夜場') ? 'full' : 'half';
   // 岩原 夜場：夜場 = 半天價；全日＋夜場 = 全天價＋半天價（淡季每堂各折 NT$1,000）
   const NIGHT_RESORT = '岩原';
-  const NIGHT_SLOTS = ['夜場', '全日＋夜場', '上午＋夜場', '下午＋夜場'];
-  const NIGHT_LABELS = { '全日': '全天（9:00–16:00）', '半日（上午）': '上午（9:00–12:00）', '半日（下午）': '下午（13:00–16:00）', '夜場': '夜場 3 小時（時間由教練確認）', '全日＋夜場': '全天＋夜場', '上午＋夜場': '上午＋夜場', '下午＋夜場': '下午＋夜場' };
+  const NIGHT_SLOTS = ['夜場', '全日＋夜場', '上午＋夜場', '下午＋夜場', '上午＋下午＋夜場'];
+  const NIGHT_LABELS = { '全日': '全天（9:00–15:00）', '半日（上午）': '上午（9:00–12:00）', '半日（下午）': '下午（13:00–16:00）', '夜場': '夜場 3 小時（時間由教練確認）', '全日＋夜場': '全天＋夜場', '上午＋夜場': '上午＋夜場', '下午＋夜場': '下午＋夜場', '上午＋下午＋夜場': '上午＋下午＋夜場' };
   const isNightResort = r => String(r || '').trim() === NIGHT_RESORT;
-  const slotUnits = slot => slot === '全日＋夜場' ? ['full', 'half'] : (slot === '上午＋夜場' || slot === '下午＋夜場') ? ['half', 'half'] : [slotKey(slot)];
-  // 複選時段：每天勾 上午／下午／夜場（夜場僅岩原）→ 組合成既有的 slot 字串（半日/全日 值不變，後台照舊）
-  const PARTS = [['am', '上午', '9:00–12:00'], ['pm', '下午', '13:00–16:00'], ['night', '夜場 3 小時', '時間由教練確認']];
-  const slotFromParts = p => { const a = p.includes('am'), b = p.includes('pm'), n = p.includes('night');
-    return a && b ? (n ? '全日＋夜場' : '全日') : a ? (n ? '上午＋夜場' : '半日（上午）') : b ? (n ? '下午＋夜場' : '半日（下午）') : '夜場'; };
-  const partsFromSlot = s => ({ '全日': ['am', 'pm'], '半日（上午）': ['am'], '半日（下午）': ['pm'], '夜場': ['night'], '全日＋夜場': ['am', 'pm', 'night'], '上午＋夜場': ['am', 'night'], '下午＋夜場': ['pm', 'night'] })[s] || ['am', 'pm'];
+  // 全日 = 1 堂全天；上午／下午／夜場 各 1 堂半天
+  const SLOT_UNITS = { '全日': ['full'], '全日＋夜場': ['full', 'half'], '半日（上午）': ['half'], '半日（下午）': ['half'], '夜場': ['half'], '上午＋下午': ['half', 'half'], '上午＋夜場': ['half', 'half'], '下午＋夜場': ['half', 'half'], '上午＋下午＋夜場': ['half', 'half', 'half'] };
+  const slotUnits = slot => SLOT_UNITS[slot] || [slotKey(slot)];
+  // 複選時段：全天 與 上午／下午 互斥；夜場（僅岩原）可與任一組合
+  const PARTS = [['full', '全天', '9:00–15:00<br><span class="nw">（中間休息 1 小時）</span>'], ['am', '上午', '9:00–12:00'], ['pm', '下午', '13:00–16:00'], ['night', '夜場 3 小時', '時間由教練確認']];
+  const SLOT_PARTS = { '全日': ['full'], '全日＋夜場': ['full', 'night'], '半日（上午）': ['am'], '半日（下午）': ['pm'], '上午＋下午': ['am', 'pm'], '夜場': ['night'], '上午＋夜場': ['am', 'night'], '下午＋夜場': ['pm', 'night'], '上午＋下午＋夜場': ['am', 'pm', 'night'] };
+  const partsFromSlot = s => SLOT_PARTS[s] || ['full'];
+  const slotFromParts = p => Object.keys(SLOT_PARTS).find(k => { const q = SLOT_PARTS[k]; return q.length === p.length && q.every(x => p.includes(x)); }) || '全日';
   const slotLabel = s => (isNightResort(booking.resort) && NIGHT_LABELS[s]) || CONFIG.slotLabels[s] || s;
 
   /* ---------- 北海道課程費用（預估） ----------
@@ -221,7 +223,7 @@
       }
       if (n0 > SAPPORO_EARLY.maxPeople) return quoteResult('over_max', '請私訊報價', { resort: '札幌國際', people: n0 });
       if (n0 >= 1) {
-        const amount = list0.reduce((s, d) => { const t = SAPPORO_EARLY.table[slotKey(d.slot)]; return s + t[Math.min(n0, t.length) - 1]; }, 0);
+        const amount = list0.reduce((s, d) => s + slotUnits(d.slot).reduce((u, k) => { const t = SAPPORO_EARLY.table[k]; return u + t[Math.min(n0, t.length) - 1]; }, 0), 0);
         const deposit = Math.round(amount * depositRate);
         const halfDays = list0.filter(d => slotKey(d.slot) === 'half').length;
         return {
@@ -263,7 +265,7 @@
       };
     }
     const days = [];
-    for (const d of list) {
+    for (const d of list.flatMap(x => slotUnits(x.slot).map(k => ({ date: x.date, slot: k === 'full' ? '全日' : '半日' })))) {
       const one = dayFee({ resort: key, people: n, slot: d.slot, date: d.date, asOf });
       if (!one.ok) {
         if (one.reason === 'out_of_season') {
@@ -336,6 +338,8 @@
     b.duration = duration;
     b.durationLabel = duration === 'mixed' ? `半日 ${halfDays} 天・全日 ${fullDays} 天` : (duration ? `${CONFIG.durations[duration]} × ${b.dates.length} 天` : '');
     const nightDays = isNightResort(b.resort) ? b.dates.filter(d => NIGHT_SLOTS.includes(d.slot)) : [];
+    const amPmDays = b.dates.filter(d => d.slot === '上午＋下午');
+    if (amPmDays.length) b.durationLabel += `（含上午＋下午：${amPmDays.map(d => d.date).join('、')}）`;
     if (nightDays.length) b.durationLabel += `（含岩原夜場：${nightDays.map(d => d.date + ' ' + d.slot).join('、')}）`;
     const hokkaido = String(b.resort || '').startsWith('北海道・');
     if (hokkaido) {
@@ -371,7 +375,7 @@
     let amount = null, offDays = 0;
     if (!overMax && people >= 1 && b.dates.length) {
       const extra = YUZAWA_SURCHARGE[String(b.resort || '').trim()] || 0; // per lesson day per group
-      const units = d => isNightResort(b.resort) ? slotUnits(d.slot) : [slotKey(d.slot)];
+      const units = d => slotUnits(d.slot);
       offDays = b.dates.reduce((s, d) => s + (isYuzawaOffseason(d.date) ? units(d).length : 0), 0); // 淡季 per lesson (全日＋夜場 = 2)
       amount = b.dates.reduce((sum, d) => sum + units(d).reduce((s, k) => s + (t => t[Math.min(people, t.length) - 1])(CONFIG.PRICE_TABLE[k]), 0) + extra, 0) - offDays * YUZAWA_OFFSEASON.off;
     }
@@ -610,7 +614,7 @@
   }
   daysEl.addEventListener('click', e => { const c = e.target.closest('[data-part]'); if (!c) return;
     const d = booking.dates[+c.dataset.day], k = c.dataset.part; let p = partsFromSlot(d.slot);
-    p = p.includes(k) ? p.filter(x => x !== k) : p.concat(k);
+    p = p.includes(k) ? p.filter(x => x !== k) : p.filter(x => !(k === 'full' ? ['am', 'pm'] : k === 'night' ? [] : ['full']).includes(x)).concat(k);
     if (!p.length) { toast('每天至少選一個時段'); return; }
     d.slot = slotFromParts(p); renderDays(); updateLive(); });
   daysEl.addEventListener('click', e => { const b = e.target.closest('[data-del]'); if (b) toggleDate(b.dataset.del, false); });
