@@ -3,7 +3,7 @@
   var root=document.getElementById('rc'); if(!root) return;
   var Y='ECHIGO-YUZAWA', H='HOKKAIDO';
   var R=[
-    {g:'yz',r:Y,n:'岩原',en:'IWAPPARA',d:'谷川連峰景觀前的寬闊主坡，循序進階的理想場地。',t:'主坡最寬約 200 公尺',img:'iwappara',v:'岩原'},
+    {g:'yz',r:Y,n:'岩原',en:'IWAPPARA',d:'谷川連峰景觀前的寬闊主坡，循序進階的理想場地。',nt:'設有夜場，平日營業至 19:00、假日至 20:00，可預約傍晚課程。',t:'主坡最寬約 200 公尺',img:'iwappara',v:'岩原'},
     {g:'yz',r:Y,n:'中里',en:'YUZAWA NAKAZATO',d:'緊鄰 JR 越後中里站，出站走幾步就能開滑。',t:'下車即雪場',img:'nakazato',v:'中里'},
     {g:'yz',r:Y,n:'苗場',en:'NAEBA',d:'緊鄰苗場王子大飯店的大型山域，從入門坡到世界盃賽道。',t:'世界盃賽道',img:'naeba',v:'苗場'},
     {g:'yz',r:Y,n:'神樂',en:'KAGURA',d:'かぐら・みつまた・田代三大區域組成的大型山域，雪季長、標高差大。',t:'三大區域',img:'kagura',v:'神樂'},
@@ -52,7 +52,7 @@
     var price=o.p||(o.g==='yz'?'prices-yuzawa':'prices-hokkaido');
     var c=CR[o.img], front=c?'<img class="rc-photo" src="img/resorts/'+o.img+'-600.webp" srcset="img/resorts/'+o.img+'-600.webp 600w, img/resorts/'+o.img+'-1080.webp 1080w" sizes="(max-width:640px) 80vw, 540px" alt="" loading="lazy" decoding="async">':bg(o,i);
     var credit=c?'<p class="rc-credit">Photo: <a href="'+c.u+'" target="_blank" rel="noopener">'+c.a+'</a> / <a href="'+c.lu+'" target="_blank" rel="noopener license">'+c.l+'</a></p>':'';
-    li.innerHTML='<div class="rc-flip"><div class="rc-face rc-front"><div class="rc-media"><div class="rc-bg" aria-hidden="true">'+front+'</div>'+credit+'</div><div class="rc-body"><p class="rc-region">'+o.r+'</p><h4 class="rc-name">'+o.n+'</h4><p class="rc-en">'+o.en+'</p><p class="rc-desc">'+o.d+'</p><span class="rc-tag">'+o.t+'</span><div class="rc-btns"><a class="rc-book" href="#booking" data-resort="'+o.v+'">預約</a><a class="rc-price rc-link" href="#'+price+'">看課程費用<span aria-hidden="true"> →</span></a><button type="button" class="rc-mapbtn rc-link" aria-pressed="false"><svg aria-hidden="true" viewBox="0 0 16 16" width="13" height="13"><circle cx="8" cy="8" r="6.5" fill="none" stroke="currentColor" stroke-width="1.3"/><path d="M8 7v4.2" stroke="currentColor" stroke-width="1.4" stroke-linecap="round"/><circle cx="8" cy="4.8" r=".9" fill="currentColor"/></svg>雪場資訊</button></div></div></div>'+backHTML(o)+'</div>';
+    li.innerHTML='<div class="rc-flip"><div class="rc-face rc-front"><div class="rc-media"><div class="rc-bg" aria-hidden="true">'+front+'</div>'+credit+'</div><div class="rc-body"><p class="rc-region">'+o.r+'</p><h4 class="rc-name">'+o.n+'</h4><p class="rc-en">'+o.en+'</p><p class="rc-desc">'+o.d+'</p>'+(o.nt?'<p class="rc-night">'+o.nt+'</p>':'')+'<span class="rc-tag">'+o.t+'</span><div class="rc-btns"><a class="rc-book" href="#booking" data-resort="'+o.v+'">預約</a><a class="rc-price rc-link" href="#'+price+'">看課程費用<span aria-hidden="true"> →</span></a><button type="button" class="rc-mapbtn rc-link" aria-pressed="false"><svg aria-hidden="true" viewBox="0 0 16 16" width="13" height="13"><circle cx="8" cy="8" r="6.5" fill="none" stroke="currentColor" stroke-width="1.3"/><path d="M8 7v4.2" stroke="currentColor" stroke-width="1.4" stroke-linecap="round"/><circle cx="8" cy="4.8" r=".9" fill="currentColor"/></svg>雪場資訊</button></div></div></div>'+backHTML(o)+'</div>';
     track.appendChild(li); return li;
   });
   var filter='all', list=[], idx=0;
