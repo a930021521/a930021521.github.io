@@ -45,7 +45,7 @@
 <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@200;300;400;600;700&display=swap" rel="stylesheet">
 <link rel="preload" as="image" type="image/webp" href="img/hero-m-opt5.webp" media="(max-width:640px)" fetchpriority="high">
 <link rel="preload" as="image" type="image/webp" href="img/hero-yuzawa-1920.webp" media="(min-width:641px)" fetchpriority="high">
-<link rel="stylesheet" href="style.css?v=hero23">
+<link rel="stylesheet" href="style.css?v=hero24">
 <link rel="stylesheet" href="hero-snow.css?v=1">
 <link rel="stylesheet" href="resort-carousel.css?v=16">
 </head>
@@ -560,6 +560,7 @@ b.querySelector('.announce-x').addEventListener('click',function(){b.hidden=true
                 <label class="lv"><input type="radio" name="level" value="Lv.4 能在中級道平行式轉彎" data-lv="4" required><span class="lv-no">Lv.4</span><span class="lv-desc">能在中級道平行式轉彎</span></label>
                 <label class="lv"><input type="radio" name="level" value="Lv.5 能刻滑，開始挑戰陡坡、蘑菇或粉雪" data-lv="5" required><span class="lv-no">Lv.5</span><span class="lv-desc">能刻滑，開始挑戰陡坡、蘑菇或粉雪</span></label>
             </div>
+            <p class="lv-note">程度不同或想說明更多，請寫在備註</p>
             <span class="err" data-err="level"></span>
           </fieldset>
           <div class="row2">
@@ -642,7 +643,8 @@ b.querySelector('.announce-x').addEventListener('click',function(){b.hidden=true
             <span class="err" data-err="email"></span>
           </label>
           <label class="fld">備註
-            <textarea name="notes" rows="3" maxlength="500" placeholder="其他需求"></textarea>
+            <span class="notes-hint">請在備註寫下每位學員的程度，例如：第一次滑、會落葉飄、會轉彎，或想加強的地方，方便我們為您安排合適的教練。</span>
+            <textarea name="notes" rows="4" maxlength="500" placeholder="例：大人 A 第一次滑；小孩 B 會落葉飄，想學轉彎"></textarea>
           </label>
         </fieldset>
 
@@ -1110,7 +1112,18 @@ Jay教練是我們這兩天玩的這麼愉快的大功臣！
 <div class="toast" id="toast" role="status" aria-live="polite"></div>
 <script src="hero-snow.js?v=1"></script>
 <dialog class="lightbox" id="lightbox" aria-label="放大圖片"><button type="button" class="lb-close" aria-label="關閉">×</button><img alt=""></dialog>
-<script src="script.js?v=ms8"></script>
+<div class="msum" id="msum" hidden>
+  <div class="msum-sheet" id="msum-sheet" role="region" aria-label="您的預約明細" hidden>
+    <p class="msum-title">您的預約</p>
+    <dl class="msum-dl" id="msum-dl"></dl>
+  </div>
+  <button type="button" class="msum-bar" id="msum-bar" aria-expanded="false" aria-controls="msum-sheet">
+    <span class="msum-l"><span class="msum-k">預估費用</span><span class="msum-sub" id="msum-sub">查看您的選擇</span></span>
+    <strong class="msum-v" id="msum-v">選擇雪場後顯示</strong>
+    <svg class="msum-chev" viewBox="0 0 24 24" aria-hidden="true"><path d="M6 15l6-6 6 6" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>
+  </button>
+</div>
+<script src="script.js?v=ms9"></script>
 <script src="resort-carousel.js?v=18"></script>
 </body>
 </html>

@@ -796,7 +796,43 @@
     const liveNote = $('#live-price-note');
     if (liveNote) liveNote.textContent = booking.price.note || '以我們的回覆為準';
     $$('.wiz-est-off').forEach(el => { el.textContent = booking.price.offseasonNote || ''; el.hidden = !booking.price.offseasonNote || booking.price.amount == null; });
+
+    updateMsum();
   }
+  // mobile: sticky bottom bar + expandable sheet with the same details as the desktop panel
+  function updateMsum() {
+    const dl = $('#msum-dl'); if (!dl) return;
+    const p = booking.price, sel = form.elements.resort, opt = sel && sel.selectedOptions && sel.selectedOptions[0];
+    const resort = opt && sel.value ? opt.textContent.trim() : '';
+    const rows = [
+      ['板類', esc(booking.discipline || '尚未選擇')],
+      ['程度', esc(booking.level || '—')],
+      ['雪場', esc(resort || '尚未選擇')],
+      ['日期', datesHTML(false)],
+      ['人數', esc(`大人 ${booking.adults}・小孩 ${booking.children}（共 ${booking.totalPeople} 人）`)],
+    ];
+    const dur = durationText(booking); if (dur) rows.push(['課程', esc(dur)]);
+    if (p.offseasonNote && p.amount != null) rows.push(['優惠', esc(p.offseasonNote)]);
+    rows.push(['預估費用', `<strong class="msum-total${p.quoteRequired || p.needsResort ? ' is-text' : ''}">${esc(p.display)}</strong><small class="msum-note">${esc(p.note && p.note !== p.offseasonNote ? p.note : '以我們的回覆為準')}</small>`]);
+    dl.innerHTML = rows.map(([k, v]) => `<div><dt>${k}</dt><dd>${v}</dd></div>`).join('');
+    const v = $('#msum-v'); v.textContent = p.display; v.classList.toggle('is-text', !!(p.quoteRequired || p.needsResort));
+    const n = booking.dates.length;
+    $('#msum-sub').textContent = [resort.replace(/（.*?）/g, ''), n ? `${n} 天` : '', `${booking.totalPeople} 人`].filter(Boolean).join('・');
+  }
+  (() => {
+    const box = $('#msum'), bar = $('#msum-bar'), sheet = $('#msum-sheet'), sec = $('#booking');
+    if (!box || !sec) return;
+    const mq = matchMedia('(max-width:1000px)');
+    let inView = false;
+    const setOpen = o => { bar.setAttribute('aria-expanded', String(o)); sheet.hidden = !o; box.classList.toggle('is-open', o); };
+    const sync = () => { const on = mq.matches && inView; box.hidden = !on; document.body.classList.toggle('msum-on', on); if (!on) setOpen(false); };
+    bar.addEventListener('click', () => setOpen(sheet.hidden));
+    document.addEventListener('keydown', e => { if (e.key === 'Escape' && !sheet.hidden) setOpen(false); });
+    document.addEventListener('click', e => { if (!sheet.hidden && !box.contains(e.target)) setOpen(false); });
+    new IntersectionObserver(es => { inView = es[0].isIntersecting; sync(); }, { rootMargin: '0px 0px -40% 0px' }).observe(sec);
+    (mq.addEventListener ? mq.addEventListener('change', sync) : mq.addListener(sync));
+    document.body.classList.add('msum-ready');
+  })();
 
   /* ---------- validation ---------- */
   const setErr = (k, t) => {
