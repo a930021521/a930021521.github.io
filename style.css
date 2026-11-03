@@ -669,6 +669,7 @@ button{cursor:pointer}
 
 .avatar-photo{overflow:hidden;padding:0}
 .avatar-photo img{width:100%;height:100%;object-fit:cover;display:block}
+.avatar-photo picture{display:block;width:100%;height:100%;align-self:stretch;justify-self:stretch}
 
 /* ===== hero snow mode switch (OFF: calm hero · ON: colour + bokeh snow + booking CTA) ===== */
 .hero-copy,.hero .quick{position:relative;z-index:1}
