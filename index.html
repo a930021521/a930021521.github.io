@@ -45,7 +45,7 @@
 <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@200;300;400;600;700&display=swap" rel="stylesheet">
 <link rel="preload" as="image" type="image/webp" href="img/hero-m-opt5.webp" media="(max-width:640px)" fetchpriority="high">
 <link rel="preload" as="image" type="image/webp" href="img/hero-yuzawa-1920.webp" media="(min-width:641px)" fetchpriority="high">
-<link rel="stylesheet" href="style.css?v=hero18">
+<link rel="stylesheet" href="style.css?v=hero19">
 <link rel="stylesheet" href="hero-snow.css?v=1">
 <link rel="stylesheet" href="resort-carousel.css?v=16">
 </head>
@@ -580,6 +580,13 @@ b.querySelector('.announce-x').addEventListener('click',function(){b.hidden=true
         <!-- step 2 -->
         <fieldset class="step" data-step="2">
           <legend class="step-title">選擇日期</legend>
+          <div class="row2">
+            <label class="fld">雪場 <em>*</em>
+              <select name="resort" required><option value="" selected disabled hidden>請選擇雪場</option><optgroup label="越後湯澤"><option value="岩原">岩原 Iwappara（夜場）</option><option value="中里">中里 Yuzawa Nakazato</option><option value="苗場">苗場 Naeba</option><option value="神樂">神樂 Kagura</option><option value="神立">神立 Kandatsu</option><option value="石打丸山">石打丸山 Ishiuchi Maruyama</option><option value="湯澤由教練建議">湯澤由教練建議</option></optgroup><optgroup label="北海道"><option value="北海道・二世古">二世古 Niseko</option><option value="北海道・留壽都">留壽都 Rusutsu</option><option value="北海道・富良野">富良野 Furano</option><option value="北海道・星野">星野 Tomamu</option><option value="北海道・札幌國際">札幌國際 Sapporo Kokusai</option><option value="北海道・手稻">手稻 Sapporo Teine</option></optgroup></select>
+              <span class="err" data-err="resort"></span>
+            </label>
+          </div>
+          <p class="days-note" id="night-note" hidden>岩原設有夜場，平日營業至 19:00、假日至 20:00。夜場以 3 小時計，可單獨預約，也可加在白天課程之後；時數可彈性調整，請於備註告知，實際開始時間將由教練與您確認。</p>
           <p class="hint">點選日曆加入上課日，可以選多天、不必連續；每一天可複選時段。</p>
           <div class="cal" id="cal">
             <div class="cal-head">
@@ -592,14 +599,7 @@ b.querySelector('.announce-x').addEventListener('click',function(){b.hidden=true
           </div>
           <ul class="days" id="days" aria-live="polite"></ul>
           <p class="days-empty" id="days-empty">還沒有選日期。</p>
-          <p class="days-note" id="night-note" hidden>岩原設有夜場，平日營業至 19:00、假日至 20:00。夜場以 3 小時計，可單獨預約，也可加在白天課程之後；時數可彈性調整，請於備註告知，實際開始時間將由教練與您確認。</p>
           <span class="err" data-err="dates"></span>
-          <div class="row2">
-            <label class="fld">雪場 <em>*</em>
-              <select name="resort" required><option value="" selected disabled hidden>請選擇雪場</option><optgroup label="越後湯澤"><option value="岩原">岩原 Iwappara（夜場）</option><option value="中里">中里 Yuzawa Nakazato</option><option value="苗場">苗場 Naeba</option><option value="神樂">神樂 Kagura</option><option value="神立">神立 Kandatsu</option><option value="石打丸山">石打丸山 Ishiuchi Maruyama</option><option value="湯澤由教練建議">湯澤由教練建議</option></optgroup><optgroup label="北海道"><option value="北海道・二世古">二世古 Niseko</option><option value="北海道・留壽都">留壽都 Rusutsu</option><option value="北海道・富良野">富良野 Furano</option><option value="北海道・星野">星野 Tomamu</option><option value="北海道・札幌國際">札幌國際 Sapporo Kokusai</option><option value="北海道・手稻">手稻 Sapporo Teine</option></optgroup></select>
-              <span class="err" data-err="resort"></span>
-            </label>
-          </div>
         </fieldset>
 
         <!-- step 3 -->
@@ -1110,7 +1110,7 @@ Jay教練是我們這兩天玩的這麼愉快的大功臣！
 <div class="toast" id="toast" role="status" aria-live="polite"></div>
 <script src="hero-snow.js?v=1"></script>
 <dialog class="lightbox" id="lightbox" aria-label="放大圖片"><button type="button" class="lb-close" aria-label="關閉">×</button><img alt=""></dialog>
-<script src="script.js?v=ms3"></script>
+<script src="script.js?v=ms4"></script>
 <script src="resort-carousel.js?v=18"></script>
 </body>
 </html>
