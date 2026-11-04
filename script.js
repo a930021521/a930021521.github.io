@@ -95,6 +95,7 @@
     '留壽都':   { full: [75000, 80000, 85000, 90000],  half: [45000, 50000, 55000, 60000] },
     '星野':     { full: [71500, 86900, 102300, 117700], half: [49500, 64900, 80300, 95700] }
   };
+  const NO_SURCHARGE = new Set(['星野']); // 全季同價，不加季節加價
   const SEASON_SURCHARGE = { // JPY，每位教練每天
     low:  { full: 0, half: 0 },
     peak: { full: 15000, half: 10000 }, // 旺季 1/3–3/2
@@ -187,7 +188,7 @@
     const season = seasonOf(date);
     if (!season) return { ok: false, reason: 'out_of_season', date };
     const base = HOKKAIDO_BASE[key][sk][n - 1];
-    const surcharge = SEASON_SURCHARGE[season][sk];
+    const surcharge = NO_SURCHARGE.has(key) ? 0 : SEASON_SURCHARGE[season][sk];
     const raw = base + surcharge;
     const early = isEarlyBirdOn(asOf);
     return {
