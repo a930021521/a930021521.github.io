@@ -303,7 +303,7 @@
       balance,
       depositDisplay: ntd(deposit),
       balanceDisplay: ntd(balance),
-      basis: basisText(early, seasonsUsed),
+      basis: basisText(early, NO_SURCHARGE.has(key) ? null : seasonsUsed),
       earlyBird: early,
       earlyBirdRate: early ? EARLY_BIRD.rate : 1,
       jpy: { raw: rawJpy, total: totalJpy, deposit: depositJpy, balance: totalJpy - depositJpy },
