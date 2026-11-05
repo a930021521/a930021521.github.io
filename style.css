@@ -225,6 +225,8 @@ button{cursor:pointer}
 .eb-badge .n{font-family:var(--lat);font-weight:700;font-size:2.9rem;letter-spacing:-.02em}
 .eb-badge .n small{font-family:var(--sans);font-size:1.25rem;font-weight:700;margin-left:2px}
 .eb-badge .off{margin-top:6px;font-family:var(--lat);font-size:.7rem;font-weight:600;letter-spacing:.22em;opacity:.9}
+.eb-title .eb-l{display:inline-block;white-space:nowrap}
+@media (max-width:640px){.eb-title .eb-l{display:block}.eb-hero .eb-title:has(.eb-l){font-size:1.55rem;letter-spacing:.04em}}
 .eb-badge--text .n{font-family:var(--sans);font-size:2.1rem;letter-spacing:.04em}
 .eb-badge--text .off{font-size:.82rem;letter-spacing:.08em;margin-top:8px}
 .est-note{font-size:.78rem;font-weight:500;color:var(--mute)}
@@ -1204,7 +1206,8 @@ button{cursor:pointer}
 .hero-eb{margin-top:4px;font-size:.95rem;font-weight:400;letter-spacing:.04em;color:var(--blue-3);text-shadow:0 1px 10px rgba(0,0,0,.45)}
 .hero-eb time{font-family:var(--lat);font-weight:600;letter-spacing:.04em;color:#fff}
 .hero-eb-sep{margin:0 .35em;color:rgba(207,220,255,.55)}
-.hero-eb-price{font-weight:500;color:#fff}
+.hero-eb-price{font-weight:500;color:#fff;white-space:nowrap}
+@media (max-width:640px){.hero-eb-tag{display:block}.hero-eb-sep2{display:none}}
 .hero-cta{display:flex;flex-wrap:wrap;gap:12px;margin-top:20px}
 .hero-btn{display:inline-flex;align-items:center;justify-content:center;min-width:148px;padding:12px 28px;border-radius:999px;font-size:.95rem;font-weight:500;letter-spacing:.12em;line-height:1.4;text-decoration:none;transition:transform .2s ease,box-shadow .2s ease,border-color .2s ease,background-color .2s ease}
 .hero-btn--main{background:linear-gradient(180deg,#F2F4F7 0%,#C4CAD2 100%);color:var(--night);font-weight:700;box-shadow:0 8px 26px rgba(0,0,0,.35),inset 0 1px 0 rgba(255,255,255,.7)}
