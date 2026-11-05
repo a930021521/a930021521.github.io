@@ -1531,3 +1531,14 @@ html.has-announce{scroll-padding-top:calc(84px + var(--announce-h))}
 .wa-same{margin-top:8px;font-size:.84rem}
 .wa-same input{accent-color:#25D366}
 #cid-field input.is-synced{opacity:.8;cursor:default}
+
+/* early-bird card (refined) */
+.eb-card{position:relative;margin:0 0 18px;padding:20px 22px 18px;border-radius:14px;border:1px solid rgba(214,224,240,.28);background:linear-gradient(160deg,rgba(28,42,78,.72) 0%,rgba(12,20,40,.62) 100%);box-shadow:0 0 0 1px rgba(255,255,255,.03) inset,0 10px 30px rgba(0,0,0,.18)}
+.eb-card::before{content:"";position:absolute;left:22px;right:22px;top:0;height:1px;background:linear-gradient(90deg,transparent,rgba(220,232,255,.55),transparent)}
+.eb-card-top{display:flex;align-items:center;justify-content:space-between;gap:12px;margin-bottom:10px}
+.eb-card-kicker{font-family:var(--lat);font-size:.68rem;font-weight:600;letter-spacing:.24em;color:#a9c4ff}
+.eb-card-chip{flex:none;padding:3px 11px;border-radius:999px;border:1px solid rgba(214,224,240,.4);font-size:.74rem;letter-spacing:.06em;color:#e8eefb;background:rgba(255,255,255,.04)}
+.eb-card-chip time{font-family:var(--lat);font-weight:600}
+.eb-card-title{margin:0;font-size:1.35rem;font-weight:600;letter-spacing:.12em;color:#fff}
+.eb-card-sub{margin:6px 0 0;font-size:.88rem;letter-spacing:.04em;color:rgba(232,238,251,.72)}
+.eb-card-ex{display:block;margin-top:2px;font-size:.78rem;color:rgba(232,238,251,.5)}
