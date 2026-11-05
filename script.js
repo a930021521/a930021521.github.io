@@ -113,8 +113,7 @@
   const EB_EXT_END = Date.parse('2026-11-15T23:59:59.999+08:00');
   const EB_EXT_ON = (() => { const q = (location.search.match(/[?&]eb=([01])/) || [])[1]; return q ? q === '1' : Date.now() <= EB_EXT_END; })();
   const EB_EXT = { rate: 0.85, label: '早鳥限時優惠第二彈', until: '2026/11/15',
-    yuzawa: { half: [8000, 9000, 10000, 11000, 12000], full: [12000, 13000, 14000, 15000, 16000] }, // 第二彈：一般價 −NT$1,000，5–6 人用最後一格
-    sapporo: { half: [7700, 8500, 9400, 10200, 11100], full: [11100, 11900, 12800, 13600, 14500] } }; // 札幌搶先開滑：現價 × 0.85 取整百（同北海道）
+    yuzawa: { half: [8000, 9000, 10000, 11000, 12000], full: [12000, 13000, 14000, 15000, 16000] } }; // 第二彈：一般價 −NT$1,000，5–6 人用最後一格
   const EB_EXCLUDE = new Set(['星野']); // 星野 維持現價（9 折），不適用早鳥 85 折
   (function applyEbDom() {
     const on = EB_EXT_ON;
@@ -254,14 +253,14 @@
       }
       if (n0 > SAPPORO_EARLY.maxPeople) return quoteResult('over_max', '請私訊報價', { resort: '札幌國際', people: n0 });
       if (n0 >= 1) {
-        const amount = list0.reduce((s, d) => s + slotUnits(d.slot).reduce((u, k) => { const t = (EB_EXT_ON ? EB_EXT.sapporo : SAPPORO_EARLY.table)[k]; return u + t[Math.min(n0, t.length) - 1]; }, 0), 0);
+        const amount = list0.reduce((s, d) => s + slotUnits(d.slot).reduce((u, k) => { const t = SAPPORO_EARLY.table[k]; return u + t[Math.min(n0, t.length) - 1]; }, 0), 0);
         const deposit = Math.round(amount * depositRate);
         const halfDays = list0.filter(d => slotKey(d.slot) === 'half').length;
         return {
-          ok: true, quoteRequired: false, hokkaido: true, sapporoEarly: true, ebExt: EB_EXT_ON, label: EB_EXT_ON ? '札幌國際 搶先開滑早鳥價' : SAPPORO_EARLY.label,
+          ok: true, quoteRequired: false, hokkaido: true, sapporoEarly: true, label: SAPPORO_EARLY.label,
           amount, display: ntd(amount), deposit, balance: amount - deposit,
           depositDisplay: ntd(deposit), balanceDisplay: ntd(amount - deposit),
-          basis: (EB_EXT_ON ? `札幌國際 搶先開滑・早鳥限時優惠第二彈（${EB_EXT.until} 截止）` : '札幌國際 搶先開滑價') + '，整組總價；實際以確認為準',
+          basis: '札幌國際 搶先開滑價，整組總價；實際以確認為準',
           earlyBird: false, resort: '札幌國際', people: n0, days: [],
           breakdown: { halfDays, fullDays: list0.length - halfDays, totalPeople: n0, seasons: ['搶先開滑'] }
         };
@@ -339,7 +338,7 @@
     };
   }
   function priceNote(price) {
-    if (price && price.sapporoEarly) return (price.ebExt ? '札幌國際早鳥限時優惠第二彈' : '札幌國際搶先開滑價') + '；實際以確認為準';
+    if (price && price.sapporoEarly) return '札幌國際搶先開滑價；實際以確認為準';
     if (price && price.hokkaido && price.amount != null && !price.quoteRequired) {
       if (price.ebExt) return '含早鳥限時優惠第二彈；實際以確認為準';
       return price.earlyBird ? '含 9 折；實際以確認為準' : '實際以確認為準';
