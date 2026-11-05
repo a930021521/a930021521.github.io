@@ -1543,3 +1543,27 @@ html.has-announce{scroll-padding-top:calc(84px + var(--announce-h))}
 .eb-card-sub{margin:6px 0 0;font-size:.88rem;letter-spacing:.04em;color:rgba(232,238,251,.72)}
 .eb-card-ex{display:block;margin-top:2px;font-size:.78rem;color:rgba(232,238,251,.5)}
 #prices-yuzawa .price-cell{align-items:flex-start}
+
+/* ===== v3 early-bird editorial (only renders while early-bird is on) ===== */
+.eb-card{padding:22px 24px 20px;border-radius:12px;border:1px solid rgba(206,220,245,.18);background:linear-gradient(180deg,rgba(22,34,64,.55) 0%,rgba(10,17,34,.45) 100%);box-shadow:none}
+.eb-card::before{left:24px;right:auto;width:56px;background:linear-gradient(90deg,#bcd4ff,rgba(188,212,255,0))}
+.eb-card-top{margin-bottom:14px}
+.eb-card-kicker{font-size:.64rem;font-weight:500;letter-spacing:.32em;color:#9fbcf2}
+.eb-card-chip{padding:4px 12px;border-color:rgba(188,212,255,.35);background:transparent;color:#d6e4ff;font-size:.72rem;letter-spacing:.12em}
+.eb-card-title{font-size:1.5rem;font-weight:300;letter-spacing:.22em;line-height:1.25}
+.eb-card-sub{margin-top:8px;font-size:.84rem;letter-spacing:.08em;color:rgba(226,234,250,.62)}
+.eb-card-ex{margin-top:4px;font-size:.74rem;letter-spacing:.06em;color:rgba(226,234,250,.42)}
+@media (min-width:900px){.eb-card{display:grid;grid-template-columns:1fr auto;align-items:end;column-gap:32px;padding:26px 32px}.eb-card-top{grid-column:1/-1}.eb-card-title{font-size:1.75rem}.eb-card-sub{grid-column:1}.eb-card .eb-card-chip{}}
+#prices-yuzawa:has(.eb-card:not([hidden])) table{font-variant-numeric:tabular-nums}
+#prices-yuzawa:has(.eb-card:not([hidden])) thead th{font-size:.7rem;font-weight:500;letter-spacing:.2em;color:rgba(188,212,255,.8);background:transparent;border-bottom:1px solid rgba(206,220,245,.16);padding-top:12px;padding-bottom:12px}
+#prices-yuzawa:has(.eb-card:not([hidden])) thead th:not(:first-child),#prices-yuzawa:has(.eb-card:not([hidden])) tbody td{text-align:right}
+#prices-yuzawa:has(.eb-card:not([hidden])) tbody th{font-family:var(--lat);font-weight:400;letter-spacing:.06em;color:rgba(232,238,251,.82)}
+#prices-yuzawa:has(.eb-card:not([hidden])) tbody th,#prices-yuzawa:has(.eb-card:not([hidden])) tbody td{padding-top:15px;padding-bottom:15px;border-bottom-color:rgba(206,220,245,.08)}
+#prices-yuzawa .price-cell{align-items:flex-end;gap:3px}
+#prices-yuzawa .price-cell .was{font-size:.68rem;font-weight:400;letter-spacing:.02em;color:rgba(226,234,250,.34);text-decoration-color:rgba(226,234,250,.34)}
+#prices-yuzawa .price-cell .now{font-size:1.06rem;font-weight:600;letter-spacing:.01em;color:#dbe8ff}
+@media (min-width:900px){#prices-yuzawa .price-cell .now{font-size:1.15rem}#prices-yuzawa:has(.eb-card:not([hidden])) tbody th,#prices-yuzawa:has(.eb-card:not([hidden])) tbody td{padding:18px 28px}}
+#prices-yuzawa:has(.eb-card:not([hidden])) th,#prices-yuzawa:has(.eb-card:not([hidden])) td{white-space:nowrap}
+@media (max-width:640px){#prices-yuzawa:has(.eb-card:not([hidden])) th,#prices-yuzawa:has(.eb-card:not([hidden])) td{padding-left:14px;padding-right:14px}#prices-yuzawa:has(.eb-card:not([hidden])) thead th{letter-spacing:.1em}#prices-yuzawa:has(.eb-card:not([hidden])) thead small{margin-left:2px;letter-spacing:0}#prices-yuzawa .price-cell .now{font-size:1rem}.eb-card-title{font-size:1.4rem;letter-spacing:.18em}}
+@media (min-width:900px){#prices-yuzawa:has(.eb-card:not([hidden])) thead th:first-child{width:40%}}
+@media (max-width:640px){#prices-yuzawa:has(.eb-card:not([hidden])) table{min-width:0}#prices-yuzawa:has(.eb-card:not([hidden])) th,#prices-yuzawa:has(.eb-card:not([hidden])) td{padding-left:12px;padding-right:12px}#prices-yuzawa:has(.eb-card:not([hidden])) tbody td:last-child,#prices-yuzawa:has(.eb-card:not([hidden])) thead th:last-child{padding-right:16px}#prices-yuzawa .price-cell .now{font-size:.95rem}.eb-card{padding:20px 18px 18px}.eb-card-kicker{letter-spacing:.2em}.eb-card::before{left:18px}}
