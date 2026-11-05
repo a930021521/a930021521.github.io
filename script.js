@@ -108,6 +108,20 @@
   }
   /* 北海道 9 折開關：true = 價表顯示划線原價＋9 折、預估費用打 9 折；false = 全部回原價（價表改顯示原價、隱藏 9 折字樣） */
   const HOKKAIDO_DISCOUNT_ON = true;
+  /* 早鳥延長：2026/11/15 23:59（台北時間）前預約 → 整季早鳥價（湯澤早鳥價、北海道 85 折〔星野除外〕、札幌國際搶先開滑早鳥價）。
+   * 時間一過自動回到一般價＋湯澤淡季折抵＋北海道 9 折。測試用：網址加 ?eb=1 / ?eb=0 強制開關。 */
+  const EB_EXT_END = Date.parse('2026-11-15T23:59:59.999+08:00');
+  const EB_EXT_ON = (() => { const q = (location.search.match(/[?&]eb=([01])/) || [])[1]; return q ? q === '1' : Date.now() <= EB_EXT_END; })();
+  const EB_EXT = { rate: 0.85, label: '早鳥優惠', until: '2026/11/15',
+    yuzawa: { half: [7000, 8000, 9000, 10000], full: [12000, 13000, 14000, 14000] }, // 5 人以上私訊詳談（同舊早鳥版）
+    sapporo: { half: [7000, 8000, 9000, 10000], full: [12000, 13000, 14000, 15000] } };
+  const EB_EXCLUDE = new Set(['星野']); // 星野 維持現價（9 折），不適用早鳥 85 折
+  (function applyEbDom() {
+    const on = EB_EXT_ON;
+    document.querySelectorAll('[data-eb-on]').forEach(el => { el.hidden = !on; });
+    document.querySelectorAll('[data-eb-off]').forEach(el => { el.hidden = on; });
+    if (!on) document.querySelectorAll('[data-off-text]').forEach(el => { el.textContent = el.dataset.offText; });
+  })();
   const EARLY_BIRD = { rate: 0.9, label: '9 折優惠' };
   const SEASON_LABEL = { low: '淡季', peak: '旺季', super: '超旺季' };
   const YUZAWA_BASIS = '2026–27 課程費用，整組總價；實際費用以我們的回覆為準';
@@ -148,9 +162,19 @@
     });
   }
   function applyEarlyBird(raw) { return Math.round(raw * EARLY_BIRD.rate); }
+  const ebExt = key => EB_EXT_ON && !EB_EXCLUDE.has(key);
+  // NT$ list price × rate; 早鳥 85 折 rounds to NT$100 (same as 價表 / 舊早鳥版)
+  const hkDiscTwd = (twd, key) => ebExt(key) ? 100 * Math.round(twd * EB_EXT.rate / 100) : applyEarlyBird(twd);
+  const hkDiscJpy = (jpy, key) => Math.round(jpy * (ebExt(key) ? EB_EXT.rate : EARLY_BIRD.rate));
   function basisText(early, seasons) {
     const bits = [];
     if (early) bits.push('含 9 折');
+    if (seasons && seasons.length) bits.push('季節：' + seasons.join('・'));
+    bits.push('實際以確認為準');
+    return bits.join('；');
+  }
+  function basisTextEb(seasons) {
+    const bits = [`含早鳥優惠（${EB_EXT.until} 前預約）`];
     if (seasons && seasons.length) bits.push('季節：' + seasons.join('・'));
     bits.push('實際以確認為準');
     return bits.join('；');
@@ -203,8 +227,8 @@
       surcharge,
       raw,              // JPY
       earlyBird: early,
-      amountJpy: early ? applyEarlyBird(raw) : raw,
-      amount: early ? applyEarlyBird(jpyToTwd(raw)) : jpyToTwd(raw) // per-day NT$ reference only (9 折 on the NT$ list price, same as 價表)
+      amountJpy: early ? hkDiscJpy(raw, key) : raw,
+      amount: early ? hkDiscTwd(jpyToTwd(raw), key) : jpyToTwd(raw) // per-day NT$ reference only (9 折 on the NT$ list price, same as 價表)
     };
   }
   /**
@@ -228,16 +252,17 @@
       if (!list0.every(d => inSapporoWindow(d.date))) {
         return quoteResult('out_of_season', '札幌國際 11/20–12/16 以外的日期，請私訊報價', { resort: '札幌國際', people: n0 });
       }
+      if (EB_EXT_ON && n0 > 4) return quoteResult('over_max', '5 人以上請私訊報價', { resort: '札幌國際', people: n0 });
       if (n0 > SAPPORO_EARLY.maxPeople) return quoteResult('over_max', '請私訊報價', { resort: '札幌國際', people: n0 });
       if (n0 >= 1) {
-        const amount = list0.reduce((s, d) => s + slotUnits(d.slot).reduce((u, k) => { const t = SAPPORO_EARLY.table[k]; return u + t[Math.min(n0, t.length) - 1]; }, 0), 0);
+        const amount = list0.reduce((s, d) => s + slotUnits(d.slot).reduce((u, k) => { const t = (EB_EXT_ON ? EB_EXT.sapporo : SAPPORO_EARLY.table)[k]; return u + t[Math.min(n0, t.length) - 1]; }, 0), 0);
         const deposit = Math.round(amount * depositRate);
         const halfDays = list0.filter(d => slotKey(d.slot) === 'half').length;
         return {
-          ok: true, quoteRequired: false, hokkaido: true, sapporoEarly: true, label: SAPPORO_EARLY.label,
+          ok: true, quoteRequired: false, hokkaido: true, sapporoEarly: true, ebExt: EB_EXT_ON, label: EB_EXT_ON ? '札幌國際 搶先開滑早鳥價' : SAPPORO_EARLY.label,
           amount, display: ntd(amount), deposit, balance: amount - deposit,
           depositDisplay: ntd(deposit), balanceDisplay: ntd(amount - deposit),
-          basis: '札幌國際 搶先開滑價，整組總價；實際以確認為準',
+          basis: (EB_EXT_ON ? `札幌國際 搶先開滑早鳥價（${EB_EXT.until} 前預約）` : '札幌國際 搶先開滑價') + '，整組總價；實際以確認為準',
           earlyBird: false, resort: '札幌國際', people: n0, days: [],
           breakdown: { halfDays, fullDays: list0.length - halfDays, totalPeople: n0, seasons: ['搶先開滑'] }
         };
@@ -285,9 +310,9 @@
       days.push(one);
     }
     const rawJpy = days.reduce((s, d) => s + d.raw, 0);
-    const totalJpy = early ? applyEarlyBird(rawJpy) : rawJpy;
+    const totalJpy = early ? hkDiscJpy(rawJpy, key) : rawJpy;
     const depositJpy = Math.ceil(depositRate * Math.max(0, totalJpy));
-    const amount = early ? applyEarlyBird(jpyToTwd(rawJpy)) : jpyToTwd(rawJpy); // 9 折 on NT$ list price → matches 價表
+    const amount = early ? hkDiscTwd(jpyToTwd(rawJpy), key) : jpyToTwd(rawJpy); // 9 折 on NT$ list price → matches 價表
     const deposit = jpyToTwd(depositJpy);
     const balance = amount - deposit;
     const halfDays = days.filter(d => d.slot === 'half').length;
@@ -303,9 +328,10 @@
       balance,
       depositDisplay: ntd(deposit),
       balanceDisplay: ntd(balance),
-      basis: basisText(early, NO_SURCHARGE.has(key) ? null : seasonsUsed),
+      basis: ebExt(key) ? basisTextEb(NO_SURCHARGE.has(key) ? null : seasonsUsed) : basisText(early, NO_SURCHARGE.has(key) ? null : seasonsUsed),
+      ebExt: ebExt(key),
       earlyBird: early,
-      earlyBirdRate: early ? EARLY_BIRD.rate : 1,
+      earlyBirdRate: early ? (ebExt(key) ? EB_EXT.rate : EARLY_BIRD.rate) : 1,
       jpy: { raw: rawJpy, total: totalJpy, deposit: depositJpy, balance: totalJpy - depositJpy },
       resort: key,
       people: n,
@@ -314,8 +340,9 @@
     };
   }
   function priceNote(price) {
-    if (price && price.sapporoEarly) return '札幌國際搶先開滑價；實際以確認為準';
+    if (price && price.sapporoEarly) return (price.ebExt ? '札幌國際早鳥價' : '札幌國際搶先開滑價') + '；實際以確認為準';
     if (price && price.hokkaido && price.amount != null && !price.quoteRequired) {
+      if (price.ebExt) return '含早鳥優惠；實際以確認為準';
       return price.earlyBird ? '含 9 折；實際以確認為準' : '實際以確認為準';
     }
     return '以我們的回覆為準';
@@ -361,7 +388,7 @@
       b.balance = hk.balance;
       return {
         currency: CONFIG.currency,
-        label: hk.quoteRequired ? CONFIG.priceLabel : hk.label ? hk.label : (hk.earlyBird ? EARLY_BIRD.label : '北海道課程費用（預估）'),
+        label: hk.quoteRequired ? CONFIG.priceLabel : hk.label ? hk.label : hk.ebExt ? EB_EXT.label : (hk.earlyBird ? EARLY_BIRD.label : '北海道課程費用（預估）'),
         amount: hk.amount,
         display: hk.display,
         deposit: hk.deposit,
@@ -378,13 +405,13 @@
         breakdown: hk.breakdown || { halfDays, fullDays, totalPeople: people }
       };
     }
-    const overMax = people > CONFIG.maxPricedPeople;
+    const overMax = people > (EB_EXT_ON ? 4 : CONFIG.maxPricedPeople); // 早鳥：5 人以上私訊詳談
     let amount = null, offDays = 0;
     if (!overMax && people >= 1 && b.dates.length) {
       const extra = YUZAWA_SURCHARGE[String(b.resort || '').trim()] || 0; // per lesson day per group
       const units = d => slotUnits(d.slot);
-      offDays = b.dates.reduce((s, d) => s + (isYuzawaOffseason(d.date) ? units(d).length : 0), 0); // 淡季 per lesson (全日＋夜場 = 2)
-      amount = b.dates.reduce((sum, d) => sum + units(d).reduce((s, k) => s + (t => t[Math.min(people, t.length) - 1])(CONFIG.PRICE_TABLE[k]), 0) + extra, 0) - offDays * YUZAWA_OFFSEASON.off;
+      offDays = EB_EXT_ON ? 0 : b.dates.reduce((s, d) => s + (isYuzawaOffseason(d.date) ? units(d).length : 0), 0); // 淡季 per lesson (全日＋夜場 = 2)
+      amount = b.dates.reduce((sum, d) => sum + units(d).reduce((s, k) => s + (t => t[Math.min(people, t.length) - 1])((EB_EXT_ON ? EB_EXT.yuzawa : CONFIG.PRICE_TABLE)[k]), 0) + extra, 0) - offDays * YUZAWA_OFFSEASON.off;
     }
     const offNote = offDays ? `淡季優惠 −${ntd(offDays * YUZAWA_OFFSEASON.off)}${offDays > 1 ? `（NT$1,000 × ${offDays} 堂）` : ''}` : '';
     const deposit = amount == null ? null : Math.round(amount * b.depositRate);
@@ -396,7 +423,7 @@
     const later = overMax ? '私訊報價' : null;
     return {
       currency: CONFIG.currency,
-      label: CONFIG.priceLabel,
+      label: EB_EXT_ON ? '早鳥回饋價 2026–27' : CONFIG.priceLabel,
       amount,
       display: show(amount),
       deposit,
@@ -408,7 +435,7 @@
       earlyBird: false,
       offseasonDays: offDays,
       offseasonNote: offNote,
-      basis: YUZAWA_BASIS,
+      basis: EB_EXT_ON ? `早鳥回饋價 2026–27（${EB_EXT.until} 前預約），整組總價；實際費用以我們的回覆為準` : YUZAWA_BASIS,
       note: offNote || '以我們的回覆為準',
       duration,
       durationLabel: b.durationLabel,
