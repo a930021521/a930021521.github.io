@@ -1542,3 +1542,4 @@ html.has-announce{scroll-padding-top:calc(84px + var(--announce-h))}
 .eb-card-title{margin:0;font-size:1.35rem;font-weight:600;letter-spacing:.12em;color:#fff}
 .eb-card-sub{margin:6px 0 0;font-size:.88rem;letter-spacing:.04em;color:rgba(232,238,251,.72)}
 .eb-card-ex{display:block;margin-top:2px;font-size:.78rem;color:rgba(232,238,251,.5)}
+#prices-yuzawa .price-cell{align-items:flex-start}
