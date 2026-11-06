@@ -83,7 +83,7 @@
   const slotFromParts = p => Object.keys(SLOT_PARTS).find(k => { const q = SLOT_PARTS[k]; return q.length === p.length && q.every(x => p.includes(x)); }) || '全日';
   const slotLabel = s => (isNightResort(booking.resort) && NIGHT_LABELS[s]) || CONFIG.slotLabels[s] || s;
 
-  /* ---------- 北海道課程費用（預估） ----------
+  /* ---------- 北海道課程費用 ----------
    * 以日圓計：每天 (淡季底價 + 季節加價)，加總後（HOKKAIDO_DISCOUNT_ON 時）×0.9 四捨五入，
    * 再以固定匯率 1 TWD = 5.06 JPY 換成 NT$，四捨五入到百位（<NT$50 則無條件進位）。
    * 訂金 = ceil(30% × 日圓總額) 再換算；尾款 = 總額 NT$ − 訂金 NT$。 */
@@ -386,7 +386,7 @@
       b.balance = hk.balance;
       return {
         currency: CONFIG.currency,
-        label: hk.quoteRequired ? CONFIG.priceLabel : hk.label ? hk.label : hk.ebExt ? EB_EXT.label : (hk.earlyBird ? EARLY_BIRD.label : '北海道課程費用（預估）'),
+        label: hk.quoteRequired ? CONFIG.priceLabel : hk.label ? hk.label : hk.ebExt ? EB_EXT.label : (hk.earlyBird ? EARLY_BIRD.label : '北海道課程費用'),
         amount: hk.amount,
         display: hk.display,
         deposit: hk.deposit,
