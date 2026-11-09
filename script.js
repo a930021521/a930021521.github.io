@@ -62,15 +62,15 @@
   const ntd = v => 'NT$' + Math.round(v).toLocaleString('en-US');
   // 夜滑 is priced as 半日 when that slot is present. Anything other than 全日 is half.
   const slotKey = slot => (slot === '全日' || slot === 'full' || slot === '全日＋夜場') ? 'full' : 'half';
-  // 岩原 夜場：夜場 = 半天價；全日＋夜場 = 全天價＋半天價（淡季每堂各折 NT$1,000）
-  const NIGHT_RESORT = '岩原';
+  // 岩原／神立 夜場：夜場 = 半天價；全日＋夜場 = 全天價＋半天價（淡季每堂各折 NT$1,000）
+  const NIGHT_RESORTS = ['岩原', '神立'];
   const NIGHT_SLOTS = ['夜場', '全日＋夜場', '上午＋夜場', '下午＋夜場', '上午＋下午＋夜場'];
   const NIGHT_LABELS = { '全日': '全天（9:00–15:00）', '半日（上午）': '上午（9:00–12:00）', '半日（下午）': '下午（13:00–16:00）', '夜場': '夜場 3 小時（時數可彈性調整）', '全日＋夜場': '全天＋夜場', '上午＋夜場': '上午＋夜場', '下午＋夜場': '下午＋夜場', '上午＋下午＋夜場': '上午＋下午＋夜場' };
-  const isNightResort = r => String(r || '').trim() === NIGHT_RESORT;
+  const isNightResort = r => NIGHT_RESORTS.includes(String(r || '').trim());
   // 全日 = 1 堂全天；上午／下午／夜場 各 1 堂半天
   const SLOT_UNITS = { '全日': ['full'], '全日＋夜場': ['full', 'half'], '半日（上午）': ['half'], '半日（下午）': ['half'], '夜場': ['half'], '上午＋下午': ['half', 'half'], '上午＋夜場': ['half', 'half'], '下午＋夜場': ['half', 'half'], '上午＋下午＋夜場': ['half', 'half', 'half'] };
   const slotUnits = slot => SLOT_UNITS[slot] || [slotKey(slot)];
-  // 複選時段：全天 與 上午／下午 互斥；夜場（僅岩原）可與任一組合
+  // 複選時段：全天 與 上午／下午 互斥；夜場（岩原、神立）可與任一組合
   const CHIP_ICONS = {
     full: '<svg viewBox="0 0 24 24"><path d="M2 20 9 8l4 6 3-4 6 10z" fill="currentColor" opacity=".9"/><path d="M9 8l1.8 3H7.2z" fill="#fff" opacity=".85"/></svg>',
     am: '<svg viewBox="0 0 24 24"><path d="M3 18h18" stroke="currentColor" stroke-width="2" stroke-linecap="round"/><path d="M6.5 18a5.5 5.5 0 0 1 11 0z" fill="currentColor"/><path d="M12 6v2.5M5.6 9.6l1.6 1.6M18.4 9.6l-1.6 1.6" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>',
@@ -372,7 +372,7 @@
     const nightDays = isNightResort(b.resort) ? b.dates.filter(d => NIGHT_SLOTS.includes(d.slot)) : [];
     const amPmDays = b.dates.filter(d => d.slot === '上午＋下午');
     if (amPmDays.length) b.durationLabel += `（含上午＋下午：${amPmDays.map(d => d.date).join('、')}）`;
-    if (nightDays.length) b.durationLabel += `（含岩原夜場：${nightDays.map(d => d.date + ' ' + d.slot).join('、')}）`;
+    if (nightDays.length) b.durationLabel += `（含夜場：${nightDays.map(d => d.date + ' ' + d.slot).join('、')}）`;
     const hokkaido = String(b.resort || '').startsWith('北海道・');
     if (hokkaido) {
       const hk = estimateHokkaido({
@@ -639,7 +639,7 @@
     daysEmpty.textContent = booking.dates.length ? `已選 ${booking.dates.length} 天` : '還沒有選日期。';
     const nn = $('#night-note'); if (nn) nn.hidden = !isNightResort(booking.resort);
   }
-  // leaving 岩原: 夜場 options disappear → 夜場 → 下午 / 全日＋夜場 → 全日
+  // leaving 岩原／神立: 夜場 options disappear → 夜場 → 下午 / 全日＋夜場 → 全日
   function syncNightSlots() {
     if (!isNightResort(booking.resort)) booking.dates.forEach(d => { if (NIGHT_SLOTS.includes(d.slot)) { const p = partsFromSlot(d.slot).filter(k => k !== 'night'); d.slot = slotFromParts(p.length ? p : ['pm']); } });
     renderDays();

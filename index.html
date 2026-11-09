@@ -282,6 +282,13 @@ b.querySelector('.announce-x').addEventListener('click',function(){b.hidden=true
           <dl class="yz-off-dates"><dt>營業時間</dt><dd>平日至 19:00</dd><dd>假日至 20:00</dd></dl>
           <p class="yz-off-hint">岩原設有夜場，平日營業至 19:00、假日至 20:00。白天行程滿檔也能安排傍晚課程，可單獨預約或加在白天課程之後。夜場以 3 小時計，價格比照當日半天課；時數可依您的需求彈性調整，請於備註告知。</p>
         </div>
+        <div class="yz-off yz-night" role="note" aria-label="神立夜場">
+          <span class="yz-moon" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M15.5 3.2a8.6 8.6 0 1 0 5.3 14.6A7.2 7.2 0 0 1 15.5 3.2z" fill="currentColor"/></svg></span>
+          <span class="yz-off-tag">NIGHT SESSION・KANDATSU</span>
+          <p class="yz-off-title">神立夜場開放預約</p>
+          <dl class="yz-off-dates"><dt>營業時間</dt><dd>金／六／祝前日 18:00–翌日 2:00</dd></dl>
+          <p class="yz-off-hint">神立設有夜場，金／六／祝前日營業至翌日 2:00。白天行程滿檔也能安排傍晚課程，可單獨預約或加在白天課程之後。夜場以 3 小時計，價格比照當日半天課；時數可依您的需求彈性調整，請於備註告知。</p>
+        </div>
         <div class="table-scroll">
           <table>
             <caption class="sr-only">SNOWMODE 越後湯澤 課程費用 2026–27（NT$，整組總價）</caption>
@@ -593,11 +600,11 @@ b.querySelector('.announce-x').addEventListener('click',function(){b.hidden=true
           <legend class="step-title">雪場與日期</legend>
           <div class="row2">
             <label class="fld">雪場 <em>*</em>
-              <select name="resort" required><option value="" selected disabled hidden>請選擇雪場</option><optgroup label="越後湯澤"><option value="岩原">岩原 Iwappara（夜場）</option><option value="中里">中里 Yuzawa Nakazato</option><option value="苗場">苗場 Naeba</option><option value="神樂">神樂 Kagura</option><option value="神立">神立 Kandatsu</option><option value="石打丸山">石打丸山 Ishiuchi Maruyama</option><option value="湯澤由教練建議">湯澤由教練建議</option></optgroup><optgroup label="北海道"><option value="北海道・二世古">二世古 Niseko</option><option value="北海道・留壽都">留壽都 Rusutsu</option><option value="北海道・富良野">富良野 Furano</option><option value="北海道・星野">星野 Tomamu</option><option value="北海道・札幌國際">札幌國際 Sapporo Kokusai</option><option value="北海道・手稻">手稻 Sapporo Teine</option></optgroup></select>
+              <select name="resort" required><option value="" selected disabled hidden>請選擇雪場</option><optgroup label="越後湯澤"><option value="岩原">岩原 Iwappara（夜場）</option><option value="中里">中里 Yuzawa Nakazato</option><option value="苗場">苗場 Naeba</option><option value="神樂">神樂 Kagura</option><option value="神立">神立 Kandatsu（夜場）</option><option value="石打丸山">石打丸山 Ishiuchi Maruyama</option><option value="湯澤由教練建議">湯澤由教練建議</option></optgroup><optgroup label="北海道"><option value="北海道・二世古">二世古 Niseko</option><option value="北海道・留壽都">留壽都 Rusutsu</option><option value="北海道・富良野">富良野 Furano</option><option value="北海道・星野">星野 Tomamu</option><option value="北海道・札幌國際">札幌國際 Sapporo Kokusai</option><option value="北海道・手稻">手稻 Sapporo Teine</option></optgroup></select>
               <span class="err" data-err="resort"></span>
             </label>
           </div>
-          <p class="days-note" id="night-note" hidden>岩原設有夜場，平日營業至 19:00、假日至 20:00。夜場以 3 小時計，可單獨預約，也可加在白天課程之後；時數可彈性調整，請於備註告知，實際開始時間將由教練與您確認。</p>
+          <p class="days-note" id="night-note" hidden>岩原、神立設有夜場。岩原平日營業至 19:00、假日至 20:00；神立金／六／祝前日 18:00 至翌日 2:00。夜場以 3 小時計，可單獨預約，也可加在白天課程之後；時數可彈性調整，請於備註告知，實際開始時間將由教練與您確認。</p>
           <p class="hint">點選日曆加入上課日，可以選多天、不必連續；每一天可複選時段。</p>
           <div class="cal" id="cal">
             <div class="cal-head">
@@ -1133,7 +1140,7 @@ Jay教練是我們這兩天玩的這麼愉快的大功臣！
     <svg class="msum-chev" viewBox="0 0 24 24" aria-hidden="true"><path d="M6 15l6-6 6 6" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>
   </button>
 </div>
-<script src="script.js?v=eb5"></script>
-<script src="resort-carousel.js?v=18"></script>
+<script src="script.js?v=kn1"></script>
+<script src="resort-carousel.js?v=kn1"></script>
 </body>
 </html>
