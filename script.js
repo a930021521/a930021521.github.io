@@ -830,7 +830,8 @@
   }
   function updateLive() {
     booking.price = computePrice(booking);
-    const map = { discipline: booking.discipline || '尚未選擇', level: booking.level || '—', dates: datesText(true), people: `大人 ${booking.adults}・小孩 ${booking.children}（共 ${booking.totalPeople} 人）`, price: booking.price.display };
+    const rsel = form.elements.resort, ropt = rsel && rsel.selectedOptions && rsel.selectedOptions[0];
+    const map = { discipline: booking.discipline || '尚未選擇', level: booking.level || '—', resort: (ropt && rsel.value ? ropt.textContent.trim() : '') || '尚未選擇', dates: datesText(true), people: `大人 ${booking.adults}・小孩 ${booking.children}（共 ${booking.totalPeople} 人）`, price: booking.price.display };
     $$('[data-live]').forEach(el => { el.textContent = map[el.dataset.live]; });
     $$('[data-live="dates"]').forEach(el => { el.innerHTML = datesHTML(true); });
     $$('[data-live="price"]').forEach(el => { el.classList.toggle('is-quote', !!booking.price.quoteRequired); el.classList.toggle('is-pending', !!booking.price.needsResort); });
