@@ -812,10 +812,10 @@
   // customer-facing duration text (booking.durationLabel is left as-is for the payload)
   function durationText(b) {
     const days = b.dates || [], n = days.length; if (!n) return '';
-    const night = days.filter(d => NIGHT_SLOTS.includes(d.slot)).length, nightTxt = night ? `（含夜場 ${night} 天）` : '';
-    const half = days.filter(d => slotKey(d.slot) === 'half').length, full = n - half;
-    if (half && full) return `半天 ${half} 天・全天 ${full} 天${nightTxt}`;
-    return `${CONFIG.durationsDisplay[full ? 'full' : 'half']} × ${n} 天${nightTxt}`;
+    const NAMES = { full: '全天', am: '半天', pm: '半天', night: '夜場' };
+    const PART = { full: '全天', am: '上午', pm: '下午', night: '夜場' };
+    const names = days.map(d => { const ps = SLOT_PARTS[d.slot] || [slotKey(d.slot)]; return ps.length === 1 ? (NAMES[ps[0]] || '半天') : ps.map(p => PART[p] || '半天').join('＋'); });
+    return names.every(x => x === names[0]) ? `${names[0]} × ${n} 天` : `共 ${n} 天`;
   }
   function datesText(short) {
     if (!booking.dates.length) return '尚未選擇';
