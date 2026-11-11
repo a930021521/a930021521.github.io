@@ -47,6 +47,7 @@
     adults: 1,
     children: 0,
     childAges: [],
+    adultAge: '',
     totalPeople: 1,
     resort: '',
     notes: '',
@@ -354,13 +355,130 @@
   const isYuzawaOffseason = iso => YUZAWA_OFFSEASON.ranges.some(([a, z]) => iso >= a && iso <= z);
   const NO_RESORT_TEXT = '選擇雪場後顯示';
   const hasResort = b => { const r = String(b.resort || '').trim(); return !!r && !/由教練建議/.test(r); };
+  /* ---------- 折扣碼 ----------
+   * 這裡只存代碼的 SHA-256（先 trim 再轉小寫後再雜湊），不要把明文寫進這個檔案。
+   * 新增代碼時，在瀏覽器 Console 執行：
+   *   const t = 'YOURCODE'.trim().toLowerCase();
+   *   crypto.subtle.digest('SHA-256', new TextEncoder().encode(t)).then(buf => {
+   *     console.log([...new Uint8Array(buf)].map(b => b.toString(16).padStart(2, '0')).join(''));
+   *   });
+   * 然後把結果加進 DISCOUNT_CODES，例如：
+   *   { hash: '<64 位 hex>', type: 'percent', value: 10 }
+   *   { hash: '<64 位 hex>', type: 'fixed', value: 1000, expires: '2026-12-31', min: 8000 }
+   * type percent = 依目前顯示的預估費用（已含早鳥）打 value%；fixed = 現折 NT$ value。
+   * expires 可省略，台北時間該日 23:59:59 前有效；min 可省略，預估費用需達此 NT$ 門檻。
+   * 比對不分大小寫。星野同樣以畫面上的 NT$ 預估為準（日圓已換算）。
+   */
+  const DISCOUNT_CODES = [
+    { hash: '62edca691b3f86ccec256ccce6f3428d2ad94980a9bb6089cddbf686ab8c86ca', type: 'percent', value: 10 }
+  ];
+  const promoState = { applied: null, status: '', open: false };
+  async function sha256hex(str) {
+    const buf = await crypto.subtle.digest('SHA-256', new TextEncoder().encode(str));
+    return [...new Uint8Array(buf)].map(b => b.toString(16).padStart(2, '0')).join('');
+  }
+  const taipeiEndMs = iso => Date.parse(iso + 'T23:59:59.999+08:00');
+  function promoOffAmount(amount, rule) {
+    if (amount == null || !isFinite(amount) || amount <= 0) return 0;
+    if (rule.min && amount < Number(rule.min)) return null;
+    const off = rule.type === 'percent' ? Math.round(amount * Number(rule.value) / 100) : Math.round(Number(rule.value));
+    if (!isFinite(off) || off < 0) return 0;
+    return Math.min(off, amount);
+  }
+  function applyPromoToPrice(price) {
+    const out = { ...price, amountOriginal: price.amount, displayOriginal: price.display, discount: 0, code: '' };
+    const rule = promoState.applied;
+    if (!rule || price.quoteRequired || price.needsResort || price.amount == null) return out;
+    if (rule.expires && Date.now() > taipeiEndMs(rule.expires)) {
+      promoState.applied = null; promoState.status = 'expired';
+      return out;
+    }
+    const off = promoOffAmount(price.amount, rule);
+    if (off == null) {
+      promoState.applied = null; promoState.status = 'min';
+      return out;
+    }
+    if (off <= 0) return out;
+    const amount = price.amount - off;
+    const rate = (booking.depositRate != null) ? booking.depositRate : 0.3;
+    const deposit = Math.round(amount * rate);
+    const balance = amount - deposit;
+    booking.deposit = deposit; booking.balance = balance;
+    return { ...out, amount, discount: off, code: rule.code, display: ntd(amount), deposit, balance,
+      depositDisplay: ntd(deposit), balanceDisplay: ntd(balance) };
+  }
+  function promoStatusText() {
+    return promoState.status === 'invalid' ? '折扣碼無效'
+      : promoState.status === 'expired' ? '折扣碼已過期'
+      : promoState.status === 'min' ? '尚未達到此折扣碼的使用門檻'
+      : promoState.status === 'empty' ? '請輸入折扣碼'
+      : promoState.status === 'unavailable' ? '目前無法驗證折扣碼'
+      : '';
+  }
+  function syncPromoUI() {
+    const applied = !!promoState.applied;
+    const msg = applied ? '' : promoStatusText();
+    const open = !applied && !!promoState.open;
+    document.querySelectorAll('[data-promo]').forEach(box => {
+      box.classList.toggle('is-applied', applied);
+      box.classList.toggle('is-open', open);
+      box.classList.toggle('is-error', open && !!msg);
+      const ok = box.querySelector('.promo-ok');
+      if (ok) ok.hidden = !applied;
+      const st = box.querySelector('.promo-status');
+      if (st) st.textContent = open ? msg : '';
+      const tog = box.querySelector('[data-promo-toggle]');
+      if (tog) tog.setAttribute('aria-expanded', open ? 'true' : 'false');
+      if (applied) {
+        const input = box.querySelector('.promo-input');
+        if (input) input.value = promoState.applied.code || '';
+      }
+    });
+  }
+  function syncPriceDisplay() {
+    const p = booking.price || {};
+    const hasOff = p.discount > 0 && p.amount != null && !p.quoteRequired && !p.needsResort;
+    document.querySelectorAll('.price-was').forEach(el => {
+      el.textContent = hasOff ? (p.displayOriginal || (p.amountOriginal != null ? ntd(p.amountOriginal) : '')) : '';
+      el.hidden = !hasOff;
+    });
+    document.querySelectorAll('.price-disc').forEach(el => {
+      el.textContent = hasOff ? ('折扣 −' + ntd(p.discount)) : '';
+      el.hidden = !hasOff;
+    });
+    syncPromoUI();
+  }
+  async function applyPromo(raw) {
+    const code = String(raw || '').trim();
+    const fail = st => { promoState.applied = null; promoState.status = st; promoState.open = true; if (typeof updateLive === 'function') updateLive(); else syncPromoUI(); return false; };
+    if (!code) return fail('empty');
+    if (!crypto.subtle) return fail('unavailable');
+    const hex = await sha256hex(code.toLowerCase());
+    const rule = DISCOUNT_CODES.find(c => c.hash === hex);
+    if (!rule) return fail('invalid');
+    if (rule.expires && Date.now() > taipeiEndMs(rule.expires)) return fail('expired');
+    promoState.applied = { ...rule, code };
+    promoState.status = 'ok';
+    promoState.open = false;
+    if (typeof updateLive === 'function') updateLive(); else { booking.price = computePrice(booking); syncPriceDisplay(); }
+    return promoState.status === 'ok' && !!promoState.applied;
+  }
+  function clearPromo() {
+    promoState.applied = null;
+    promoState.status = '';
+    promoState.open = false;
+    document.querySelectorAll('.promo-input').forEach(el => { el.value = ''; });
+    if (typeof updateLive === 'function') updateLive(); else { booking.price = computePrice(booking); syncPriceDisplay(); }
+  }
   function computePrice(b) {
     const full = computePriceRaw(b);
-    if (hasResort(b)) return full;
-    b.deposit = null; b.balance = null;
-    return { ...full, amount: null, display: NO_RESORT_TEXT, deposit: null, balance: null,
-      depositDisplay: '—', balanceDisplay: '—', quoteRequired: false, hokkaido: false, earlyBird: false,
-      note: '以我們的回覆為準', needsResort: true };
+    if (!hasResort(b)) {
+      b.deposit = null; b.balance = null;
+      return applyPromoToPrice({ ...full, amount: null, display: NO_RESORT_TEXT, deposit: null, balance: null,
+        depositDisplay: '—', balanceDisplay: '—', quoteRequired: false, hokkaido: false, earlyBird: false,
+        note: '以我們的回覆為準', needsResort: true });
+    }
+    return applyPromoToPrice(full);
   }
   function computePriceRaw(b) {
     const people = Number(b.totalPeople) || 0;
@@ -442,11 +560,20 @@
   }
   function buildPayload() {
     booking.price = computePrice(booking);
-    return JSON.parse(JSON.stringify({ ...booking, submittedAt: new Date().toISOString(), source: 'snowmode-site' }));
+    const payload = JSON.parse(JSON.stringify({ ...booking, submittedAt: new Date().toISOString(), source: 'snowmode-site' }));
+    if (booking.price && booking.price.discount > 0) {
+      payload.code = booking.price.code;
+      payload.discount = booking.price.discount;
+    } else {
+      delete payload.code; delete payload.discount;
+    }
+    if (!payload.adultAge) delete payload.adultAge;
+    return payload;
   }
 
   window.SNOWMODE = {
     booking, CONFIG, computePrice, buildPayload, estimateHokkaido, seasonOf, jpyToTwd,
+    DISCOUNT_CODES, hashCode: sha256hex, applyPromo, clearPromo,
     async submitBooking(payload) {
       // text/plain avoids a CORS preflight, which Apps Script doesn't support
       const r = await fetch(CONFIG.endpoint, { method: 'POST', headers: { 'Content-Type': 'text/plain;charset=utf-8' }, body: JSON.stringify(payload) });
@@ -484,6 +611,8 @@
       '板類：' + (p.discipline || '') + '　程度：' + (p.level || ''),
       '人數：大人 ' + (p.adults || 0) + ' 位' + kids,
       '預估費用：' + ((p.price && p.price.display) || '—'),
+      (p.discount || (p.price && p.price.discount)) ? ('折扣：−' + ntd(p.discount || p.price.discount) + (p.code || (p.price && p.price.code) ? '（已套用折扣碼）' : '')) : '',
+      p.adultAge ? '大人大約年齡：' + p.adultAge : '',
       p.notes ? '備註：' + p.notes : ''].filter(Boolean).join('\n');
   }
   function showLineFallback(p) {
@@ -805,6 +934,7 @@
     booking.contact.id = PHONE_METHODS.includes(f.contactMethod.value) ? booking.phone : f.contactId.value.trim();
     booking.contact.email = f.email.value.trim() || (f.contactMethod.value === 'Email' ? booking.contact.id : '');
     booking.notes = f.notes.value.trim();
+    booking.adultAge = (f.adultAge && f.adultAge.value) || '';
     updateLive();
   }
 
@@ -831,15 +961,37 @@
   function updateLive() {
     booking.price = computePrice(booking);
     const rsel = form.elements.resort, ropt = rsel && rsel.selectedOptions && rsel.selectedOptions[0];
-    const map = { discipline: booking.discipline || '尚未選擇', level: booking.level || '—', resort: (ropt && rsel.value ? ropt.textContent.trim() : '') || '尚未選擇', dates: datesText(true), people: `大人 ${booking.adults}・小孩 ${booking.children}（共 ${booking.totalPeople} 人）`, price: booking.price.display };
+    const map = { discipline: booking.discipline || '尚未選擇', level: booking.level || '—', resort: (ropt && rsel.value ? ropt.textContent.trim() : '') || '尚未選擇', dates: datesText(true), people: `大人 ${booking.adults}・小孩 ${booking.children}（共 ${booking.totalPeople} 人）`, adultAge: booking.adultAge || '', price: booking.price.display };
     $$('[data-live]').forEach(el => { el.textContent = map[el.dataset.live]; });
     $$('[data-live="dates"]').forEach(el => { el.innerHTML = datesHTML(true); });
     $$('[data-live="price"]').forEach(el => { el.classList.toggle('is-quote', !!booking.price.quoteRequired); el.classList.toggle('is-pending', !!booking.price.needsResort); });
     const liveNote = $('#live-price-note');
     if (liveNote) liveNote.textContent = booking.price.note || '以我們的回覆為準';
     $$('.wiz-est-off').forEach(el => { el.textContent = booking.price.offseasonNote || ''; el.hidden = !booking.price.offseasonNote || booking.price.amount == null; });
-
+    $$('[data-adult-age-row]').forEach(el => { el.hidden = !booking.adultAge; });
+    syncPriceDisplay();
+    syncEst();
     updateMsum();
+  }
+  function syncEst() {
+    const price = booking.price || {};
+    const el = $('#est-price');
+    if (!el) return;
+    el.textContent = price.display;
+    el.classList.toggle('is-quote', !!price.quoteRequired);
+    el.classList.toggle('is-pending', !!price.needsResort);
+    const dep = $('#est-deposit');
+    if (dep) dep.textContent = price.depositDisplay || '—';
+    const bal = $('#est-balance');
+    if (bal) bal.textContent = price.balanceDisplay || '—';
+    const estNote = $('#est-note');
+    if (estNote) {
+      const showNote = !!((price.hokkaido || price.offseasonDays) && price.amount != null && !price.quoteRequired);
+      estNote.hidden = !showNote;
+      estNote.textContent = showNote ? (price.note || '') : '';
+    }
+    const basis = $('#est-basis');
+    if (basis) basis.textContent = price.basis || YUZAWA_BASIS;
   }
   // mobile: sticky bottom bar + expandable sheet with the same details as the desktop panel
   function updateMsum() {
@@ -854,8 +1006,14 @@
       ['人數', esc(`大人 ${booking.adults}・小孩 ${booking.children}（共 ${booking.totalPeople} 人）`)],
     ];
     const dur = durationText(booking); if (dur) rows.push(['課程', esc(dur)]);
+    if (booking.adultAge) rows.push(['大人年齡', esc(booking.adultAge)]);
     if (p.offseasonNote && p.amount != null) rows.push(['優惠', esc(p.offseasonNote)]);
-    rows.push(['預估費用', `<strong class="msum-total${p.quoteRequired || p.needsResort ? ' is-text' : ''}">${esc(p.display)}</strong><small class="msum-note">${esc(p.note && p.note !== p.offseasonNote ? p.note : '以我們的回覆為準')}</small>`]);
+    const stack = [];
+    if (p.discount > 0 && p.amount != null && p.displayOriginal) stack.push(`<s class="price-was">${esc(p.displayOriginal)}</s>`);
+    if (p.discount > 0 && p.amount != null) stack.push(`<span class="price-disc">${esc('折扣 −' + ntd(p.discount))}</span>`);
+    stack.push(`<strong class="msum-total${p.quoteRequired || p.needsResort ? ' is-text' : ''}">${esc(p.display)}</strong>`);
+    stack.push(`<small class="msum-note">${esc(p.note && p.note !== p.offseasonNote ? p.note : '以我們的回覆為準')}</small>`);
+    rows.push(['預估費用', `<span class="price-block">${stack.join('')}</span>`]);
     dl.innerHTML = rows.map(([k, v]) => `<div><dt>${k}</dt><dd>${v}</dd></div>`).join('');
     const v = $('#msum-v'); v.textContent = p.display; v.classList.toggle('is-text', !!(p.quoteRequired || p.needsResort));
     const n = booking.dates.length;
@@ -875,6 +1033,40 @@
     (mq.addEventListener ? mq.addEventListener('change', sync) : mq.addListener(sync));
     document.body.classList.add('msum-ready');
   })();
+
+  /* ---------- 折扣碼 UI ---------- */
+  function promoInputValue(btn) {
+    const box = btn && btn.closest('[data-promo]');
+    const input = box && box.querySelector('.promo-input');
+    return input ? input.value : (document.querySelector('.promo-input') || {}).value || '';
+  }
+  function syncPromoInputs(val) {
+    $$('.promo-input').forEach(el => { el.value = val; });
+  }
+  document.addEventListener('click', e => {
+    const tog = e.target.closest('[data-promo-toggle]');
+    if (tog) {
+      e.preventDefault();
+      if (promoState.applied) return;
+      promoState.open = !promoState.open;
+      if (!promoState.open) promoState.status = '';
+      syncPromoUI();
+      if (promoState.open) {
+        const input = tog.closest('[data-promo]').querySelector('.promo-input');
+        if (input) setTimeout(() => input.focus(), 60);
+      }
+      return;
+    }
+    const applyBtn = e.target.closest('[data-promo-apply]');
+    if (applyBtn) { e.preventDefault(); const v = promoInputValue(applyBtn); syncPromoInputs(v); applyPromo(v); return; }
+    if (e.target.closest('[data-promo-remove]')) { e.preventDefault(); clearPromo(); }
+  });
+  document.addEventListener('keydown', e => {
+    if (e.key !== 'Enter' || !e.target.classList || !e.target.classList.contains('promo-input')) return;
+    e.preventDefault();
+    syncPromoInputs(e.target.value);
+    applyPromo(e.target.value);
+  });
 
   /* ---------- validation ---------- */
   const setErr = (k, t) => {
@@ -951,21 +1143,12 @@
     if (!PHONE_METHODS.includes(c.method)) rows.push([c.method, c.id]);
     else rows.push(['偏好的聯絡方式', c.method]);
     if (c.method !== 'Email') rows.push(['Email', c.email || '（未填）']);
+    if (booking.adultAge) rows.push(['大人年齡', booking.adultAge]);
     rows.push(['備註', booking.notes || '（無）']);
     $('#summary').innerHTML = rows.map(([k, v]) => `<dt>${esc(k)}</dt><dd>${k === '日期' ? datesHTML(false) : esc(v || '—')}</dd>`).join('');
-    $('#est-price').textContent = price.display;
-    $('#est-price').classList.toggle('is-quote', !!price.quoteRequired);
-    $('#est-price').classList.toggle('is-pending', !!price.needsResort);
-    $('#est-deposit').textContent = price.depositDisplay;
-    $('#est-balance').textContent = price.balanceDisplay;
-    const estNote = $('#est-note');
-    if (estNote) {
-      const showNote = !!((price.hokkaido || price.offseasonDays) && price.amount != null && !price.quoteRequired);
-      estNote.hidden = !showNote;
-      estNote.textContent = showNote ? price.note : '';
-    }
-    const basis = $('#est-basis');
-    if (basis) basis.textContent = price.basis || YUZAWA_BASIS;
+    booking.price = price;
+    syncPriceDisplay();
+    syncEst();
   }
   next.addEventListener('click', () => { if (validate(cur)) go(cur + 1); });
   back.addEventListener('click', () => go(cur - 1));
@@ -1018,7 +1201,7 @@
     } finally { send.disabled = false; send.textContent = '送出預約需求'; }
   });
   $('#done-again').addEventListener('click', () => {
-    form.reset(); booking.dates = []; booking.childAges = []; setParty(1, 0); waTouched = false; syncMethod(); syncPhoneCc(); setErr('phone', ''); setDiscipline('');
+    form.reset(); booking.dates = []; booking.childAges = []; booking.adultAge = ''; clearPromo(); setParty(1, 0); waTouched = false; syncMethod(); syncPhoneCc(); setErr('phone', ''); setDiscipline('');
     renderCal(); renderDays(); readForm(); showDoneOrForm(false); go(1);
   });
 

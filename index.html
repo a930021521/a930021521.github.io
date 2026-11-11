@@ -45,7 +45,7 @@
 <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@200;300;400;600;700&display=swap" rel="stylesheet">
 <link rel="preload" as="image" type="image/webp" href="img/hero-m-opt5.webp" media="(max-width:640px)" fetchpriority="high">
 <link rel="preload" as="image" type="image/webp" href="img/hero-yuzawa-1920.webp" media="(min-width:641px)" fetchpriority="high">
-<link rel="stylesheet" href="style.css?v=hero34">
+<link rel="stylesheet" href="style.css?v=hero37">
 <link rel="stylesheet" href="hero-snow.css?v=1">
 <link rel="stylesheet" href="resort-carousel.css?v=16">
 </head>
@@ -541,8 +541,32 @@ b.querySelector('.announce-x').addEventListener('click',function(){b.hidden=true
           <div><dt>雪場</dt><dd data-live="resort">尚未選擇</dd></div>
           <div><dt>日期</dt><dd data-live="dates">尚未選擇</dd></div>
           <div><dt>人數</dt><dd data-live="people">大人 1・小孩 0（共 1 人）</dd></div>
+          <div data-adult-age-row hidden><dt>大人年齡</dt><dd data-live="adultAge"></dd></div>
         </dl>
-        <p class="live-price"><span>預估費用</span><strong data-live="price" class="is-pending">選擇雪場後顯示</strong><small id="live-price-note">以我們的回覆為準</small></p>
+        <div class="live-price">
+          <span class="live-price-k">預估費用</span>
+          <div class="price-block">
+            <s class="price-was" hidden></s>
+            <span class="price-disc" hidden></span>
+            <strong data-live="price" class="is-pending">選擇雪場後顯示</strong>
+          </div>
+          <small id="live-price-note" class="live-price-note">以我們的回覆為準</small>
+        </div>
+        <div class="promo promo--live" data-promo>
+          <button type="button" class="promo-toggle" data-promo-toggle aria-expanded="false" aria-controls="promo-edit-live">有折扣碼？<svg class="promo-toggle-ico" viewBox="0 0 12 12" aria-hidden="true"><path d="M2.5 4.5 6 8l3.5-3.5" fill="none" stroke="currentColor" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round"/></svg></button>
+          <div class="promo-edit" id="promo-edit-live">
+            <div class="promo-edit-inner">
+              <div class="promo-row">
+                <input type="text" id="promo-code-live" class="promo-input" placeholder="輸入折扣碼" maxlength="40" autocomplete="off" autocapitalize="characters" spellcheck="false" aria-describedby="promo-status-live">
+                <button type="button" class="promo-apply" data-promo-apply>套用</button>
+              </div>
+              <p class="promo-status" id="promo-status-live" role="status" aria-live="polite"></p>
+            </div>
+          </div>
+          <div class="promo-ok" hidden>
+            <span class="promo-chip"><span class="promo-ok-text">折扣碼已套用</span><button type="button" class="promo-remove" data-promo-remove aria-label="移除折扣碼">×</button></span>
+          </div>
+        </div>
       </aside>
       <p class="fine">※ 送出的是預約需求，不會收費；預約確認後支付總價 30% 訂金，付款方式與相關資訊將由學校另行提供。</p>
     </div>
@@ -592,6 +616,17 @@ b.querySelector('.announce-x').addEventListener('click',function(){b.hidden=true
               <div class="person-control"><span>小孩</span><div class="stepper"><button type="button" data-person="children" data-n="-1" aria-label="減少小孩">−</button><input type="number" name="children" id="children" data-person-input="children" value="0" min="0" inputmode="numeric" aria-label="小孩人數"><button type="button" data-person="children" data-n="1" aria-label="增加小孩">＋</button></div></div>
             </div>
             <div id="child-ages" class="child-ages" aria-live="polite"></div>
+            <label class="adult-age-field" for="adult-age"><span>大人大約年齡</span>
+              <select name="adultAge" id="adult-age" aria-label="大人大約年齡（選填）">
+                <option value="">請選擇（選填）</option>
+                <option>20 多歲</option>
+                <option>30 多歲</option>
+                <option>40 多歲</option>
+                <option>50 多歲</option>
+                <option>60 歲以上</option>
+                <option>年齡不一（請在備註說明）</option>
+              </select>
+            </label>
             <span class="err" data-err="people"></span><span class="err" data-err="childAges"></span>
           </div>
         </fieldset>
@@ -670,13 +705,28 @@ b.querySelector('.announce-x').addEventListener('click',function(){b.hidden=true
         <fieldset class="step" data-step="4">
           <legend class="step-title">確認內容</legend>
           <dl class="summary" id="summary"></dl>
-          <div class="est"><span>預估費用</span><strong id="est-price" class="is-pending">選擇雪場後顯示</strong><span id="est-note" class="est-note" hidden></span><small>訂金 30%：<b id="est-deposit">—</b><br>尾款 70%：<b id="est-balance">—</b>（於上課前結清）<br>付款方式與相關資訊將由學校另行提供<br><b id="est-basis" class="est-basis">2026–27 課程費用，整組總價；實際費用以我們的回覆為準</b></small></div>
+          <div class="est"><span class="est-k">預估費用</span><span class="price-block"><s class="price-was" hidden></s><span class="price-disc est-disc" hidden></span><strong id="est-price" class="is-pending">選擇雪場後顯示</strong></span><span id="est-note" class="est-note" hidden></span><small>訂金 30%：<b id="est-deposit">—</b><br>尾款 70%：<b id="est-balance">—</b>（於上課前結清）<br>付款方式與相關資訊將由學校另行提供<br><b id="est-basis" class="est-basis">2026–27 課程費用，整組總價；實際費用以我們的回覆為準</b></small></div>
+        <div class="promo promo--step4" data-promo>
+            <button type="button" class="promo-toggle" data-promo-toggle aria-expanded="false" aria-controls="promo-edit-step4">有折扣碼？<svg class="promo-toggle-ico" viewBox="0 0 12 12" aria-hidden="true"><path d="M2.5 4.5 6 8l3.5-3.5" fill="none" stroke="currentColor" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round"/></svg></button>
+            <div class="promo-edit" id="promo-edit-step4">
+              <div class="promo-edit-inner">
+                <div class="promo-row">
+                  <input type="text" id="promo-code-step4" class="promo-input" placeholder="輸入折扣碼" maxlength="40" autocomplete="off" autocapitalize="characters" spellcheck="false" aria-describedby="promo-status-step4">
+                  <button type="button" class="promo-apply" data-promo-apply>套用</button>
+                </div>
+                <p class="promo-status" id="promo-status-step4" role="status" aria-live="polite"></p>
+              </div>
+            </div>
+            <div class="promo-ok" hidden>
+              <span class="promo-chip"><span class="promo-ok-text">折扣碼已套用</span><button type="button" class="promo-remove" data-promo-remove aria-label="移除折扣碼">×</button></span>
+            </div>
+          </div>
           <label class="agree"><input type="checkbox" name="agree" required><span>我了解這是預約「需求」，確認教練與時段後才算完成預約；並同意 SNOWMODE 的付款與取消政策：預約確認後支付總價 30% 訂金，尾款於上課前結清，付款方式與相關資訊將由學校另行提供；課程首日前 61 天以上取消全額退款、前 31–60 天退還訂金 50%、前 30 天內（含第 30 天）恕不退款，多日課程以第一天起算；若因天候或雪場關閉取消課程，可改期或全額退款；並同意 SNOWMODE 依<a href="privacy.html" target="_blank" rel="noopener">隱私權政策</a>使用上述資料與我聯繫。</span></label>
           <span class="err" data-err="agree"></span>
         </fieldset>
 
         <p class="wiz-msg" id="wiz-msg" role="status" aria-live="polite"></p>
-        <p class="wiz-est"><span>預估費用</span><strong data-live="price" class="is-pending">選擇雪場後顯示</strong><small class="wiz-est-off" hidden></small></p>
+        <p class="wiz-est"><span class="wiz-est-k">預估費用</span><span class="price-block"><s class="price-was" hidden></s><span class="price-disc wiz-est-disc" hidden></span><strong data-live="price" class="is-pending">選擇雪場後顯示</strong></span><small class="wiz-est-off" hidden></small></p>
         <div class="wiz-nav">
           <button type="button" class="btn btn-ghost" id="wiz-back" hidden>← 上一步</button>
           <button type="button" class="btn btn-main" id="wiz-next">下一步 <span aria-hidden="true">→</span></button>
@@ -1134,6 +1184,21 @@ Jay教練是我們這兩天玩的這麼愉快的大功臣！
   <div class="msum-sheet" id="msum-sheet" role="region" aria-label="您的預約明細" hidden>
     <p class="msum-title">您的預約</p>
     <dl class="msum-dl" id="msum-dl"></dl>
+        <div class="promo promo--msum" data-promo>
+      <button type="button" class="promo-toggle" data-promo-toggle aria-expanded="false" aria-controls="promo-edit-msum">有折扣碼？<svg class="promo-toggle-ico" viewBox="0 0 12 12" aria-hidden="true"><path d="M2.5 4.5 6 8l3.5-3.5" fill="none" stroke="currentColor" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round"/></svg></button>
+      <div class="promo-edit" id="promo-edit-msum">
+        <div class="promo-edit-inner">
+          <div class="promo-row">
+            <input type="text" id="promo-code-msum" class="promo-input" placeholder="輸入折扣碼" maxlength="40" autocomplete="off" autocapitalize="characters" spellcheck="false" aria-describedby="promo-status-msum">
+            <button type="button" class="promo-apply" data-promo-apply>套用</button>
+          </div>
+          <p class="promo-status" id="promo-status-msum" role="status" aria-live="polite"></p>
+        </div>
+      </div>
+      <div class="promo-ok" hidden>
+        <span class="promo-chip"><span class="promo-ok-text">折扣碼已套用</span><button type="button" class="promo-remove" data-promo-remove aria-label="移除折扣碼">×</button></span>
+      </div>
+    </div>
   </div>
   <button type="button" class="msum-bar" id="msum-bar" aria-expanded="false" aria-controls="msum-sheet">
     <span class="msum-l"><span class="msum-k">預估費用</span><span class="msum-sub" id="msum-sub">查看您的選擇</span></span>
@@ -1141,7 +1206,7 @@ Jay教練是我們這兩天玩的這麼愉快的大功臣！
     <svg class="msum-chev" viewBox="0 0 24 24" aria-hidden="true"><path d="M6 15l6-6 6 6" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>
   </button>
 </div>
-<script src="script.js?v=kn4"></script>
+<script src="script.js?v=kn7"></script>
 <script src="resort-carousel.js?v=kn2"></script>
 </body>
 </html>
