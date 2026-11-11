@@ -45,7 +45,7 @@
 <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@200;300;400;600;700&display=swap" rel="stylesheet">
 <link rel="preload" as="image" type="image/webp" href="img/hero-m-opt5.webp" media="(max-width:640px)" fetchpriority="high">
 <link rel="preload" as="image" type="image/webp" href="img/hero-yuzawa-1920.webp" media="(min-width:641px)" fetchpriority="high">
-<link rel="stylesheet" href="style.css?v=hero37">
+<link rel="stylesheet" href="style.css?v=hero40">
 <link rel="stylesheet" href="hero-snow.css?v=1">
 <link rel="stylesheet" href="resort-carousel.css?v=16">
 </head>
@@ -616,17 +616,19 @@ b.querySelector('.announce-x').addEventListener('click',function(){b.hidden=true
               <div class="person-control"><span>小孩</span><div class="stepper"><button type="button" data-person="children" data-n="-1" aria-label="減少小孩">−</button><input type="number" name="children" id="children" data-person-input="children" value="0" min="0" inputmode="numeric" aria-label="小孩人數"><button type="button" data-person="children" data-n="1" aria-label="增加小孩">＋</button></div></div>
             </div>
             <div id="child-ages" class="child-ages" aria-live="polite"></div>
-            <label class="adult-age-field" for="adult-age"><span>大人大約年齡</span>
-              <select name="adultAge" id="adult-age" aria-label="大人大約年齡（選填）">
-                <option value="">請選擇（選填）</option>
-                <option>20 多歲</option>
-                <option>30 多歲</option>
-                <option>40 多歲</option>
-                <option>50 多歲</option>
-                <option>60 歲以上</option>
-                <option>年齡不一（請在備註說明）</option>
-              </select>
-            </label>
+            <div class="adult-age-field">
+              <div class="adult-age-head">
+                <span id="adult-age-l">大人大約年齡</span>
+                <small class="adult-age-hint">可複選</small>
+              </div>
+              <div class="chips adult-age-chips" id="adult-age" role="group" aria-labelledby="adult-age-l">
+                <label><input type="checkbox" name="adultAge" value="20 多歲"><span>20 多歲</span></label>
+                <label><input type="checkbox" name="adultAge" value="30 多歲"><span>30 多歲</span></label>
+                <label><input type="checkbox" name="adultAge" value="40 多歲"><span>40 多歲</span></label>
+                <label><input type="checkbox" name="adultAge" value="50 多歲"><span>50 多歲</span></label>
+                <label><input type="checkbox" name="adultAge" value="60 歲以上"><span>60 歲以上</span></label>
+              </div>
+            </div>
             <span class="err" data-err="people"></span><span class="err" data-err="childAges"></span>
           </div>
         </fieldset>
@@ -1206,7 +1208,7 @@ Jay教練是我們這兩天玩的這麼愉快的大功臣！
     <svg class="msum-chev" viewBox="0 0 24 24" aria-hidden="true"><path d="M6 15l6-6 6 6" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>
   </button>
 </div>
-<script src="script.js?v=kn7"></script>
+<script src="script.js?v=kn8"></script>
 <script src="resort-carousel.js?v=kn2"></script>
 </body>
 </html>

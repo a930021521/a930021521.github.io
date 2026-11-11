@@ -48,6 +48,7 @@
     children: 0,
     childAges: [],
     adultAge: '',
+    adultAges: [],
     totalPeople: 1,
     resort: '',
     notes: '',
@@ -567,7 +568,7 @@
     } else {
       delete payload.code; delete payload.discount;
     }
-    if (!payload.adultAge) delete payload.adultAge;
+    if (!payload.adultAge) { delete payload.adultAge; delete payload.adultAges; }
     return payload;
   }
 
@@ -934,8 +935,14 @@
     booking.contact.id = PHONE_METHODS.includes(f.contactMethod.value) ? booking.phone : f.contactId.value.trim();
     booking.contact.email = f.email.value.trim() || (f.contactMethod.value === 'Email' ? booking.contact.id : '');
     booking.notes = f.notes.value.trim();
-    booking.adultAge = (f.adultAge && f.adultAge.value) || '';
+    booking.adultAges = selectedAdultAges();
+    booking.adultAge = booking.adultAges.join('、');
     updateLive();
+  }
+  const ADULT_AGE_OPTIONS = ['20 多歲', '30 多歲', '40 多歲', '50 多歲', '60 歲以上'];
+  function selectedAdultAges() {
+    const on = new Set($$('#adult-age input[type=checkbox]:checked').map(el => el.value));
+    return ADULT_AGE_OPTIONS.filter(v => on.has(v));
   }
 
   /* ---------- live summary ---------- */
@@ -1201,7 +1208,7 @@
     } finally { send.disabled = false; send.textContent = '送出預約需求'; }
   });
   $('#done-again').addEventListener('click', () => {
-    form.reset(); booking.dates = []; booking.childAges = []; booking.adultAge = ''; clearPromo(); setParty(1, 0); waTouched = false; syncMethod(); syncPhoneCc(); setErr('phone', ''); setDiscipline('');
+    form.reset(); booking.dates = []; booking.childAges = []; booking.adultAge = ''; booking.adultAges = []; clearPromo(); setParty(1, 0); waTouched = false; syncMethod(); syncPhoneCc(); setErr('phone', ''); setDiscipline('');
     renderCal(); renderDays(); readForm(); showDoneOrForm(false); go(1);
   });
 
