@@ -49,6 +49,7 @@
     childAges: [],
     adultAge: '',
     adultAges: [],
+    source: '',
     totalPeople: 1,
     resort: '',
     notes: '',
@@ -559,9 +560,20 @@
       breakdown: { halfDays, fullDays, totalPeople: people }
     };
   }
+  function captureUtm() {
+    let q;
+    try { q = new URLSearchParams(location.search); } catch (_) { return null; }
+    const out = {};
+    const src = q.get('utm_source');
+    const camp = q.get('utm_campaign');
+    if (src) out.utm_source = src;
+    if (camp) out.utm_campaign = camp;
+    return Object.keys(out).length ? out : null;
+  }
+  const capturedUtm = captureUtm();
   function buildPayload() {
     booking.price = computePrice(booking);
-    const payload = JSON.parse(JSON.stringify({ ...booking, submittedAt: new Date().toISOString(), source: 'snowmode-site' }));
+    const payload = JSON.parse(JSON.stringify({ ...booking, submittedAt: new Date().toISOString(), source: booking.source || '' }));
     if (booking.price && booking.price.discount > 0) {
       payload.code = booking.price.code;
       payload.discount = booking.price.discount;
@@ -569,6 +581,7 @@
       delete payload.code; delete payload.discount;
     }
     if (!payload.adultAge) { delete payload.adultAge; delete payload.adultAges; }
+    if (capturedUtm) payload.utm = { ...capturedUtm };
     return payload;
   }
 
@@ -935,6 +948,7 @@
     booking.contact.id = PHONE_METHODS.includes(f.contactMethod.value) ? booking.phone : f.contactId.value.trim();
     booking.contact.email = f.email.value.trim() || (f.contactMethod.value === 'Email' ? booking.contact.id : '');
     booking.notes = f.notes.value.trim();
+    booking.source = (f.source && f.source.value || '').trim();
     booking.adultAges = selectedAdultAges();
     booking.adultAge = booking.adultAges.join('、');
     updateLive();
@@ -1208,7 +1222,7 @@
     } finally { send.disabled = false; send.textContent = '送出預約需求'; }
   });
   $('#done-again').addEventListener('click', () => {
-    form.reset(); booking.dates = []; booking.childAges = []; booking.adultAge = ''; booking.adultAges = []; clearPromo(); setParty(1, 0); waTouched = false; syncMethod(); syncPhoneCc(); setErr('phone', ''); setDiscipline('');
+    form.reset(); booking.dates = []; booking.childAges = []; booking.adultAge = ''; booking.adultAges = []; booking.source = ''; clearPromo(); setParty(1, 0); waTouched = false; syncMethod(); syncPhoneCc(); setErr('phone', ''); setDiscipline('');
     renderCal(); renderDays(); readForm(); showDoneOrForm(false); go(1);
   });
 

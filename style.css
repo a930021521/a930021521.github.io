@@ -1598,6 +1598,12 @@ html.has-announce{scroll-padding-top:calc(84px + var(--announce-h))}
 }
 @media (prefers-reduced-motion:reduce){.chips.adult-age-chips span,.chips.adult-age-chips span::before{transition:none}}
 
+.source-field{gap:8px;margin-top:16px;width:100%;min-width:0}
+.source-field .source-head{font-size:.78rem;color:var(--mute);letter-spacing:0}
+.source-field select{height:46px;padding:0 12px;border-radius:12px;border:1px solid rgba(255,255,255,.28);background:rgba(255,255,255,.1);color:rgba(255,255,255,.86)}
+.source-field select:focus{outline:none;border-color:var(--blue-2);background:rgba(255,255,255,.14)}
+.source-field select option{color:#111;background:#fff}
+
 
 .promo{margin-top:16px}
 .promo-toggle{display:inline-flex;align-items:center;gap:5px;margin:0;padding:0;border:0;background:none;color:var(--blue-2);font-size:.78rem;letter-spacing:.04em;opacity:.85;cursor:pointer}
