@@ -869,14 +869,12 @@
 
   /* ---------- contact method label ---------- */
   const cid = form.elements.contactId, cidL = $('#cid-l');
-  const CID = { LINE: ['LINE ID', 'LINE ID'], WeChat: ['WeChat ID', '您的 WeChat ID'], WhatsApp: ['WhatsApp 號碼', '+886 912 345 678'], Email: ['Email', 'name@example.com'], '電話': ['電話號碼', '+886 912 345 678'] };
+  const CID = { LINE: ['LINE ID', '您的 LINE ID'], WeChat: ['WeChat ID', '您的 WeChat ID'], WhatsApp: ['WhatsApp 號碼', '+886 912 345 678'], Email: ['Email', 'name@example.com'], '電話': ['電話號碼', '+886 912 345 678'] };
   // 電話 reuses the required 手機號碼 field, so the separate ID box is hidden for it
   const PHONE_METHODS = ['電話']; // WhatsApp now has its own number box (contactId)
   function syncMethod() {
     const m = form.elements.contactMethod.value; booking.contact.method = m; cidL.textContent = CID[m][0]; cid.placeholder = CID[m][1]; cid.type = m === 'Email' ? 'email' : 'text'; form.elements.email.closest('label').hidden = m === 'Email';
     $('#cid-field').hidden = PHONE_METHODS.includes(m);
-    const lineHint = $('#cid-hint');
-    if (lineHint) { lineHint.hidden = m !== 'LINE'; if (m === 'LINE') cid.setAttribute('aria-describedby', 'cid-hint'); else cid.removeAttribute('aria-describedby'); }
     const wa = m === 'WhatsApp', same = $('#wa-same');
     $('#wa-same-wrap').hidden = !wa;
     if (wa && !waTouched) { same.checked = true; waTouched = true; }
@@ -1146,9 +1144,9 @@
       if (ph.error) errs.push(ph.field === 'cc' ? 'phoneCcOther' : 'phone');
       const m = booking.contact.method, v = booking.contact.id;
       if (PHONE_METHODS.includes(m)) setErr('contactId', ''); // uses 手機號碼 above
-      else if (!v) { setErr('contactId', m === 'LINE' ? '請填寫 LINE ID 或手機號碼' : `請填寫${CID[m][0]}`); errs.push('contactId'); }
+      else if (!v) { setErr('contactId', `請填寫${CID[m][0]}`); errs.push('contactId'); }
       else if (m === 'Email' && !EMAIL.test(v)) { setErr('contactId', 'Email 格式不正確'); errs.push('contactId'); }
-      else setErr('contactId', ''); // LINE accepts a LINE ID or a phone number; both are plain text
+      else setErr('contactId', '');
       if (booking.contact.method !== 'Email') {
         if (!booking.contact.email) { setErr('email', '請填寫 Email（用來寄確認信）'); errs.push('email'); }
         else if (!EMAIL.test(booking.contact.email)) { setErr('email', 'Email 格式不正確'); errs.push('email'); } else setErr('email', '');
