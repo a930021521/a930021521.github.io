@@ -587,20 +587,45 @@
 
   window.SNOWMODE = {
     booking, CONFIG, computePrice, buildPayload, estimateHokkaido, seasonOf, jpyToTwd,
-    DISCOUNT_CODES, hashCode: sha256hex, applyPromo, clearPromo,
+    DISCOUNT_CODES, hashCode: sha256hex, applyPromo, clearPromo, bookingRef,
     async submitBooking(payload) {
       // text/plain avoids a CORS preflight, which Apps Script doesn't support
       const r = await fetch(CONFIG.endpoint, { method: 'POST', headers: { 'Content-Type': 'text/plain;charset=utf-8' }, body: JSON.stringify(payload) });
-      const data = await r.json();
-      if (!data.ok) throw new Error(data.error || 'submit failed');
+      const text = await r.text();
+      let data = null;
+      try { data = JSON.parse(text); } catch (_) {}
+      if (!data || data.ok !== true || !data.ref) {
+        const err = new Error((data && data.error) || 'submit failed');
+        if (data && data.ref) err.ref = data.ref;
+        throw err;
+      }
       return data;
     }
   };
 
+  /* One booking number per submission: SM-MMDD-XXXX, date in Asia/Taipei (same as the Apps Script). */
+  function bookingRef(now) {
+    const d = now || new Date();
+    let mm, dd;
+    try {
+      const parts = new Intl.DateTimeFormat('en-US', { timeZone: 'Asia/Taipei', month: '2-digit', day: '2-digit' }).formatToParts(d);
+      mm = parts.find(p => p.type === 'month').value;
+      dd = parts.find(p => p.type === 'day').value;
+    } catch (_) {
+      const t = new Date(d.getTime() + 8 * 3600000);
+      mm = String(t.getUTCMonth() + 1).padStart(2, '0');
+      dd = String(t.getUTCDate()).padStart(2, '0');
+    }
+    let chars = '';
+    while (chars.length < 4) chars += Math.random().toString(36).slice(2);
+    return 'SM-' + mm + dd + '-' + chars.slice(0, 4).toUpperCase();
+  }
+
   /* ---------- backup: email the booking (FormSubmit) when the Apps Script backend fails ---------- */
   const BACKUP_EMAIL = 'a930021521@gmail.com';
   async function emailBooking(p) {
-    const ref = 'SM-' + new Date().toISOString().slice(5, 10).replace('-', '') + '-' + Math.random().toString(36).slice(2, 6).toUpperCase();
+    const ref = p.ref || bookingRef();
+    p.ref = ref;
     const r = await fetch('https://formsubmit.co/ajax/' + BACKUP_EMAIL, {
       method: 'POST', headers: { 'Content-Type': 'application/json', Accept: 'application/json' },
       body: JSON.stringify({ _subject: '【SNOWMODE 網站預約】' + (p.name || '') + ' ' + ref, _template: 'box', _captcha: 'false', 預約編號: ref, 內容: bookingText(p) })
@@ -617,6 +642,7 @@
     const days = (p.dates || []).map(d => d.date + ' ' + (d.slot || '')).join('、');
     const kids = p.children ? '，小孩 ' + p.children + ' 位（' + (p.childAges || []).join('、') + ' 歲）' : '';
     return ['【SNOWMODE 預約需求】',
+      p.ref ? '預約編號：' + p.ref : '',
       '姓名：' + (p.name || ''),
       '電話：' + (p.phone || '') + (p.phoneWhatsApp ? '（可 WhatsApp）' : ''),
       '聯絡方式：' + (c.method || '') + ' ' + (c.id || c.email || ''),
@@ -1194,12 +1220,17 @@
     for (let n = 1; n <= 4; n++) if (!validate(n)) { if (n !== cur) go(n); validate(n); return; }
     send.disabled = true; send.textContent = '送出中…';
     const payload = buildPayload();
+    payload.ref = bookingRef();
     try {
       let res;
       try { res = await window.SNOWMODE.submitBooking(payload); }
-      catch (e1) { res = await emailBooking(payload); }
+      catch (e1) {
+        // Keep the number already sent to Google (or the one we chose) — never mint a second one.
+        if (e1 && e1.ref) payload.ref = e1.ref;
+        res = await emailBooking(payload);
+      }
       window.SNOWMODE.lastSubmission = res;
-      showDoneContact(res && res.ref, booking.contact);
+      showDoneContact((res && res.ref) || payload.ref, booking.contact);
       showDoneOrForm(true); done.focus();
       toast('預約需求已送出');
       // GA4 conversion: lesson details only — never name, contact ID, email or notes
