@@ -869,7 +869,7 @@
 
   /* ---------- contact method label ---------- */
   const cid = form.elements.contactId, cidL = $('#cid-l');
-  const CID = { LINE: ['LINE ID（沒有的話可填手機號碼）', 'LINE ID 或手機號碼'], WeChat: ['WeChat ID', '您的 WeChat ID'], WhatsApp: ['WhatsApp 號碼', '+886 912 345 678'], Email: ['Email', 'name@example.com'], '電話': ['電話號碼', '+886 912 345 678'] };
+  const CID = { LINE: ['LINE ID（沒有的話可填手機號碼）', 'LINE ID'], WeChat: ['WeChat ID', '您的 WeChat ID'], WhatsApp: ['WhatsApp 號碼', '+886 912 345 678'], Email: ['Email', 'name@example.com'], '電話': ['電話號碼', '+886 912 345 678'] };
   // 電話 reuses the required 手機號碼 field, so the separate ID box is hidden for it
   const PHONE_METHODS = ['電話']; // WhatsApp now has its own number box (contactId)
   function syncMethod() {
