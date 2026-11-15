@@ -1778,3 +1778,57 @@
   dlg.addEventListener('click', () => dlg.close());
   dlg.addEventListener('close', () => { document.documentElement.style.overflow = ''; if (last) last.focus(); });
 })();
+
+// ===== 課程費用：地區切換（越後湯澤／札幌國際／北海道）＋ 手機半天／全天切換 =====
+(function () {
+  const tabs = Array.from(document.querySelectorAll('.px-tab'));
+  if (!tabs.length) return;
+  const panels = tabs.map(t => document.getElementById(t.getAttribute('aria-controls')));
+  function show(i, focus) {
+    tabs.forEach((t, j) => {
+      const on = i === j;
+      t.classList.toggle('on', on);
+      t.setAttribute('aria-selected', on ? 'true' : 'false');
+      t.tabIndex = on ? 0 : -1;
+      if (panels[j]) panels[j].hidden = !on;
+    });
+    if (focus) tabs[i].focus();
+  }
+  tabs.forEach((t, i) => {
+    t.addEventListener('click', () => show(i, false));
+    t.addEventListener('keydown', e => {
+      let j = null;
+      if (e.key === 'ArrowRight') j = (i + 1) % tabs.length;
+      else if (e.key === 'ArrowLeft') j = (i - 1 + tabs.length) % tabs.length;
+      else if (e.key === 'Home') j = 0;
+      else if (e.key === 'End') j = tabs.length - 1;
+      if (j === null) return;
+      e.preventDefault();
+      show(j, true);
+    });
+  });
+  const idx = h => panels.findIndex(p => p && '#' + p.id === h);
+  const toPrices = smooth => { const el = document.getElementById('prices'); if (el) el.scrollIntoView({ behavior: smooth ? 'smooth' : 'auto', block: 'start' }); };
+  // #prices-sapporo 等連結（含頂部公告列）：切到對應地區再捲到價格區
+  document.addEventListener('click', e => {
+    const a = e.target.closest && e.target.closest('a[href^="#prices-"]');
+    if (!a) return;
+    const i = idx(a.getAttribute('href'));
+    if (i < 0) return;
+    e.preventDefault();
+    show(i, false);
+    toPrices(true);
+    if (history.replaceState) history.replaceState(null, '', a.getAttribute('href'));
+  }, true);
+  const i0 = idx(location.hash);
+  if (i0 > 0) { show(i0, false); requestAnimationFrame(() => toPrices(false)); }
+  window.addEventListener('hashchange', () => { const i = idx(location.hash); if (i >= 0) { show(i, false); toPrices(false); } });
+  // 手機：半天／全天
+  document.querySelectorAll('.px-prices').forEach(box => {
+    const btns = Array.from(box.querySelectorAll('.px-dur button'));
+    btns.forEach(b => b.addEventListener('click', () => {
+      box.dataset.show = b.dataset.dur;
+      btns.forEach(x => x.setAttribute('aria-pressed', x === b ? 'true' : 'false'));
+    }));
+  });
+})();
