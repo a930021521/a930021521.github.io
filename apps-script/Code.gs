@@ -9,7 +9,10 @@
  * same number does not add another row or send another email. One rejected cell no
  * longer drops the rest of the row (the columns after 實收).
  *
- * - Receives booking JSON from https://jpsnowmode.com, appends a row (狀態 = 待確認), emails the owner.
+ * - Receives booking JSON from https://jpsnowmode.com, writes a row (狀態 = 待確認) on the first
+ *   blank 預約編號, emails the owner.
+ * v-row (2026-11-16): do not use getLastRow()/appendRow for that write. Column B (已建群組)
+ *   checkboxes are FALSE down the sheet (~row 1000) and would park the new booking there.
  * - Calendar sync: when a row's 狀態 becomes 已確認, one deep-red ALL-DAY event per booking (one per run of
  *   consecutive dates) is created on the 「SNOWMODE 課程」 calendar, titled 雪場｜板類｜半天/全天; edits update it in place;
  *   已取消 / 待確認 deletes it. Works for web-form rows and hand-typed rows. (v-cal3, 2026-10-10)
@@ -679,36 +682,67 @@ function setBookFormulas_(sh) {
     sh.getRange(1, cols['實收']).setFormula('={"實收";ARRAYFORMULA(IF(ISNUMBER(' + L('總價') + '),' + L('總價') + '-' + num('抽成金額') + ',""))}');
 }
 
-/** One cell. A dropdown that rejects the value is cleared for that cell and the value is written anyway. */
-function writeCell_(sh, row, col, value) {
+/** Coerce a value the same way the old per-cell write did, so setValues stores the same text. */
+function cellValue_(value) {
   if (value && typeof value === 'object') {
     try { value = Array.isArray(value) ? value.join('、') : JSON.stringify(value).slice(0, 45000); }
     catch (e) { value = ''; }
   }
+  return value;
+}
+
+/** One cell. A dropdown that rejects the value is cleared for that cell and the value is written anyway.
+ *  Do not use this for the 已建群組 checkbox — clearing validation would remove the checkbox. */
+function writeCell_(sh, row, col, value) {
+  value = cellValue_(value);
   var range = sh.getRange(row, col);
   try { range.setValue(value); return; } catch (e1) { console.error(e1); }
   try { range.clearDataValidations(); range.setValue(value); } catch (e2) { console.error(e2); }
 }
 
-/** Writes a record (header -> value) into the next empty row, by header name; never touches the formula column.
- *  Each cell is its own write: one rejected value must not leave the columns after 實收 blank. */
+/** First data row whose column A (預約編號) is blank.
+ *  getLastRow() is not the next booking: column B (已建群組) is FALSE down to ~row 1000. */
+function firstEmptyBookingRow_(sh) {
+  var last = sh.getLastRow();
+  if (last < 2) return 2;
+  var vals = sh.getRange(2, 1, last - 1, 1).getValues();
+  for (var i = 0; i < vals.length; i++) {
+    if (String(vals[i][0] == null ? '' : vals[i][0]).trim() === '') return i + 2;
+  }
+  return last + 1;
+}
+
+/** Writes a record (header -> value) onto the first row with a blank 預約編號.
+ *  Formula columns are not written. Column B checkbox is set FALSE and its validation is kept.
+ *  A rejected setValues falls back per cell so the columns after 實收 are still written, not cleared. */
 function writeRecord_(sh, rec) {
   var cols = cols_(sh);
-  // last row that has any value outside the ARRAYFORMULA columns
-  var skipF = FORMULA_HEADERS.map(function (h) { return cols[h]; });
-  var last = 1, n = sh.getLastRow();
-  if (n >= 2) {
-    var all = sh.getRange(2, 1, n - 1, sh.getLastColumn()).getValues();
-    for (var i = all.length - 1; i >= 0 && last === 1; i--) {
-      if (all[i].some(function (v, j) { return skipF.indexOf(j + 1) < 0 && v !== '' && v !== null; })) last = i + 2;
-    }
-  }
-  var r = last + 1;
+  var r = firstEmptyBookingRow_(sh);
   if (r > sh.getMaxRows()) sh.insertRowsAfter(sh.getMaxRows(), 20);
   var skip = FORMULA_HEADERS.map(function (h) { return cols[h]; }).filter(Boolean);
+  var cells = [];
   Object.keys(rec).forEach(function (h) {
-    if (cols[h] && skip.indexOf(cols[h]) < 0) writeCell_(sh, r, cols[h], rec[h]);
+    if (cols[h] && skip.indexOf(cols[h]) < 0) cells.push([cols[h], cellValue_(rec[h])]);
   });
+  cells.sort(function (a, b) { return a[0] - b[0]; });
+  var i = 0;
+  while (i < cells.length) {
+    var j = i;
+    while (j + 1 < cells.length && cells[j + 1][0] === cells[j][0] + 1) j++;
+    var row = [];
+    for (var k = i; k <= j; k++) row.push(cells[k][1]);
+    try {
+      sh.getRange(r, cells[i][0], 1, row.length).setValues([row]);
+    } catch (e) {
+      console.error(e);
+      for (var k2 = i; k2 <= j; k2++) writeCell_(sh, r, cells[k2][0], cells[k2][1]);
+    }
+    i = j + 1;
+  }
+  // 已建群組 is a pre-filled checkbox (column B). FALSE keeps it unchecked; do not clear its validation.
+  if (cols['已建群組']) {
+    try { sh.getRange(r, cols['已建群組']).setValue(false); } catch (e) { console.error(e); }
+  }
   try {
     // multi-line 日期與時段: wrap the cell and let the row grow so every lesson day is visible (also on the phone app)
     var dc = sh.getRange(r, cols['日期與時段']);
