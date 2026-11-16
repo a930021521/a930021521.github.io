@@ -882,6 +882,7 @@
     prevMethod = m;
     syncWaSame();
     setErr('contactId', '');
+    syncLineNote();
   }
   // WhatsApp「同手機號碼」: checked = mirror the phone field (read-only), unchecked = manual entry
   let waTouched = false, prevMethod = '';
@@ -1164,6 +1165,20 @@
   }
   form.elements.agree.addEventListener('change', () => setErr('agree', ''));
 
+  /* ---------- last-step LINE / contact reminder ---------- */
+  function syncLineNote() {
+    const el = $('#wiz-line-note');
+    if (!el) return;
+    const m = form.elements.contactMethod && form.elements.contactMethod.value;
+    el.textContent = m === 'WhatsApp'
+      ? '送出後，請記得透過 WhatsApp 傳送預約編號給我們，預約才算成立。'
+      : m === 'WeChat'
+      ? '送出後，請記得透過微信傳送預約編號給我們，預約才算成立。'
+      : m === 'LINE'
+      ? '送出後，請記得加入官方 LINE 傳送預約編號，預約才算成立。'
+      : '送出後，請記得透過您選的聯絡方式傳送預約編號給我們，預約才算成立。';
+  }
+
   /* ---------- wizard nav ---------- */
   const steps = $$('.step', form), prog = $$('.prog li'), back = $('#wiz-back'), next = $('#wiz-next'), send = $('#wiz-send'), msgEl = $('#wiz-msg');
   let cur = 1;
@@ -1176,6 +1191,8 @@
       const b = $('button', p); b.tabIndex = k < n ? 0 : -1; if (k === n) b.setAttribute('aria-current', 'step'); else b.removeAttribute('aria-current');
     });
     back.hidden = n === 1; next.hidden = n === 4; send.hidden = n !== 4;
+    const lineNote = $('#wiz-line-note');
+    if (lineNote) { lineNote.hidden = n !== 4; if (n === 4) syncLineNote(); }
     if (n === 4) buildSummary();
     msg('');
     if (focus) { const t = $('.step.on .step-title', form); if (t) { t.tabIndex = -1; t.focus({ preventScroll: true }); } if ($('#wizard').getBoundingClientRect().top < 102) $('#wizard').scrollIntoView({ behavior: 'smooth', block: 'start' }); }

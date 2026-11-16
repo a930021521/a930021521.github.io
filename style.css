@@ -323,6 +323,8 @@ button{cursor:pointer}
 .wiz-msg{font-size:.86rem;min-height:1.4em;margin-top:14px;color:var(--warn)}
 .wiz-msg.ok{color:var(--ok)}
 .wiz-nav{display:flex;justify-content:flex-end;gap:10px;margin-top:10px;flex-wrap:wrap}
+.wiz-line-note{margin:16px 0 0;padding:10px 14px;border-radius:12px;border:1px solid rgba(255,207,138,.45);background:rgba(255,207,138,.1);color:var(--warn);font-size:.86rem;line-height:1.7}
+.wiz-line-note[hidden]{display:none}
 .wiz-est{display:none}
 .sent{text-align:center;padding:40px 10px 20px}
 .sent:focus{outline:none}
@@ -1265,6 +1267,8 @@ button{cursor:pointer}
 .done-ref-missing{font-size:.88rem;color:var(--mute);max-width:26em;margin:12px auto 0}
 .done-contact{max-width:26em;margin:22px auto 0;padding-top:20px;border-top:1px solid var(--line)}
 .done-say{font-size:.95rem;line-height:1.8;color:#E2E6EB}
+.done-say--alert{margin:0 auto;padding:14px 16px;border-radius:14px;border:1px solid rgba(255,154,154,.55);background:linear-gradient(180deg,rgba(90,28,24,.62),rgba(42,16,18,.5));color:#ffd6cf;font-weight:600;letter-spacing:.04em;line-height:1.7;text-align:center}
+.done-say--alert strong{display:block;margin-bottom:.25em;font-size:1.05rem;font-weight:800;letter-spacing:.08em;color:#ffc4b8}
 .done-btn{display:flex;align-items:center;justify-content:center;width:100%;max-width:300px;min-height:52px;margin:16px auto 0;padding:12px 24px;border-radius:999px;font-size:1rem;font-weight:700;letter-spacing:.1em;text-decoration:none;color:#fff;border:1px solid transparent;cursor:pointer;transition:transform .2s ease,box-shadow .2s ease,background-color .2s ease}
 .done-btn--line{background:var(--blue);color:#fff;box-shadow:0 10px 30px rgba(47,107,255,.45)}
 .done-btn--wa{background:#25D366;box-shadow:0 10px 28px rgba(37,211,102,.3)}
@@ -1281,6 +1285,8 @@ button{cursor:pointer}
 .done-mail{max-width:26em;margin:20px auto 0;font-size:.85rem;color:#C9CED6}
 .sent .done-sub{margin-top:14px}
 @media (max-width:640px){
+  .done-say--alert{font-size:.92rem;padding:14px 14px}
+  .done-say--alert strong{font-size:1.02rem}
   .sent .done-ref{font-size:1.4rem}
   .done-list li{grid-template-columns:minmax(0,1fr) auto;grid-template-rows:auto auto;column-gap:10px;row-gap:2px}
   .done-list-l{grid-column:1}

@@ -45,7 +45,7 @@
 <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@200;300;400;600;700&display=swap" rel="stylesheet">
 <link rel="preload" as="image" type="image/webp" href="img/hero-m-opt5.webp" media="(max-width:640px)" fetchpriority="high">
 <link rel="preload" as="image" type="image/webp" href="img/hero-yuzawa-1920.webp" media="(min-width:641px)" fetchpriority="high">
-<link rel="stylesheet" href="style.css?v=hero43">
+<link rel="stylesheet" href="style.css?v=hero44">
 <link rel="stylesheet" href="hero-snow.css?v=1">
 <link rel="stylesheet" href="resort-carousel.css?v=16">
 </head>
@@ -521,7 +521,7 @@ b.querySelector('.announce-x').addEventListener('click',function(){b.hidden=true
     <div class="book-intro">
       <p class="kicker"><span>04</span>BOOKING</p>
       <h2 id="booking-title">四個步驟，<br><b>完成預約需求</b></h2>
-      <p class="book-lead">選板類與程度、挑日期（可以選多個不連續的日子）、留下聯絡方式，最後確認一次。我們收到後會用您選擇的方式回覆。</p>
+      <p class="book-lead">選板類與程度、挑日期（可以選多個不連續的日子）、留下聯絡方式，最後確認一次。送出後請加入官方 LINE 並傳送預約編號，我們才能為您確認時段。</p>
       <aside class="glass live" id="live" aria-label="目前選擇">
         <p class="live-title">您的預約</p>
         <dl>
@@ -730,6 +730,7 @@ b.querySelector('.announce-x').addEventListener('click',function(){b.hidden=true
 
         <p class="wiz-msg" id="wiz-msg" role="status" aria-live="polite"></p>
         <p class="wiz-est"><span class="wiz-est-k">預估費用</span><span class="price-block"><s class="price-was" hidden></s><span class="price-disc wiz-est-disc" hidden></span><strong data-live="price" class="is-pending">選擇雪場後顯示</strong></span><small class="wiz-est-off" hidden></small></p>
+        <p class="wiz-line-note" id="wiz-line-note" hidden>送出後，請記得加入官方 LINE 傳送預約編號，預約才算成立。</p>
         <div class="wiz-nav">
           <button type="button" class="btn btn-ghost" id="wiz-back" hidden>← 上一步</button>
           <button type="button" class="btn btn-main" id="wiz-next">下一步 <span aria-hidden="true">→</span></button>
@@ -746,24 +747,24 @@ b.querySelector('.announce-x').addEventListener('click',function(){b.hidden=true
         </div>
         <p class="done-ref-missing" id="done-ref-missing" hidden>預約編號稍後會由教練提供；聯絡我們時，請告訴我們您的姓名與上課日期。</p>
         <div class="done-contact" data-done-method="LINE" hidden>
-          <p class="done-say">請加入官方 LINE，並把預約編號傳給我們。</p>
+          <p class="done-say done-say--alert" role="status"><strong>預約尚未完成！</strong>請加入官方 LINE 並傳送預約編號，預約才算成立。</p>
           <a class="done-btn done-btn--line done-btn--big" href="https://line.me/R/ti/p/@dqi1670m" target="_blank" rel="noopener">加入官方 LINE</a>
           <p class="done-send-ref" data-done-send-ref>請傳送預約編號 <b class="done-send-ref-v" data-done-ref-copy>SM-0000</b><button type="button" class="done-mini" data-copy="#done-ref" data-copy-label="預約編號">複製</button></p>
           <p class="done-id">LINE ID：@dqi1670m</p>
         </div>
         <div class="done-contact" data-done-method="WhatsApp" hidden>
-          <p class="done-say">您的預約申請已送出！最後一步：請透過 WhatsApp 傳送預約編號給我們，以便確認日期與上課細節，確認後預約才算成立。</p>
+          <p class="done-say done-say--alert" role="status">您的預約申請已送出！最後一步：請透過 WhatsApp 傳送預約編號給我們，以便確認日期與上課細節，確認後預約才算成立。</p>
           <a class="done-btn done-btn--wa" href="https://wa.me/817091690683" target="_blank" rel="noopener">開啟 WhatsApp</a>
           <p class="done-id">+81 70-9169-0683</p>
         </div>
         <div class="done-contact" data-done-method="WeChat" hidden>
-          <p class="done-say">您的預約申請已送出！最後一步：請在微信搜尋 ID：Snowmode 加我們好友並傳送預約編號，以便確認日期與上課細節，確認後預約才算成立。</p>
+          <p class="done-say done-say--alert" role="status">您的預約申請已送出！最後一步：請在微信搜尋 ID：Snowmode 加我們好友並傳送預約編號，以便確認日期與上課細節，確認後預約才算成立。</p>
           <button type="button" class="done-btn done-btn--ghost" data-copy="#wechat-id">複製 WeChat ID</button>
           <p class="done-id">WeChat ID：Snowmode</p>
           <figure class="done-qr"><img src="img/wechat-qr-card.png" width="160" height="160" alt="WeChat QR code：Snowmode" loading="lazy" decoding="async"><figcaption>用手機微信掃描加好友</figcaption></figure>
         </div>
         <div class="done-contact" data-done-method="other" hidden>
-          <p class="done-say">您的預約申請已送出！最後一步：請透過以下任一方式傳送預約編號給我們，以便確認日期與上課細節，確認後預約才算成立。</p>
+          <p class="done-say done-say--alert" role="status"><strong>預約尚未完成！</strong>請透過以下任一方式傳送預約編號給我們，預約才算成立。</p>
           <a class="done-btn done-btn--line done-btn--big" href="https://line.me/R/ti/p/@dqi1670m" target="_blank" rel="noopener">加入官方 LINE</a>
           <p class="done-send-ref" data-done-send-ref>請傳送預約編號 <b class="done-send-ref-v" data-done-ref-copy>SM-0000</b><button type="button" class="done-mini" data-copy="#done-ref" data-copy-label="預約編號">複製</button></p>
           <ul class="done-list">
@@ -1089,7 +1090,7 @@ Jay教練是我們這兩天玩的這麼愉快的大功臣！
       <h3>送出預約之後</h3>
       <ol class="timeline">
         <li><b>收到需求</b><p>您會看到預約編號；我們收到您的日期與課程需求。</p></li>
-        <li><b>確認教練與時段</b><p>我們用您選的聯絡方式回覆可安排的時段。</p></li>
+        <li><b>確認教練與時段</b><p>請加入官方 LINE 並傳送預約編號，我們再為您確認可安排的教練與時段。</p></li>
         <li><b>付款</b><p>預約確認後支付總價 30% 訂金，付款方式與相關資訊將由學校另行提供。訂金付款完成後，我們會為您建立與教練的聯絡群組。尾款於上課前結清。</p></li>
         <li><b>取消政策</b><p>課程首日前 61 天以上取消：全額退款／前 31–60 天：退還訂金 50%／前 30 天內（含第 30 天）：恕不退款。多日課程以第一天起算。</p></li>
         <li><b>行前通知</b><p>上課前提供集合時間、地點與準備事項。</p></li>
@@ -1209,7 +1210,8 @@ Jay教練是我們這兩天玩的這麼愉快的大功臣！
     <svg class="msum-chev" viewBox="0 0 24 24" aria-hidden="true"><path d="M6 15l6-6 6 6" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>
   </button>
 </div>
-<script src="script.js?v=kn17"></script>
+<script src="script.js?v=kn18"></script>
 <script src="resort-carousel.js?v=kn2"></script>
+
 </body>
 </html>
