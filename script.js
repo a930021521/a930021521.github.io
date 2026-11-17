@@ -1505,7 +1505,9 @@
   (() => {
     const note = $('.coach-note'); if (!note) return;
     const btn = $('.cn-more', note); const mq = matchMedia('all');
-    const set = open => { note.classList.toggle('is-collapsed', !open); btn.setAttribute('aria-expanded', open ? 'true' : 'false'); btn.textContent = open ? '收合' : '繼續閱讀'; };
+    const txt = $('.cn-text', note);
+    const repaint = () => { if (!txt) return; txt.style.transform = 'translateZ(0)'; void txt.offsetHeight; requestAnimationFrame(() => { txt.style.transform = ''; }); };
+    const set = open => { note.classList.toggle('is-collapsed', !open); btn.setAttribute('aria-expanded', open ? 'true' : 'false'); btn.textContent = open ? '收合' : '繼續閱讀'; repaint(); };
     const sync = () => { btn.hidden = !mq.matches; set(!mq.matches); };
     btn.addEventListener('click', () => {
       const open = btn.getAttribute('aria-expanded') !== 'true'; set(open);
