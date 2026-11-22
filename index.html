@@ -45,7 +45,7 @@
 <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@200;300;400;600;700&display=swap" rel="stylesheet">
 <link rel="preload" as="image" type="image/webp" href="img/hero-m-opt5.webp" media="(max-width:640px)" fetchpriority="high">
 <link rel="preload" as="image" type="image/webp" href="img/hero-yuzawa-1920.webp" media="(min-width:641px)" fetchpriority="high">
-<link rel="stylesheet" href="style.css?v=hero44">
+<link rel="stylesheet" href="style.css?v=hero45">
 <link rel="stylesheet" href="hero-snow.css?v=1">
 <link rel="stylesheet" href="resort-carousel.css?v=16">
 </head>
@@ -132,7 +132,7 @@ b.querySelector('.announce-x').addEventListener('click',function(){b.hidden=true
     <p class="lead"><span class="lead-l">離東京一段新幹線的距離，</span><span class="lead-l"><span>這個冬天，</span><span>開啟滑雪模式，</span><span>滑進越後湯澤。</span></span></p>
     <div class="hero-offer">
       <p class="hero-course">越後湯澤・北海道｜單板・雙板課程</p>
-      <p class="hero-eb"><span class="hero-eb-tag" data-eb-on>早鳥限時優惠第二彈<span class="hero-eb-sep" aria-hidden="true">｜</span><time datetime="2026-11-20">11/20</time> 截止<span class="hero-eb-sep hero-eb-sep2" aria-hidden="true">｜</span></span><span class="hero-eb-price">湯澤半天 NT$8,000 起</span></p>
+      <p class="hero-eb" data-eb3-on><span class="hero-eb-tag">早鳥限時優惠第三彈<span class="hero-eb-sep" aria-hidden="true">｜</span><time datetime="2026-11-30">11/30</time> 截止<span class="hero-eb-sep hero-eb-sep2" aria-hidden="true">｜</span></span><span class="hero-eb-price">湯澤全天 NT$12,000 起</span></p>
       <div class="hero-cta">
         <a class="hero-btn hero-btn--main" href="#booking">立即預約</a>
         <a class="hero-btn hero-btn--line" href="https://line.me/R/ti/p/@dqi1670m" target="_blank" rel="noopener">LINE 詢問</a>
@@ -282,16 +282,18 @@ b.querySelector('.announce-x').addEventListener('click',function(){b.hidden=true
           <ul class="px-chips" aria-label="適用雪場"><li>岩原<i><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M15.5 3.2a8.6 8.6 0 1 0 5.3 14.6A7.2 7.2 0 0 1 15.5 3.2z" fill="currentColor"/></svg>夜場</i></li><li>中里</li><li>苗場</li><li>神樂</li><li>神立<i><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M15.5 3.2a8.6 8.6 0 1 0 5.3 14.6A7.2 7.2 0 0 1 15.5 3.2z" fill="currentColor"/></svg>夜場</i></li><li>石打丸山</li></ul>
         </div>
         <div class="px-promo">
-          <div class="eb-card" role="note" aria-label="早鳥限時優惠" data-eb-on>
-          <div class="eb-card-top"><span class="eb-card-kicker">EARLY BIRD · 第二彈</span><span class="eb-card-chip"><time datetime="2026-11-20">11/20</time> 截止</span></div>
+          <div class="eb-card" role="note" aria-label="早鳥限時優惠" data-eb3-on>
+          <div class="eb-card-top"><span class="eb-card-kicker">EARLY BIRD · 第三彈</span><span class="eb-card-chip"><time datetime="2026-11-30">11/30</time> 截止</span></div>
           <h3 class="eb-card-title">早鳥限時優惠</h3>
-          <p class="eb-card-sub">11/20 前預約，整季適用</p>
+          <p class="eb-card-sub">11/30 前預約，全天整季現折 NT$1,000</p>
         </div>
-          <div class="yz-off" role="note" aria-label="淡季優惠" data-eb-off hidden>
+          <div class="yz-off" role="note" aria-label="淡季優惠" data-eb-off>
           <span class="yz-off-tag">OFF-SEASON</span>
-          <p class="yz-off-title">沒搶到早鳥沒關係，淡季每堂現折 <b>NT$1,000</b></p>
+          <p class="yz-off-title" data-eb3-on>淡季半天每堂現折 <b>NT$1,000</b></p>
+          <p class="yz-off-title" data-eb3-off hidden>沒搶到早鳥沒關係，淡季每堂現折 <b>NT$1,000</b></p>
           <dl class="yz-off-dates"><dt>淡季期間</dt><dd>2026/12/18–12/23</dd><dd>2027/3/3–4/15</dd></dl>
-          <p class="yz-off-hint">半天、全天皆適用，每堂課程折抵 NT$1,000；12/24–3/2 為一般價格。</p>
+          <p class="yz-off-hint" data-eb3-on>全天已含早鳥第三彈優惠，淡季不再另折；12/24–3/2 全天為早鳥價。</p>
+          <p class="yz-off-hint" data-eb3-off hidden>半天、全天皆適用，每堂課程折抵 NT$1,000；12/24–3/2 為一般價格。</p>
         </div>
         </div>
       </div>
@@ -308,7 +310,7 @@ b.querySelector('.announce-x').addEventListener('click',function(){b.hidden=true
           </div>
           <div class="px-row" data-dur="full">
             <p class="px-row-h"><b>全天</b><span>6 小時</span></p>
-            <ul class="px-cards" aria-label="全天（6 小時）整組總價"><li class="px-card"><span class="px-n">1<small>人</small></span><span class="price-cell" data-eb-on><s class="was">NT$13,000</s><span class="now"><small>NT$</small>12,000</span></span><span data-eb-off hidden><small>NT$</small>13,000</span></li><li class="px-card"><span class="px-n">2<small>人</small></span><span class="price-cell" data-eb-on><s class="was">NT$14,000</s><span class="now"><small>NT$</small>13,000</span></span><span data-eb-off hidden><small>NT$</small>14,000</span></li><li class="px-card"><span class="px-n">3<small>人</small></span><span class="price-cell" data-eb-on><s class="was">NT$15,000</s><span class="now"><small>NT$</small>14,000</span></span><span data-eb-off hidden><small>NT$</small>15,000</span></li><li class="px-card"><span class="px-n">4<small>人</small></span><span class="price-cell" data-eb-on><s class="was">NT$16,000</s><span class="now"><small>NT$</small>15,000</span></span><span data-eb-off hidden><small>NT$</small>16,000</span></li><li class="px-card"><span class="px-n">5–6<small>人</small></span><span class="price-cell" data-eb-on><s class="was">NT$17,000</s><span class="now"><small>NT$</small>16,000</span></span><span data-eb-off hidden><small>NT$</small>17,000</span></li></ul>
+            <ul class="px-cards" aria-label="全天（6 小時）整組總價"><li class="px-card"><span class="px-n">1<small>人</small></span><span class="price-cell" data-eb3-on><s class="was">NT$13,000</s><span class="now"><small>NT$</small>12,000</span></span><span data-eb3-off hidden><small>NT$</small>13,000</span></li><li class="px-card"><span class="px-n">2<small>人</small></span><span class="price-cell" data-eb3-on><s class="was">NT$14,000</s><span class="now"><small>NT$</small>13,000</span></span><span data-eb3-off hidden><small>NT$</small>14,000</span></li><li class="px-card"><span class="px-n">3<small>人</small></span><span class="price-cell" data-eb3-on><s class="was">NT$15,000</s><span class="now"><small>NT$</small>14,000</span></span><span data-eb3-off hidden><small>NT$</small>15,000</span></li><li class="px-card"><span class="px-n">4<small>人</small></span><span class="price-cell" data-eb3-on><s class="was">NT$16,000</s><span class="now"><small>NT$</small>15,000</span></span><span data-eb3-off hidden><small>NT$</small>16,000</span></li><li class="px-card"><span class="px-n">5–6<small>人</small></span><span class="price-cell" data-eb3-on><s class="was">NT$17,000</s><span class="now"><small>NT$</small>16,000</span></span><span data-eb3-off hidden><small>NT$</small>17,000</span></li></ul>
           </div>
         </div>
         <div class="px-infos">
@@ -1210,7 +1212,7 @@ Jay教練是我們這兩天玩的這麼愉快的大功臣！
     <svg class="msum-chev" viewBox="0 0 24 24" aria-hidden="true"><path d="M6 15l6-6 6 6" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>
   </button>
 </div>
-<script src="script.js?v=kn19"></script>
+<script src="script.js?v=kn20"></script>
 <script src="resort-carousel.js?v=kn2"></script>
 
 </body>

@@ -118,11 +118,22 @@
   const EB_EXT = { rate: 0.85, label: '早鳥限時優惠第二彈', until: '2026/11/20',
     yuzawa: { half: [8000, 9000, 10000, 11000, 12000], full: [12000, 13000, 14000, 15000, 16000] } }; // 第二彈：一般價 −NT$1,000，5–6 人用最後一格
   const EB_EXCLUDE = new Set(['星野']); // 星野 維持現價（9 折），不適用早鳥 85 折
+  /* 早鳥第三彈：2026/11/30 23:59（台北時間）前預約 → 越後湯澤全天整季現折 NT$1,000
+   *（1–4 人 12,000–15,000，5–6 人 16,000）。半天、北海道、札幌國際、星野不變。
+   * 淡季不與全天早鳥疊加（比照第二彈）；半天淡季現折照常。時間一過自動回到一般價＋淡季折抵。
+   * 測試用：網址加 ?eb3=1 / ?eb3=0 強制開關。 */
+  const EB3_END = Date.parse('2026-11-30T23:59:59.999+08:00');
+  const EB3_ON = (() => { const q = (location.search.match(/[?&]eb3=([01])/) || [])[1]; return q ? q === '1' : Date.now() <= EB3_END; })();
+  const EB3 = { label: '早鳥限時優惠第三彈', until: '2026/11/30',
+    yuzawaFull: [12000, 13000, 14000, 15000, 16000] }; // 一般全天價 −NT$1,000，5–6 人用最後一格
   (function applyEbDom() {
     const on = EB_EXT_ON;
     document.querySelectorAll('[data-eb-on]').forEach(el => { el.hidden = !on; });
     document.querySelectorAll('[data-eb-off]').forEach(el => { el.hidden = on; });
     if (!on) document.querySelectorAll('[data-off-text]').forEach(el => { el.textContent = el.dataset.offText; });
+    const on3 = EB3_ON && !on; // 第二彈測試（?eb=1）時仍走第二彈畫面
+    document.querySelectorAll('[data-eb3-on]').forEach(el => { el.hidden = !on3; });
+    document.querySelectorAll('[data-eb3-off]').forEach(el => { el.hidden = on3; });
   })();
   const EARLY_BIRD = { rate: 0.9, label: '9 折優惠' };
   const SEASON_LABEL = { low: '淡季', peak: '旺季', super: '超旺季' };
@@ -528,8 +539,21 @@
     if (!overMax && people >= 1 && b.dates.length) {
       const extra = YUZAWA_SURCHARGE[String(b.resort || '').trim()] || 0; // per lesson day per group
       const units = d => slotUnits(d.slot);
-      offDays = EB_EXT_ON ? 0 : b.dates.reduce((s, d) => s + (isYuzawaOffseason(d.date) ? units(d).length : 0), 0); // 淡季 per lesson (全日＋夜場 = 2)
-      amount = b.dates.reduce((sum, d) => sum + units(d).reduce((s, k) => s + (t => t[Math.min(people, t.length) - 1])((EB_EXT_ON ? EB_EXT.yuzawa : CONFIG.PRICE_TABLE)[k]), 0) + extra, 0) - offDays * YUZAWA_OFFSEASON.off;
+      const yzPrice = (k, n) => {
+        const i = Math.min(n, CONFIG.PRICE_TABLE[k].length) - 1;
+        if (EB_EXT_ON) return EB_EXT.yuzawa[k][i];
+        if (EB3_ON && k === 'full') return EB3.yuzawaFull[i];
+        return CONFIG.PRICE_TABLE[k][i];
+      };
+      // 第二彈：淡季完全關閉（整季早鳥價）。第三彈：全天已含現折，淡季不再另折；半天淡季照常。
+      offDays = b.dates.reduce((s, d) => {
+        if (!isYuzawaOffseason(d.date)) return s;
+        const u = units(d);
+        if (EB_EXT_ON) return s;
+        if (EB3_ON) return s + u.filter(k => k === 'half').length;
+        return s + u.length;
+      }, 0); // 淡季 per lesson (全日＋夜場 = 2)
+      amount = b.dates.reduce((sum, d) => sum + units(d).reduce((s, k) => s + yzPrice(k, people), 0) + extra, 0) - offDays * YUZAWA_OFFSEASON.off;
     }
     const offNote = offDays ? `淡季優惠 −${ntd(offDays * YUZAWA_OFFSEASON.off)}${offDays > 1 ? `（NT$1,000 × ${offDays} 堂）` : ''}` : '';
     const deposit = amount == null ? null : Math.round(amount * b.depositRate);
@@ -541,7 +565,7 @@
     const later = overMax ? '私訊報價' : null;
     return {
       currency: CONFIG.currency,
-      label: EB_EXT_ON ? '早鳥限時優惠第二彈' : CONFIG.priceLabel,
+      label: EB_EXT_ON ? EB_EXT.label : EB3_ON ? EB3.label : CONFIG.priceLabel,
       amount,
       display: show(amount),
       deposit,
@@ -553,7 +577,8 @@
       earlyBird: false,
       offseasonDays: offDays,
       offseasonNote: offNote,
-      basis: EB_EXT_ON ? `早鳥限時優惠第二彈（${EB_EXT.until} 截止，整季適用），整組總價；實際費用以我們的回覆為準` : YUZAWA_BASIS,
+      basis: EB_EXT_ON ? `早鳥限時優惠第二彈（${EB_EXT.until} 截止，整季適用），整組總價；實際費用以我們的回覆為準`
+        : EB3_ON ? `早鳥限時優惠第三彈（${EB3.until} 截止，全天整季適用），整組總價；實際費用以我們的回覆為準` : YUZAWA_BASIS,
       note: offNote || '以我們的回覆為準',
       duration,
       durationLabel: b.durationLabel,
