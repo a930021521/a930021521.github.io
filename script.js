@@ -249,33 +249,45 @@
    * then jpyToTwd. 5+ people, unknown resort, or a date outside
    * the published season stays a private quote.
    */
-  /* 札幌國際 搶先開滑 11/20–12/16：同越後湯澤價（NT$ 整組總價，1–4 人、5–6 人） */
+  /* 札幌國際・手稻 搶先開滑 11/20–12/16：NT$ 整組總價，1–4 人、5–6 人共用最後一格。
+   * 札幌國際維持原價表；手稻依 Freeride 日圓價 ÷5.06（1–4 人），5–6 人依 +¥5,000／人取 5 人價再換算（半天 10,900、全天 16,800）。 */
   const SAPPORO_EARLY = {
     from: 1120, to: 1216,
-    label: '札幌國際 搶先開滑價',
-    table: { half: [9000, 10000, 11000, 12000, 13000], full: [13000, 14000, 15000, 16000, 17000] },
-    maxPeople: 6
+    maxPeople: 6,
+    resorts: {
+      '札幌國際': {
+        label: '札幌國際 搶先開滑價',
+        table: { half: [9000, 10000, 11000, 12000, 13000], full: [13000, 14000, 15000, 16000, 17000] }
+      },
+      '手稻': {
+        label: '手稻 搶先開滑價',
+        table: { half: [6900, 7900, 8900, 9900, 10900], full: [12800, 13800, 14800, 15800, 16800] }
+      }
+    }
   };
   const inSapporoWindow = iso => { const p = parseISODate(iso); if (!p) return false; const md = p.m * 100 + p.d; return md >= SAPPORO_EARLY.from && md <= SAPPORO_EARLY.to; };
+  const sapporoEarlyOf = resort => SAPPORO_EARLY.resorts[resortKey(resort)];
   function estimateHokkaido(args) {
     const { resort, people, dates, asOf, depositRate = 0.3 } = args;
     const list0 = Array.isArray(dates) ? dates : [];
     const n0 = Number(people) || 0;
-    if (resortKey(resort) === '札幌國際' && list0.length && list0.some(d => inSapporoWindow(d.date))) {
+    const earlyCfg = sapporoEarlyOf(resort);
+    const earlyKey = resortKey(resort);
+    if (earlyCfg && list0.length && list0.some(d => inSapporoWindow(d.date))) {
       if (!list0.every(d => inSapporoWindow(d.date))) {
-        return quoteResult('out_of_season', '札幌國際 11/20–12/16 以外的日期，請私訊報價', { resort: '札幌國際', people: n0 });
+        return quoteResult('out_of_season', earlyKey + ' 11/20–12/16 以外的日期，請私訊報價', { resort: earlyKey, people: n0 });
       }
-      if (n0 > SAPPORO_EARLY.maxPeople) return quoteResult('over_max', '請私訊報價', { resort: '札幌國際', people: n0 });
+      if (n0 > SAPPORO_EARLY.maxPeople) return quoteResult('over_max', '請私訊報價', { resort: earlyKey, people: n0 });
       if (n0 >= 1) {
-        const amount = list0.reduce((s, d) => s + slotUnits(d.slot).reduce((u, k) => { const t = SAPPORO_EARLY.table[k]; return u + t[Math.min(n0, t.length) - 1]; }, 0), 0);
+        const amount = list0.reduce((s, d) => s + slotUnits(d.slot).reduce((u, k) => { const t = earlyCfg.table[k]; return u + t[Math.min(n0, t.length) - 1]; }, 0), 0);
         const deposit = Math.round(amount * depositRate);
         const halfDays = list0.filter(d => slotKey(d.slot) === 'half').length;
         return {
-          ok: true, quoteRequired: false, hokkaido: true, sapporoEarly: true, label: SAPPORO_EARLY.label,
+          ok: true, quoteRequired: false, hokkaido: true, sapporoEarly: true, label: earlyCfg.label,
           amount, display: ntd(amount), deposit, balance: amount - deposit,
           depositDisplay: ntd(deposit), balanceDisplay: ntd(amount - deposit),
-          basis: '札幌國際 搶先開滑價，整組總價；實際以確認為準',
-          earlyBird: false, resort: '札幌國際', people: n0, days: [],
+          basis: earlyCfg.label + '，整組總價；實際以確認為準',
+          earlyBird: false, resort: earlyKey, people: n0, days: [],
           breakdown: { halfDays, fullDays: list0.length - halfDays, totalPeople: n0, seasons: ['搶先開滑'] }
         };
       }
@@ -352,7 +364,7 @@
     };
   }
   function priceNote(price) {
-    if (price && price.sapporoEarly) return '札幌國際搶先開滑價；實際以確認為準';
+    if (price && price.sapporoEarly) return (price.resort || '札幌國際') + '搶先開滑價；實際以確認為準';
     if (price && price.hokkaido && price.amount != null && !price.quoteRequired) {
       if (price.ebExt) return '含早鳥限時優惠第二彈；實際以確認為準';
       return price.earlyBird ? '含 9 折；實際以確認為準' : '實際以確認為準';
@@ -860,7 +872,7 @@
   // 越後湯澤 groups max 6 (大人+小孩); 北海道 keeps its own rule
   const partyCap = () => {
     const r = String(booking.resort || '').trim();
-    if (r === '北海道・札幌國際') return booking.dates.length && booking.dates.every(d => inSapporoWindow(d.date)) ? SAPPORO_EARLY.maxPeople : Infinity; // 搶先開滑 only
+    if (r === '北海道・札幌國際' || r === '北海道・手稻') return booking.dates.length && booking.dates.every(d => inSapporoWindow(d.date)) ? SAPPORO_EARLY.maxPeople : Infinity; // 搶先開滑 only
     return r && !r.startsWith('北海道・') ? CONFIG.maxPricedPeople : Infinity;
   };
   function setParty(adults, children) {
@@ -1823,7 +1835,7 @@
   dlg.addEventListener('close', () => { document.documentElement.style.overflow = ''; if (last) last.focus(); });
 })();
 
-// ===== 課程費用：地區切換（越後湯澤／札幌國際／北海道）＋ 手機半天／全天切換 =====
+// ===== 課程費用：地區切換（越後湯澤／札幌國際・手稻／北海道）＋ 手機半天／全天切換 =====
 (function () {
   const tabs = Array.from(document.querySelectorAll('.px-tab'));
   if (!tabs.length) return;
@@ -1875,4 +1887,16 @@
       btns.forEach(x => x.setAttribute('aria-pressed', x === b ? 'true' : 'false'));
     }));
   });
+  // 札幌國際／手稻：手機切換雪場（電腦兩座並陳，不切）
+  const spPanel = document.getElementById('prices-sapporo');
+  if (spPanel) {
+    const spBtns = Array.from(spPanel.querySelectorAll('.px-sp-switch [data-sp-resort]'));
+    const setSp = key => {
+      spPanel.dataset.spResort = key;
+      const box = spPanel.querySelector('.px-prices');
+      if (box) box.dataset.spResort = key;
+      spBtns.forEach(b => b.setAttribute('aria-selected', b.dataset.spResort === key ? 'true' : 'false'));
+    };
+    spBtns.forEach(b => b.addEventListener('click', () => setSp(b.dataset.spResort)));
+  }
 })();
