@@ -250,14 +250,15 @@
    * the published season stays a private quote.
    */
   /* 札幌國際・手稻 搶先開滑 11/20–12/16：NT$ 整組總價，1–4 人、5–6 人共用最後一格。
-   * 札幌國際維持原價表；手稻依 Freeride 日圓價 ÷5.06（1–4 人），5–6 人依 +¥5,000／人取 5 人價再換算（半天 10,900、全天 16,800）。 */
+   * 札幌國際：廣告價（一般價 −NT$1,000；5–6 人為 4 人價 +1,000）。
+   * 手稻：Freeride 日圓價 ÷5.06（1–4 人），5–6 人依 +¥5,000／人取 5 人價再換算（半天 10,900、全天 16,800）。 */
   const SAPPORO_EARLY = {
     from: 1120, to: 1216,
     maxPeople: 6,
     resorts: {
       '札幌國際': {
         label: '札幌國際 搶先開滑價',
-        table: { half: [9000, 10000, 11000, 12000, 13000], full: [13000, 14000, 15000, 16000, 17000] }
+        table: { half: [8000, 9000, 10000, 11000, 12000], full: [12000, 13000, 14000, 15000, 16000] }
       },
       '手稻': {
         label: '手稻 搶先開滑價',
@@ -1835,7 +1836,7 @@
   dlg.addEventListener('close', () => { document.documentElement.style.overflow = ''; if (last) last.focus(); });
 })();
 
-// ===== 課程費用：地區切換（越後湯澤／札幌國際・手稻／北海道）＋ 手機半天／全天切換 =====
+// ===== 課程費用：地區切換（越後湯澤／札幌國際／手稻／北海道）＋ 手機半天／全天切換 =====
 (function () {
   const tabs = Array.from(document.querySelectorAll('.px-tab'));
   if (!tabs.length) return;
@@ -1887,16 +1888,4 @@
       btns.forEach(x => x.setAttribute('aria-pressed', x === b ? 'true' : 'false'));
     }));
   });
-  // 札幌國際／手稻：手機切換雪場（電腦兩座並陳，不切）
-  const spPanel = document.getElementById('prices-sapporo');
-  if (spPanel) {
-    const spBtns = Array.from(spPanel.querySelectorAll('.px-sp-switch [data-sp-resort]'));
-    const setSp = key => {
-      spPanel.dataset.spResort = key;
-      const box = spPanel.querySelector('.px-prices');
-      if (box) box.dataset.spResort = key;
-      spBtns.forEach(b => b.setAttribute('aria-selected', b.dataset.spResort === key ? 'true' : 'false'));
-    };
-    spBtns.forEach(b => b.addEventListener('click', () => setSp(b.dataset.spResort)));
-  }
 })();
