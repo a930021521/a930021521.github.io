@@ -1836,50 +1836,117 @@
   dlg.addEventListener('close', () => { document.documentElement.style.overflow = ''; if (last) last.focus(); });
 })();
 
-// ===== 課程費用：地區切換（越後湯澤／札幌國際／手稻／北海道）＋ 手機半天／全天切換 =====
+// ===== 課程費用：地區切換（電腦四頁／手機札幌國際・手稻合併）＋ 半天／全天切換 =====
 (function () {
   const tabs = Array.from(document.querySelectorAll('.px-tab'));
   if (!tabs.length) return;
+  const tabSp = tabs.find(t => t.id === 'px-tab-sp');
+  const tabTn = tabs.find(t => t.id === 'px-tab-tn');
+  const panelSp = document.getElementById('prices-sapporo');
+  const panelTn = document.getElementById('prices-teine');
   const panels = tabs.map(t => document.getElementById(t.getAttribute('aria-controls')));
-  function show(i, focus) {
-    tabs.forEach((t, j) => {
-      const on = i === j;
+  const mq = window.matchMedia('(max-width:899px)');
+  const isMobile = () => mq.matches;
+  const visibleTabs = () => tabs.filter(t => t.id !== 'px-tab-tn' || !isMobile());
+  const boxOf = panel => panel && panel.querySelector('.px-prices');
+  const syncDur = (from, to) => {
+    if (!from || !to || !from.dataset.show) return;
+    to.dataset.show = from.dataset.show;
+    to.querySelectorAll('.px-dur button').forEach(b => b.setAttribute('aria-pressed', b.dataset.dur === to.dataset.show ? 'true' : 'false'));
+  };
+  const setSpResort = key => {
+    if (!panelSp) return;
+    panelSp.dataset.spResort = key;
+    const box = boxOf(panelSp);
+    if (box) box.dataset.spResort = key;
+    panelSp.querySelectorAll('.px-sp-switch [data-sp-resort]').forEach(b => {
+      b.setAttribute('aria-selected', b.dataset.spResort === key ? 'true' : 'false');
+    });
+  };
+  function show(tab, focus) {
+    if (typeof tab === 'number') tab = tabs[tab];
+    if (!tab) return;
+    if (isMobile() && tab === tabTn) {
+      syncDur(boxOf(panelTn), boxOf(panelSp));
+      setSpResort('teine');
+      tab = tabSp;
+    }
+    if (!isMobile() && tab === tabSp) setSpResort('kokusai');
+    tabs.forEach(t => {
+      const on = t === tab;
       t.classList.toggle('on', on);
       t.setAttribute('aria-selected', on ? 'true' : 'false');
       t.tabIndex = on ? 0 : -1;
-      if (panels[j]) panels[j].hidden = !on;
+      const p = document.getElementById(t.getAttribute('aria-controls'));
+      if (p) p.hidden = !on;
     });
-    if (focus) tabs[i].focus();
+    if (isMobile() && panelTn) panelTn.hidden = true;
+    if (focus) tab.focus();
   }
-  tabs.forEach((t, i) => {
-    t.addEventListener('click', () => show(i, false));
+  function showHash(h) {
+    if (h === '#prices-teine') {
+      if (isMobile()) { setSpResort('teine'); show(tabSp, false); }
+      else show(tabTn, false);
+      return true;
+    }
+    if (h === '#prices-sapporo') {
+      setSpResort('kokusai');
+      show(tabSp, false);
+      return true;
+    }
+    const i = panels.findIndex(p => p && '#' + p.id === h);
+    if (i < 0) return false;
+    show(tabs[i], false);
+    return true;
+  }
+  function syncMode() {
+    if (isMobile()) {
+      if (panelTn && !panelTn.hidden) {
+        syncDur(boxOf(panelTn), boxOf(panelSp));
+        setSpResort('teine');
+        show(tabSp, false);
+      } else if (panelTn) panelTn.hidden = true;
+    } else if (panelSp && !panelSp.hidden && panelSp.dataset.spResort === 'teine') {
+      syncDur(boxOf(panelSp), boxOf(panelTn));
+      show(tabTn, false);
+    }
+  }
+  tabs.forEach(t => {
+    t.addEventListener('click', () => show(t, false));
     t.addEventListener('keydown', e => {
+      const vis = visibleTabs();
+      const i = vis.indexOf(t);
+      if (i < 0) return;
       let j = null;
-      if (e.key === 'ArrowRight') j = (i + 1) % tabs.length;
-      else if (e.key === 'ArrowLeft') j = (i - 1 + tabs.length) % tabs.length;
+      if (e.key === 'ArrowRight') j = (i + 1) % vis.length;
+      else if (e.key === 'ArrowLeft') j = (i - 1 + vis.length) % vis.length;
       else if (e.key === 'Home') j = 0;
-      else if (e.key === 'End') j = tabs.length - 1;
+      else if (e.key === 'End') j = vis.length - 1;
       if (j === null) return;
       e.preventDefault();
-      show(j, true);
+      show(vis[j], true);
     });
   });
-  const idx = h => panels.findIndex(p => p && '#' + p.id === h);
+  if (panelSp) {
+    panelSp.querySelectorAll('.px-sp-switch [data-sp-resort]').forEach(b => {
+      b.addEventListener('click', () => setSpResort(b.dataset.spResort));
+    });
+  }
   const toPrices = smooth => { const el = document.getElementById('prices'); if (el) el.scrollIntoView({ behavior: smooth ? 'smooth' : 'auto', block: 'start' }); };
   // #prices-sapporo 等連結（含頂部公告列）：切到對應地區再捲到價格區
   document.addEventListener('click', e => {
     const a = e.target.closest && e.target.closest('a[href^="#prices-"]');
     if (!a) return;
-    const i = idx(a.getAttribute('href'));
-    if (i < 0) return;
+    if (!showHash(a.getAttribute('href'))) return;
     e.preventDefault();
-    show(i, false);
     toPrices(true);
     if (history.replaceState) history.replaceState(null, '', a.getAttribute('href'));
   }, true);
-  const i0 = idx(location.hash);
-  if (i0 > 0) { show(i0, false); requestAnimationFrame(() => toPrices(false)); }
-  window.addEventListener('hashchange', () => { const i = idx(location.hash); if (i >= 0) { show(i, false); toPrices(false); } });
+  if (showHash(location.hash)) requestAnimationFrame(() => toPrices(false));
+  window.addEventListener('hashchange', () => { showHash(location.hash); toPrices(false); });
+  if (mq.addEventListener) mq.addEventListener('change', syncMode);
+  else mq.addListener(syncMode);
+  syncMode();
   // 手機：半天／全天
   document.querySelectorAll('.px-prices').forEach(box => {
     const btns = Array.from(box.querySelectorAll('.px-dur button'));

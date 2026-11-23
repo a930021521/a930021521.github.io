@@ -1655,7 +1655,7 @@ html.has-announce{scroll-padding-top:calc(84px + var(--announce-h))}
 .msum-v{color:#fff}
 
 /* ===== 課程費用 v2：地區切換＋設計版價格卡 ===== */
-.px-switch{display:grid;grid-template-columns:repeat(2,1fr);gap:6px;margin:30px 0 22px;padding:6px;border-radius:18px;border:1px solid rgba(206,220,245,.16);background:rgba(10,16,32,.62)}
+.px-switch{display:grid;grid-template-columns:repeat(3,1fr);gap:6px;margin:30px 0 22px;padding:6px;border-radius:18px;border:1px solid rgba(206,220,245,.16);background:rgba(10,16,32,.62)}
 .px-tab{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:1px;min-height:56px;padding:10px 6px;border:0;border-radius:13px;background:transparent;color:rgba(232,238,251,.72);font:inherit;cursor:pointer;transition:background .25s,color .25s,box-shadow .25s}
 .px-tab b{font-size:1.02rem;font-weight:600;letter-spacing:.12em}
 .px-tab small{font-family:var(--lat);font-size:.68rem;letter-spacing:.06em;opacity:.7}
@@ -1808,17 +1808,48 @@ html.has-announce{scroll-padding-top:calc(84px + var(--announce-h))}
 .px-times dd{border-radius:10px}
 @media (max-width:899px){.px-promo .yz-off{padding:12px 14px}.px-promo .yz-off-title{font-size:.95rem}.px-promo .yz-off-dates{gap:6px}.px-promo .yz-off-dates dd{font-size:.78rem;padding:2px 10px}.px-promo .yz-off-hint{font-size:.78rem;margin-top:6px}}
 
-/* 四個地區分頁：手機 2×2，電腦一列 */
+/* 手機：三個分頁，札幌國際・手稻合併；電腦：四個獨立分頁 */
+.px-tab-name-sp{display:none}
+.px-tab-name-merge{display:flex;flex-wrap:wrap;justify-content:center;align-items:baseline;column-gap:0;letter-spacing:.04em;font-size:.95rem;line-height:1.2}
+.px-tab-name-merge span{white-space:nowrap}
+#px-tab-tn{display:none}
+#prices-sapporo .px-title-desk,
+#prices-sapporo .px-chips-desk,
+#prices-sapporo .px-note-desk{display:none}
+#prices-sapporo .px-hero-bg[data-sp-for]{inset:0}
+#prices-sapporo .px-hero-bg[data-sp-for="teine"]{opacity:0;pointer-events:none}
+.px-sp-bar{display:grid;gap:10px;margin-bottom:12px}
+.px-sp-bar .px-lead{margin:0}
+.px-sp-switch{display:grid;grid-template-columns:1fr 1fr;gap:4px;padding:4px;border-radius:14px;border:1px solid rgba(206,220,245,.2);background:rgba(255,255,255,.03)}
+.px-sp-switch button{min-height:44px;padding:8px 10px;border:0;border-radius:11px;background:transparent;color:rgba(232,238,251,.8);font:inherit;font-size:.95rem;letter-spacing:.12em;cursor:pointer}
+.px-sp-switch button[aria-selected="true"]{background:linear-gradient(180deg,#eef4ff,#c8daff);color:#0b1426;font-weight:600;box-shadow:0 6px 18px -10px rgba(143,176,255,.7)}
 @media (max-width:899px){
-  .px-tab{min-height:52px;padding:8px 4px}
-  .px-tab b{font-size:.88rem;letter-spacing:.06em}
-  .px-tab small{font-size:.62rem;letter-spacing:.02em;white-space:nowrap}
+  #prices-sapporo .px-prices[data-sp-resort="kokusai"] .px-sp-block[data-sp-resort="teine"],
+  #prices-sapporo .px-prices[data-sp-resort="teine"] .px-sp-block[data-sp-resort="kokusai"]{display:none}
+  #prices-sapporo[data-sp-resort="teine"] .px-hero-bg[data-sp-for="kokusai"]{opacity:0;pointer-events:none}
+  #prices-sapporo[data-sp-resort="teine"] .px-hero-bg[data-sp-for="teine"]{opacity:1}
+  #prices-teine{display:none!important}
 }
 @media (max-width:640px){
-  .px-tab b{font-size:.82rem;letter-spacing:.04em}
-  #prices-teine .px-title{letter-spacing:.28em}
+  .px-tab-name-merge{font-size:.8rem;letter-spacing:0}
+  #prices-sapporo .px-title-merge{font-size:1.85rem;letter-spacing:.06em}
 }
 @media (min-width:900px){
+  .px-tab-name-sp{display:block}
+  .px-tab-name-merge{display:none}
+  #px-tab-tn{display:flex}
+  #prices-sapporo .px-title-desk{display:inline}
+  #prices-sapporo .px-chips-desk{display:flex}
+  #prices-sapporo .px-note-desk{display:block}
+  #prices-sapporo .px-title-merge,
+  #prices-sapporo .px-chips-merge,
+  #prices-sapporo .px-note-merge{display:none}
+  #prices-sapporo .px-hero-bg[data-sp-for="teine"]{opacity:0;pointer-events:none}
+  #prices-sapporo .px-hero-bg[data-sp-for="kokusai"]{opacity:1}
+  .px-sp-switch{display:none}
+  #prices-sapporo .px-sp-block[data-sp-resort="teine"]{display:none}
+  #prices-teine{display:block}
+  #prices-teine[hidden]{display:none!important}
   .px-tab b{font-size:1.02rem}
   .px-switch .px-tab{flex-direction:column;gap:1px}
   #prices-teine .px-title{letter-spacing:.32em}

@@ -45,7 +45,7 @@
 <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@200;300;400;600;700&display=swap" rel="stylesheet">
 <link rel="preload" as="image" type="image/webp" href="img/hero-m-opt5.webp" media="(max-width:640px)" fetchpriority="high">
 <link rel="preload" as="image" type="image/webp" href="img/hero-yuzawa-1920.webp" media="(min-width:641px)" fetchpriority="high">
-<link rel="stylesheet" href="style.css?v=hero47">
+<link rel="stylesheet" href="style.css?v=hero48">
 <link rel="stylesheet" href="hero-snow.css?v=1">
 <link rel="stylesheet" href="resort-carousel.css?v=16">
 </head>
@@ -269,7 +269,7 @@ b.querySelector('.announce-x').addEventListener('click',function(){b.hidden=true
 
     <div class="px-switch" role="tablist" aria-label="選擇地區">
       <button type="button" class="px-tab on" role="tab" id="px-tab-yz" aria-controls="prices-yuzawa" aria-selected="true"><b>越後湯澤</b><small>6 座雪場</small></button>
-      <button type="button" class="px-tab" role="tab" id="px-tab-sp" aria-controls="prices-sapporo" aria-selected="false" tabindex="-1"><b>札幌國際</b><small>11/20–12/16</small></button>
+      <button type="button" class="px-tab" role="tab" id="px-tab-sp" aria-controls="prices-sapporo" aria-selected="false" tabindex="-1"><b class="px-tab-name-sp">札幌國際</b><b class="px-tab-name-merge"><span>札幌國際・</span><span>手稻</span></b><small>11/20–12/16</small></button>
       <button type="button" class="px-tab" role="tab" id="px-tab-tn" aria-controls="prices-teine" aria-selected="false" tabindex="-1"><b>手稻</b><small>11/20–12/16</small></button>
       <button type="button" class="px-tab" role="tab" id="px-tab-hk" aria-controls="prices-hokkaido" aria-selected="false" tabindex="-1"><b>北海道</b><small>6 座雪場</small></button>
     </div>
@@ -337,33 +337,54 @@ b.querySelector('.announce-x').addEventListener('click',function(){b.hidden=true
       </div>
     </section>
 
-    <section class="px-panel" id="prices-sapporo" role="tabpanel" aria-labelledby="px-tab-sp" hidden>
+    <section class="px-panel" id="prices-sapporo" role="tabpanel" aria-labelledby="px-tab-sp" hidden data-sp-resort="kokusai">
       <div class="px-hero">
-        <picture class="px-hero-bg"><source type="image/webp" media="(max-width:640px)" srcset="img/resorts/sapporo-kokusai-600.webp"><img src="img/resorts/sapporo-kokusai-1080.webp" alt="" loading="lazy" decoding="async"></picture>
+        <picture class="px-hero-bg" data-sp-for="kokusai"><source type="image/webp" media="(max-width:640px)" srcset="img/resorts/sapporo-kokusai-600.webp"><img src="img/resorts/sapporo-kokusai-1080.webp" alt="" loading="lazy" decoding="async"></picture>
+        <picture class="px-hero-bg" data-sp-for="teine"><source type="image/webp" media="(max-width:640px)" srcset="img/resorts/teine-600.webp"><img src="img/resorts/teine-1080.webp" alt="" loading="lazy" decoding="async"></picture>
         <div class="px-hero-txt">
           <p class="px-kicker">搶先開啟滑雪模式</p>
-          <h3 class="px-title">札幌國際</h3>
-          <ul class="px-chips" aria-label="適用雪場"><li><span class="px-chip-date">11/20–12/16</span></li></ul>
+          <h3 class="px-title"><span class="px-title-desk">札幌國際</span><span class="px-title-merge">札幌國際・手稻</span></h3>
+          <ul class="px-chips px-chips-desk" aria-label="適用日期"><li><span class="px-chip-date">11/20–12/16</span></li></ul>
+          <ul class="px-chips px-chips-merge" aria-label="適用雪場"><li>札幌國際</li><li>手稻</li><li><span class="px-chip-date">11/20–12/16</span></li></ul>
         </div>
 
       </div>
       <div class="px-body">
-        <div class="px-prices" data-show="half">
-          <p class="px-lead">半天／全天・整組總價（非每人）・NT$</p>
+        <div class="px-prices" data-show="half" data-sp-resort="kokusai">
+          <div class="px-sp-bar">
+            <p class="px-lead">半天／全天・整組總價（非每人）・NT$</p>
+            <div class="px-sp-switch" role="tablist" aria-label="選擇雪場">
+              <button type="button" role="tab" aria-selected="true" data-sp-resort="kokusai">札幌國際</button>
+              <button type="button" role="tab" aria-selected="false" data-sp-resort="teine">手稻</button>
+            </div>
+          </div>
           <div class="px-dur" role="group" aria-label="半天或全天">
             <button type="button" data-dur="half" aria-pressed="true">半天 <small>3 小時</small></button>
             <button type="button" data-dur="full" aria-pressed="false">全天 <small>6 小時</small></button>
           </div>
-          <div class="px-row" data-dur="half">
-            <p class="px-row-h"><b>半天</b><span>3 小時</span></p>
-            <ul class="px-cards" aria-label="半天（3 小時）整組總價"><li class="px-card"><span class="px-n">1<small>人</small></span><span class="price-cell"><span class="now"><small>NT$</small>8,000</span></span></li><li class="px-card"><span class="px-n">2<small>人</small></span><span class="price-cell"><span class="now"><small>NT$</small>9,000</span></span></li><li class="px-card"><span class="px-n">3<small>人</small></span><span class="price-cell"><span class="now"><small>NT$</small>10,000</span></span></li><li class="px-card"><span class="px-n">4<small>人</small></span><span class="price-cell"><span class="now"><small>NT$</small>11,000</span></span></li><li class="px-card"><span class="px-n">5–6<small>人</small></span><span class="price-cell"><span class="now"><small>NT$</small>12,000</span></span></li></ul>
+          <div class="px-sp-block" data-sp-resort="kokusai">
+            <div class="px-row" data-dur="half">
+              <p class="px-row-h"><b>半天</b><span>3 小時</span></p>
+              <ul class="px-cards" aria-label="札幌國際 半天（3 小時）整組總價"><li class="px-card"><span class="px-n">1<small>人</small></span><span class="price-cell"><span class="now"><small>NT$</small>8,000</span></span></li><li class="px-card"><span class="px-n">2<small>人</small></span><span class="price-cell"><span class="now"><small>NT$</small>9,000</span></span></li><li class="px-card"><span class="px-n">3<small>人</small></span><span class="price-cell"><span class="now"><small>NT$</small>10,000</span></span></li><li class="px-card"><span class="px-n">4<small>人</small></span><span class="price-cell"><span class="now"><small>NT$</small>11,000</span></span></li><li class="px-card"><span class="px-n">5–6<small>人</small></span><span class="price-cell"><span class="now"><small>NT$</small>12,000</span></span></li></ul>
+            </div>
+            <div class="px-row" data-dur="full">
+              <p class="px-row-h"><b>全天</b><span>6 小時</span></p>
+              <ul class="px-cards" aria-label="札幌國際 全天（6 小時）整組總價"><li class="px-card"><span class="px-n">1<small>人</small></span><span class="price-cell"><span class="now"><small>NT$</small>12,000</span></span></li><li class="px-card"><span class="px-n">2<small>人</small></span><span class="price-cell"><span class="now"><small>NT$</small>13,000</span></span></li><li class="px-card"><span class="px-n">3<small>人</small></span><span class="price-cell"><span class="now"><small>NT$</small>14,000</span></span></li><li class="px-card"><span class="px-n">4<small>人</small></span><span class="price-cell"><span class="now"><small>NT$</small>15,000</span></span></li><li class="px-card"><span class="px-n">5–6<small>人</small></span><span class="price-cell"><span class="now"><small>NT$</small>16,000</span></span></li></ul>
+            </div>
           </div>
-          <div class="px-row" data-dur="full">
-            <p class="px-row-h"><b>全天</b><span>6 小時</span></p>
-            <ul class="px-cards" aria-label="全天（6 小時）整組總價"><li class="px-card"><span class="px-n">1<small>人</small></span><span class="price-cell"><span class="now"><small>NT$</small>12,000</span></span></li><li class="px-card"><span class="px-n">2<small>人</small></span><span class="price-cell"><span class="now"><small>NT$</small>13,000</span></span></li><li class="px-card"><span class="px-n">3<small>人</small></span><span class="price-cell"><span class="now"><small>NT$</small>14,000</span></span></li><li class="px-card"><span class="px-n">4<small>人</small></span><span class="price-cell"><span class="now"><small>NT$</small>15,000</span></span></li><li class="px-card"><span class="px-n">5–6<small>人</small></span><span class="price-cell"><span class="now"><small>NT$</small>16,000</span></span></li></ul>
+          <div class="px-sp-block" data-sp-resort="teine">
+            <div class="px-row" data-dur="half">
+              <p class="px-row-h"><b>半天</b><span>3 小時</span></p>
+              <ul class="px-cards" aria-label="手稻 半天（3 小時）整組總價"><li class="px-card"><span class="px-n">1<small>人</small></span><span class="price-cell"><span class="now"><small>NT$</small>6,900</span></span></li><li class="px-card"><span class="px-n">2<small>人</small></span><span class="price-cell"><span class="now"><small>NT$</small>7,900</span></span></li><li class="px-card"><span class="px-n">3<small>人</small></span><span class="price-cell"><span class="now"><small>NT$</small>8,900</span></span></li><li class="px-card"><span class="px-n">4<small>人</small></span><span class="price-cell"><span class="now"><small>NT$</small>9,900</span></span></li><li class="px-card"><span class="px-n">5–6<small>人</small></span><span class="price-cell"><span class="now"><small>NT$</small>10,900</span></span></li></ul>
+            </div>
+            <div class="px-row" data-dur="full">
+              <p class="px-row-h"><b>全天</b><span>6 小時</span></p>
+              <ul class="px-cards" aria-label="手稻 全天（6 小時）整組總價"><li class="px-card"><span class="px-n">1<small>人</small></span><span class="price-cell"><span class="now"><small>NT$</small>12,800</span></span></li><li class="px-card"><span class="px-n">2<small>人</small></span><span class="price-cell"><span class="now"><small>NT$</small>13,800</span></span></li><li class="px-card"><span class="px-n">3<small>人</small></span><span class="price-cell"><span class="now"><small>NT$</small>14,800</span></span></li><li class="px-card"><span class="px-n">4<small>人</small></span><span class="price-cell"><span class="now"><small>NT$</small>15,800</span></span></li><li class="px-card"><span class="px-n">5–6<small>人</small></span><span class="price-cell"><span class="now"><small>NT$</small>16,800</span></span></li></ul>
+            </div>
           </div>
         </div>
-        <p class="pt-note">本價格適用 11/20–12/16 札幌國際課程，12/17 以後及其他北海道雪場請見下方價表。價格為整組總價（非每人），以 NT$ 計價；全天含1小時用餐。雪具租借、纜車券另計。開幕日依雪場公告與降雪狀況為準。</p>
+        <p class="pt-note px-note-desk">本價格適用 11/20–12/16 札幌國際課程，12/17 以後及其他北海道雪場請見下方價表。價格為整組總價（非每人），以 NT$ 計價；全天含1小時用餐。雪具租借、纜車券另計。開幕日依雪場公告與降雪狀況為準。</p>
+        <p class="pt-note px-note-merge">本價格適用 11/20–12/16 札幌國際、手稻課程，12/17 以後及其他北海道雪場請見下方價表。價格為整組總價（非每人），以 NT$ 計價；全天含1小時用餐。雪具租借、纜車券另計。開幕日依雪場公告與降雪狀況為準。</p>
       </div>
     </section>
 
@@ -1243,7 +1264,7 @@ Jay教練是我們這兩天玩的這麼愉快的大功臣！
     <svg class="msum-chev" viewBox="0 0 24 24" aria-hidden="true"><path d="M6 15l6-6 6 6" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>
   </button>
 </div>
-<script src="script.js?v=kn22"></script>
+<script src="script.js?v=kn23"></script>
 <script src="resort-carousel.js?v=kn2"></script>
 
 </body>
