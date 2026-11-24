@@ -222,7 +222,7 @@ button{cursor:pointer}
 .eb-sub{margin:0;font-size:1.02rem;font-weight:500;letter-spacing:.06em;color:var(--blue-3)}
 .eb-sub b,.eb-sub time{font-family:var(--lat);font-weight:700;color:#fff;letter-spacing:.04em}
 .eb-badge{position:relative;flex:none;display:flex;flex-direction:column;align-items:center;justify-content:center;width:128px;height:128px;border-radius:50%;background:radial-gradient(circle at 30% 25%,#5b8cff 0%,var(--blue) 55%,#1d4fd6 100%);box-shadow:0 0 0 6px rgba(47,107,255,.18),0 14px 36px rgba(47,107,255,.5);color:#fff;line-height:1}
-.eb-badge .n{font-family:var(--lat);font-weight:700;font-size:2.9rem;letter-spacing:-.02em}
+.eb-badge .n{font-family:var(--lat);font-weight:700;font-size:2.35rem;letter-spacing:-.04em}
 .eb-badge .n small{font-family:var(--sans);font-size:1.25rem;font-weight:700;margin-left:2px}
 .eb-badge .off{margin-top:6px;font-family:var(--lat);font-size:.7rem;font-weight:600;letter-spacing:.22em;opacity:.9}
 .eb-title .eb-l{display:inline-block;white-space:nowrap}
@@ -235,7 +235,7 @@ button{cursor:pointer}
   .eb-title{font-size:1.9rem}
   .eb-sub{font-size:.92rem}
   .eb-badge{width:82px;height:82px;box-shadow:0 0 0 4px rgba(47,107,255,.18),0 10px 26px rgba(47,107,255,.5)}
-  .eb-badge .n{font-size:1.85rem}
+  .eb-badge .n{font-size:1.5rem}
   .eb-badge .n small{font-size:.85rem}
   .eb-badge .off{font-size:.55rem;letter-spacing:.14em;margin-top:4px}
   .eb-badge--text .n{font-size:1.35rem}
