@@ -1918,3 +1918,45 @@ html.has-announce{scroll-padding-top:calc(84px + var(--announce-h))}
   .rv-panel{padding:0 18px 20px}
   .rv-two{grid-template-columns:1fr;gap:0}
 }
+
+/* ===== reviews marquee (CONFIG.reviewMarquee; revert that flag or this commit to restore the grid / swipe row) ===== */
+.rv-sum{margin-top:12px;font:600 .95rem/1.4 var(--lat);color:#D8BC84;letter-spacing:.08em}
+.rv-sum[hidden]{display:none}
+.reviews.rv-is-mq .rv-row,
+.reviews.rv-is-mq .rv-all-wrap,
+.reviews.rv-is-mq .rv-swipe{display:none!important}
+.rv-mq{--rv-mq-fade:72px;display:flex;flex-direction:column;gap:14px;margin:6px calc(-1 * var(--pad)) 8px;padding:8px 0;overflow:hidden;touch-action:pan-y;
+  -webkit-mask-image:linear-gradient(90deg,transparent 0,#000 var(--rv-mq-fade),#000 calc(100% - var(--rv-mq-fade)),transparent);
+  mask-image:linear-gradient(90deg,transparent 0,#000 var(--rv-mq-fade),#000 calc(100% - var(--rv-mq-fade)),transparent)}
+.rv-mq[hidden]{display:none}
+.rv-mq-track{display:flex;width:max-content;will-change:transform;backface-visibility:hidden;
+  animation:rvMqX var(--rv-mq-t,40s) linear infinite}
+.rv-mq-track.reverse{animation-name:rvMqXrev}
+@keyframes rvMqX{from{transform:translate3d(0,0,0)}to{transform:translate3d(-50%,0,0)}}
+@keyframes rvMqXrev{from{transform:translate3d(-50%,0,0)}to{transform:translate3d(0,0,0)}}
+@media (hover:hover){
+  .rv-mq:hover .rv-mq-track,.rv-mq:focus-within .rv-mq-track{animation-play-state:paused}
+}
+.rv-mq.is-held .rv-mq-track,.rv-mq.is-open .rv-mq-track{animation-play-state:paused}
+.rv-mq-set{display:flex;gap:16px;padding-right:16px;align-items:stretch}
+.rv-mq .rv-card{flex:0 0 300px;width:300px;max-width:300px;padding:20px 20px 18px;border-radius:18px;transform:none}
+@media (hover:hover){.rv-mq .rv-card:hover{transform:none;border-color:rgba(226,230,235,.28)}}
+.rv-mq .rv-card::after{display:none}
+.rv-mq .rv-rate{margin-top:12px}
+.rv-mq .rv-body{margin-top:12px}
+.rv-mq .rv-text{font-size:.88rem;line-height:1.7;-webkit-line-clamp:4;line-clamp:4}
+.rv-mq .rv-body.open .rv-text{display:block;-webkit-line-clamp:unset;line-clamp:none;overflow:visible}
+.rv-mq .rv-pics{flex-wrap:nowrap;overflow:hidden;margin-top:auto;padding-top:14px}
+.rv-mq .rv-pics img{width:56px;height:56px;flex:none;border-radius:10px}
+.rv-mq .rv-pics img:nth-child(n+4){display:none}
+@media (max-width:640px){
+  .rv-mq{--rv-mq-fade:40px;gap:12px;margin-top:2px}
+  .rv-mq-set{gap:12px;padding-right:12px}
+  .rv-mq .rv-card{flex-basis:252px;width:252px;max-width:252px;padding:16px 16px 14px;border-radius:16px}
+  .rv-mq .rv-text{font-size:.86rem;-webkit-line-clamp:3;line-clamp:3}
+  .rv-mq .rv-pics img{width:52px;height:52px}
+  .rv-sum{font-size:.88rem}
+}
+@media (prefers-reduced-motion:reduce){
+  .rv-mq-track{animation:none!important}
+}

@@ -31,7 +31,9 @@
     maxPricedPeople: 6, // 5–6 人 use the last PRICE_TABLE entry
     durations: { half: '半日（3 小時）', full: '全日（6 小時，含午休 1 小時）' },
     // Google Apps Script web app → Sheet「SNOWMODE 預約」+ email notification
-    endpoint: 'https://script.google.com/macros/s/AKfycbyX7NthGOMOO0p3lh9YbrCJ37tdIx_CVK5tn4EBSbrvdMSMNbGzemTmV90QBG8O-5pyRw/exec'
+    endpoint: 'https://script.google.com/macros/s/AKfycbyX7NthGOMOO0p3lh9YbrCJ37tdIx_CVK5tn4EBSbrvdMSMNbGzemTmV90QBG8O-5pyRw/exec',
+    // 學員回饋跑馬燈預覽。改 false（或本 commit revert）即恢復原本的格子／左右滑。
+    reviewMarquee: true
   };
 
   /* ---------- the booking data object ---------- */
@@ -1607,6 +1609,100 @@
     if (document.fonts) document.fonts.ready.then(check);
   })();
 
+  /* ---------- reviews: 星等摘要＋雙列跑馬燈（CONFIG.reviewMarquee；還原就改 false 或 revert 這次 commit） ---------- */
+  const reviewMotionMq = window.matchMedia('(prefers-reduced-motion: reduce)');
+  function reviewStarsOf(card) {
+    const el = $('.rv-stars', card);
+    if (!el) return 0;
+    const m = /(\d(?:\.\d)?)\s*顆星/.exec(el.getAttribute('aria-label') || '');
+    const n = m ? Number(m[1]) : 0;
+    return (n >= 1 && n <= 5) ? n : 0;
+  }
+  function updateReviewSummary() {
+    const el = $('.rv-sum'), row = $('.rv-row');
+    if (!el || !row) return;
+    let sum = 0, n = 0;
+    $$(':scope > .rv-card', row).forEach(c => { const s = reviewStarsOf(c); if (s) { sum += s; n++; } });
+    if (!n) { el.hidden = true; el.textContent = ''; return; }
+    el.textContent = '★ ' + (Math.round(sum / n * 10) / 10).toFixed(1) + '・共 ' + n + ' 則評價';
+    el.hidden = false;
+  }
+  function buildReviewMarquee() {
+    const sec = $('#voices'), host = sec && $('.rv-mq', sec), row = sec && $('.rv-row', sec);
+    if (!sec || !host || !row) return;
+    const allWrap = $('.rv-all-wrap', sec);
+    const enable = CONFIG.reviewMarquee && !reviewMotionMq.matches;
+    sec.classList.toggle('rv-is-mq', enable);
+    if (allWrap) allWrap.hidden = enable;
+    row.hidden = enable;
+    if (!enable) { host.hidden = true; host.innerHTML = ''; return; }
+    const cards = $$(':scope > .rv-card', row);
+    if (cards.length < 2) { sec.classList.remove('rv-is-mq'); if (allWrap) allWrap.hidden = false; row.hidden = false; host.hidden = true; host.innerHTML = ''; return; }
+    host.innerHTML = '';
+    host.hidden = false;
+    host.setAttribute('aria-label', '學員評價，自動緩慢捲動，滑鼠移上或按住可暫停');
+    const a = cards.filter((_, i) => i % 2 === 0);
+    const b = cards.filter((_, i) => i % 2 === 1);
+    const minW = Math.max(host.clientWidth || 0, 360) + 40;
+    const trackOf = (list, reverse, secondsHint) => {
+      const track = document.createElement('div');
+      track.className = 'rv-mq-track' + (reverse ? ' reverse' : '');
+      const set = document.createElement('div');
+      set.className = 'rv-mq-set';
+      const addAll = () => list.forEach(c => set.appendChild(c.cloneNode(true)));
+      addAll();
+      host.appendChild(track);
+      track.appendChild(set);
+      let n = 1;
+      while (set.offsetWidth < minW && n < 8) { addAll(); n++; }
+      const clone = set.cloneNode(true);
+      clone.setAttribute('aria-hidden', 'true');
+      track.appendChild(clone);
+      const w = set.offsetWidth;
+      const px = reverse ? 34 : 40;
+      track.style.setProperty('--rv-mq-t', Math.max(18, w / px) + 's');
+      return track;
+    };
+    const t1 = trackOf(a, false);
+    const t2 = trackOf(b.length ? b : a, true);
+    const bind = root => {
+      $$('.rv-body', root).forEach(body => {
+        const t = $('.rv-text', body);
+        if (!t) return;
+        let btn = $('.rv-more', body);
+        if (!btn) {
+          btn = document.createElement('button');
+          btn.type = 'button';
+          btn.className = 'rv-more';
+          btn.setAttribute('aria-expanded', 'false');
+          btn.textContent = '展開';
+          body.appendChild(btn);
+        }
+        body.classList.remove('open');
+        btn.textContent = '展開';
+        btn.setAttribute('aria-expanded', 'false');
+        btn.hidden = t.scrollHeight <= t.clientHeight + 2;
+        btn.addEventListener('click', e => {
+          e.preventDefault();
+          e.stopPropagation();
+          const open = body.classList.toggle('open');
+          btn.textContent = open ? '收合' : '展開';
+          btn.setAttribute('aria-expanded', open);
+          if (!open) btn.hidden = t.scrollHeight <= t.clientHeight + 2;
+          host.classList.toggle('is-open', $$('.rv-body.open', host).length > 0);
+        });
+      });
+    };
+    bind(host);
+    const hold = on => host.classList.toggle('is-held', on);
+    host.onpointerdown = e => { if (e.pointerType !== 'mouse') hold(true); };
+    host.onpointerup = host.onpointercancel = host.onpointerleave = () => hold(false);
+  }
+  if (reviewMotionMq.addEventListener) reviewMotionMq.addEventListener('change', buildReviewMarquee);
+  else if (reviewMotionMq.addListener) reviewMotionMq.addListener(buildReviewMarquee);
+  let rvMqResize;
+  window.addEventListener('resize', () => { clearTimeout(rvMqResize); rvMqResize = setTimeout(buildReviewMarquee, 200); });
+
   /* ---------- reviews: 留下評價（表單 → Apps Script type:"review"）＋ 顯示已上架的評價 ---------- */
   (() => {
     const box = $('#review'); if (!box) return;
@@ -1774,7 +1870,9 @@
       if (nEl) nEl.textContent = '（+' + n + '）';
       $$('img', row).forEach(im => im.addEventListener('error', () => { const p = im.closest('.rv-pics'); if (p) p.remove(); }, { once: true }));
     };
-    loadApproved();
+    const refreshReviewsView = () => { updateReviewSummary(); buildReviewMarquee(); };
+    loadApproved().then(refreshReviewsView);
+    refreshReviewsView();
   })();
 
   /* ---------- init ---------- */
