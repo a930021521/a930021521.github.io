@@ -32,8 +32,8 @@
     durations: { half: '半日（3 小時）', full: '全日（6 小時，含午休 1 小時）' },
     // Google Apps Script web app → Sheet「SNOWMODE 預約」+ email notification
     endpoint: 'https://script.google.com/macros/s/AKfycbyX7NthGOMOO0p3lh9YbrCJ37tdIx_CVK5tn4EBSbrvdMSMNbGzemTmV90QBG8O-5pyRw/exec',
-    // 學員回饋跑馬燈預覽。改 false（或本 commit revert）即恢復原本的格子／左右滑。
-    reviewMarquee: true
+    // 學員回饋版面：'marquee' 跑馬燈｜'carousel' 自動輪播｜'grid' 原本的格子／左右滑
+    reviewLayout: 'carousel'
   };
 
   /* ---------- the booking data object ---------- */
@@ -1609,8 +1609,12 @@
     if (document.fonts) document.fonts.ready.then(check);
   })();
 
-  /* ---------- reviews: 星等摘要＋雙列跑馬燈（CONFIG.reviewMarquee；還原就改 false 或 revert 這次 commit） ---------- */
+  /* ---------- reviews: 星等摘要＋版面（CONFIG.reviewLayout = marquee | carousel | grid） ---------- */
   const reviewMotionMq = window.matchMedia('(prefers-reduced-motion: reduce)');
+  const reviewLayout = () => {
+    const v = CONFIG.reviewLayout;
+    return (v === 'marquee' || v === 'carousel' || v === 'grid') ? v : 'grid';
+  };
   function reviewStarsOf(card) {
     const el = $('.rv-stars', card);
     if (!el) return 0;
@@ -1627,24 +1631,79 @@
     el.textContent = '★ ' + (Math.round(sum / n * 10) / 10).toFixed(1) + '・共 ' + n + ' 則評價';
     el.hidden = false;
   }
+  function checkReviewExpand(root) {
+    $$('.rv-body', root).forEach(body => {
+      const t = $('.rv-text', body), btn = $('.rv-more', body);
+      if (!t || !btn || body.classList.contains('open')) return;
+      btn.hidden = t.scrollHeight <= t.clientHeight + 2;
+    });
+  }
+  function bindReviewExpand(root, onToggle) {
+    $$('.rv-body', root).forEach(body => {
+      const t = $('.rv-text', body);
+      if (!t) return;
+      let btn = $('.rv-more', body);
+      if (!btn) {
+        btn = document.createElement('button');
+        btn.type = 'button';
+        btn.className = 'rv-more';
+        btn.setAttribute('aria-expanded', 'false');
+        btn.textContent = '展開';
+        body.appendChild(btn);
+      }
+      body.classList.remove('open');
+      btn.textContent = '展開';
+      btn.setAttribute('aria-expanded', 'false');
+      btn.hidden = t.scrollHeight <= t.clientHeight + 2;
+      btn.addEventListener('click', e => {
+        e.preventDefault();
+        e.stopPropagation();
+        const open = body.classList.toggle('open');
+        btn.textContent = open ? '收合' : '展開';
+        btn.setAttribute('aria-expanded', open);
+        if (!open) btn.hidden = t.scrollHeight <= t.clientHeight + 2;
+        if (onToggle) onToggle($$('.rv-body.open', root).length > 0);
+      });
+    });
+  }
+
+  function syncReviewLayout() {
+    const sec = $('#voices'), row = sec && $('.rv-row', sec);
+    if (!sec || !row) return;
+    const mode = reviewLayout();
+    const useMq = mode === 'marquee' && !reviewMotionMq.matches;
+    const useCar = mode === 'carousel';
+    const allWrap = $('.rv-all-wrap', sec);
+    const mq = $('.rv-mq', sec), car = $('.rv-car', sec);
+    sec.classList.toggle('rv-is-mq', useMq);
+    sec.classList.toggle('rv-is-car', useCar);
+    if (allWrap) allWrap.hidden = useMq || useCar;
+    row.hidden = useMq || useCar;
+    if (!useMq && mq) { mq.hidden = true; mq.innerHTML = ''; mq.onpointerdown = mq.onpointerup = mq.onpointercancel = mq.onpointerleave = null; }
+    if (!useCar) destroyReviewCarousel();
+    if (useMq) buildReviewMarquee();
+    if (useCar) buildReviewCarousel();
+  }
+
   function buildReviewMarquee() {
     const sec = $('#voices'), host = sec && $('.rv-mq', sec), row = sec && $('.rv-row', sec);
     if (!sec || !host || !row) return;
-    const allWrap = $('.rv-all-wrap', sec);
-    const enable = CONFIG.reviewMarquee && !reviewMotionMq.matches;
-    sec.classList.toggle('rv-is-mq', enable);
-    if (allWrap) allWrap.hidden = enable;
-    row.hidden = enable;
-    if (!enable) { host.hidden = true; host.innerHTML = ''; return; }
     const cards = $$(':scope > .rv-card', row);
-    if (cards.length < 2) { sec.classList.remove('rv-is-mq'); if (allWrap) allWrap.hidden = false; row.hidden = false; host.hidden = true; host.innerHTML = ''; return; }
+    if (cards.length < 2) {
+      sec.classList.remove('rv-is-mq');
+      const allWrap = $('.rv-all-wrap', sec);
+      if (allWrap) allWrap.hidden = false;
+      row.hidden = false;
+      host.hidden = true; host.innerHTML = '';
+      return;
+    }
     host.innerHTML = '';
     host.hidden = false;
     host.setAttribute('aria-label', '學員評價，自動緩慢捲動，滑鼠移上或按住可暫停');
     const a = cards.filter((_, i) => i % 2 === 0);
     const b = cards.filter((_, i) => i % 2 === 1);
     const minW = Math.max(host.clientWidth || 0, 360) + 40;
-    const trackOf = (list, reverse, secondsHint) => {
+    const trackOf = (list, reverse) => {
       const track = document.createElement('div');
       track.className = 'rv-mq-track' + (reverse ? ' reverse' : '');
       const set = document.createElement('div');
@@ -1663,45 +1722,224 @@
       track.style.setProperty('--rv-mq-t', Math.max(18, w / px) + 's');
       return track;
     };
-    const t1 = trackOf(a, false);
-    const t2 = trackOf(b.length ? b : a, true);
-    const bind = root => {
-      $$('.rv-body', root).forEach(body => {
-        const t = $('.rv-text', body);
-        if (!t) return;
-        let btn = $('.rv-more', body);
-        if (!btn) {
-          btn = document.createElement('button');
-          btn.type = 'button';
-          btn.className = 'rv-more';
-          btn.setAttribute('aria-expanded', 'false');
-          btn.textContent = '展開';
-          body.appendChild(btn);
-        }
-        body.classList.remove('open');
-        btn.textContent = '展開';
-        btn.setAttribute('aria-expanded', 'false');
-        btn.hidden = t.scrollHeight <= t.clientHeight + 2;
-        btn.addEventListener('click', e => {
-          e.preventDefault();
-          e.stopPropagation();
-          const open = body.classList.toggle('open');
-          btn.textContent = open ? '收合' : '展開';
-          btn.setAttribute('aria-expanded', open);
-          if (!open) btn.hidden = t.scrollHeight <= t.clientHeight + 2;
-          host.classList.toggle('is-open', $$('.rv-body.open', host).length > 0);
-        });
-      });
-    };
-    bind(host);
+    trackOf(a, false);
+    trackOf(b.length ? b : a, true);
+    bindReviewExpand(host, open => host.classList.toggle('is-open', open));
     const hold = on => host.classList.toggle('is-held', on);
     host.onpointerdown = e => { if (e.pointerType !== 'mouse') hold(true); };
     host.onpointerup = host.onpointercancel = host.onpointerleave = () => hold(false);
   }
-  if (reviewMotionMq.addEventListener) reviewMotionMq.addEventListener('change', buildReviewMarquee);
-  else if (reviewMotionMq.addListener) reviewMotionMq.addListener(buildReviewMarquee);
-  let rvMqResize;
-  window.addEventListener('resize', () => { clearTimeout(rvMqResize); rvMqResize = setTimeout(buildReviewMarquee, 200); });
+
+  /* ---- 自動輪播 ---- */
+  const RV_CAR_INTERVAL = 4000, RV_CAR_RESUME = 5000, RV_CAR_EASE = .62;
+  let rvCar = null;
+  function destroyReviewCarousel() {
+    if (!rvCar) return;
+    rvCar.stop();
+    if (rvCar.host) { rvCar.host.hidden = true; rvCar.host.innerHTML = ''; rvCar.host.className = 'rv-car'; }
+    rvCar = null;
+  }
+  function buildReviewCarousel() {
+    const sec = $('#voices'), host = sec && $('.rv-car', sec), row = sec && $('.rv-row', sec);
+    if (!sec || !host || !row) return;
+    const src = $$(':scope > .rv-card', row);
+    if (src.length < 2) {
+      destroyReviewCarousel();
+      sec.classList.remove('rv-is-car');
+      const allWrap = $('.rv-all-wrap', sec);
+      if (allWrap) allWrap.hidden = false;
+      row.hidden = false;
+      return;
+    }
+    destroyReviewCarousel();
+    host.hidden = false;
+    host.className = 'rv-car';
+    host.setAttribute('aria-roledescription', 'carousel');
+    host.setAttribute('aria-label', '學員評價輪播');
+    const viewport = document.createElement('div');
+    viewport.className = 'rv-car-viewport';
+    const track = document.createElement('div');
+    track.className = 'rv-car-track';
+    viewport.appendChild(track);
+    const prevBtn = document.createElement('button');
+    prevBtn.type = 'button'; prevBtn.className = 'rv-car-btn prev'; prevBtn.setAttribute('aria-label', '上一則');
+    prevBtn.innerHTML = '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M14.5 5.5L8 12l6.5 6.5" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>';
+    const nextBtn = document.createElement('button');
+    nextBtn.type = 'button'; nextBtn.className = 'rv-car-btn next'; nextBtn.setAttribute('aria-label', '下一則');
+    nextBtn.innerHTML = '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M9.5 5.5L16 12l-6.5 6.5" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>';
+    const nav = document.createElement('div');
+    nav.className = 'rv-car-nav';
+    const dots = document.createElement('div');
+    dots.className = 'rv-car-dots';
+    dots.setAttribute('role', 'tablist');
+    dots.setAttribute('aria-label', '選擇評價');
+    const prog = document.createElement('div');
+    prog.className = 'rv-car-progress';
+    prog.innerHTML = '<i></i>';
+    nav.appendChild(dots);
+    host.appendChild(prevBtn);
+    host.appendChild(viewport);
+    host.appendChild(nextBtn);
+    host.appendChild(nav);
+    host.appendChild(prog);
+
+    const n = src.length;
+    const pad = 3; // clones on each side so 3-up and peek both loop smoothly
+    const originals = src.map(c => c.cloneNode(true));
+    const all = originals.slice(-pad).map(c => { const x = c.cloneNode(true); x.setAttribute('aria-hidden', 'true'); return x; })
+      .concat(originals)
+      .concat(originals.slice(0, pad).map(c => { const x = c.cloneNode(true); x.setAttribute('aria-hidden', 'true'); return x; }));
+    all.forEach(c => { c.classList.add('rv-card'); track.appendChild(c); });
+    originals.forEach((_, i) => {
+      const b = document.createElement('button');
+      b.type = 'button';
+      b.className = 'rv-car-dot';
+      b.setAttribute('aria-label', '第 ' + (i + 1) + ' 則，共 ' + n + ' 則');
+      b.addEventListener('click', () => { goTo(i, true); userAct(); });
+      dots.appendChild(b);
+    });
+    bindReviewExpand(host, open => { host.classList.toggle('is-open', open); if (open) pause(); else userAct(); });
+
+    let idx = 0, step = 0, animating = false, hovered = false, timer = 0, resumeTimer = 0, progTick = 0;
+    const reduced = () => reviewMotionMq.matches;
+    const isMobile = () => window.matchMedia('(max-width:640px)').matches;
+    const interval = () => (window.RV_CAR_MS > 0 ? window.RV_CAR_MS : RV_CAR_INTERVAL);
+
+    const xOf = i => -((pad + i) * step);
+    const apply = (i, animate) => {
+      const ease = reduced() ? '.25s ease' : (RV_CAR_EASE + 's cubic-bezier(.22,.75,.25,1)');
+      track.style.transition = animate ? 'transform ' + ease : 'none';
+      track.style.transform = 'translate3d(' + xOf(i) + 'px,0,0)';
+    };
+    const syncDots = () => {
+      const cur = ((idx % n) + n) % n;
+      $$('.rv-car-dot', dots).forEach((b, i) => {
+        b.classList.toggle('on', i === cur);
+        if (i === cur) b.setAttribute('aria-current', 'true'); else b.removeAttribute('aria-current');
+      });
+    };
+    const restartProg = () => {
+      prog.hidden = reduced();
+      const bar = $('i', prog);
+      if (!bar || prog.hidden) return;
+      bar.style.animation = 'none';
+      void bar.offsetWidth;
+      bar.style.animation = 'rvCarProg ' + interval() + 'ms linear forwards';
+      bar.style.animationPlayState = (hovered || host.classList.contains('is-open')) ? 'paused' : 'running';
+    };
+    function stopAuto() { clearTimeout(timer); timer = 0; }
+    function pause() {
+      stopAuto();
+      clearTimeout(resumeTimer);
+      const bar = $('i', prog);
+      if (bar) bar.style.animationPlayState = 'paused';
+    }
+    function scheduleAuto() {
+      stopAuto();
+      if (reduced() || hovered || host.classList.contains('is-open') || document.hidden) {
+        if (reduced()) prog.hidden = true;
+        return;
+      }
+      restartProg();
+      timer = setTimeout(() => { goTo(idx + 1, true); scheduleAuto(); }, interval());
+    }
+    function userAct() {
+      pause();
+      resumeTimer = setTimeout(scheduleAuto, RV_CAR_RESUME);
+    }
+    function goTo(target, animate) {
+      if (animating && animate) return;
+      idx = target;
+      apply(idx, animate);
+      if (!animate) { idx = ((idx % n) + n) % n; apply(idx, false); syncDots(); return; }
+      animating = true;
+      let finished = false;
+      const done = ev => {
+        if (finished || (ev && ev.target !== track)) return;
+        finished = true;
+        track.removeEventListener('transitionend', done);
+        if (idx >= n) { idx -= n; apply(idx, false); }
+        else if (idx < 0) { idx += n; apply(idx, false); }
+        animating = false;
+        syncDots();
+      };
+      track.addEventListener('transitionend', done);
+      setTimeout(done, (reduced() ? 280 : RV_CAR_EASE * 1000) + 80);
+    }
+    function layout() {
+      const vw = viewport.clientWidth;
+      const gap = parseFloat(getComputedStyle(track).gap) || (isMobile() ? 12 : 18);
+      const cardW = isMobile() ? Math.round(vw * 0.82) : Math.floor((vw - gap * 2) / 3);
+      step = cardW + gap;
+      $$(':scope > .rv-card', track).forEach(c => {
+        c.style.width = cardW + 'px';
+        c.style.flex = '0 0 ' + cardW + 'px';
+      });
+      apply(idx, false);
+      syncDots();
+      checkReviewExpand(host);
+    }
+
+    /* swipe */
+    let ptr = 0, x0 = 0, y0 = 0, dx = 0, dragging = false, locked = '';
+    const onDown = e => {
+      if (e.pointerType === 'mouse' && e.button !== 0) return;
+      if (e.target.closest && e.target.closest('.rv-more, .rv-car-btn, .rv-car-dot')) return;
+      ptr = e.pointerId; x0 = e.clientX; y0 = e.clientY; dx = 0; dragging = true; locked = '';
+      try { viewport.setPointerCapture(ptr); } catch (_) {}
+      pause();
+    };
+    const onMove = e => {
+      if (!dragging || e.pointerId !== ptr) return;
+      const mx = e.clientX - x0, my = e.clientY - y0;
+      if (!locked) {
+        if (Math.abs(mx) < 8 && Math.abs(my) < 8) return;
+        locked = Math.abs(mx) > Math.abs(my) ? 'x' : 'y';
+        if (locked === 'y') { dragging = false; return; }
+      }
+      if (locked !== 'x') return;
+      e.preventDefault();
+      dx = mx;
+      track.style.transition = 'none';
+      track.style.transform = 'translate3d(' + (xOf(idx) + dx) + 'px,0,0)';
+    };
+    const onUp = e => {
+      if (!dragging || (e && e.pointerId !== ptr)) return;
+      dragging = false;
+      const go = (locked === 'x' && Math.abs(dx) > 40) ? (dx < 0 ? 1 : -1) : 0;
+      goTo(idx + go, true);
+      userAct();
+    };
+    viewport.addEventListener('pointerdown', onDown);
+    viewport.addEventListener('pointermove', onMove);
+    viewport.addEventListener('pointerup', onUp);
+    viewport.addEventListener('pointercancel', onUp);
+
+    prevBtn.addEventListener('click', () => { goTo(idx - 1, true); userAct(); });
+    nextBtn.addEventListener('click', () => { goTo(idx + 1, true); userAct(); });
+    host.addEventListener('mouseenter', () => { hovered = true; pause(); });
+    host.addEventListener('mouseleave', () => { hovered = false; userAct(); });
+    host.addEventListener('focusin', () => pause());
+    host.addEventListener('focusout', e => { if (!host.contains(e.relatedTarget)) userAct(); });
+
+    const stop = () => { pause(); clearTimeout(resumeTimer); viewport.removeEventListener('pointerdown', onDown); viewport.removeEventListener('pointermove', onMove); viewport.removeEventListener('pointerup', onUp); viewport.removeEventListener('pointercancel', onUp); };
+    rvCar = { host, layout, stop, goTo, scheduleAuto, pause, userAct, get idx() { return ((idx % n) + n) % n; }, get n() { return n; } };
+    layout();
+    scheduleAuto();
+  }
+
+  if (window.SNOWMODE) window.SNOWMODE.syncReviewLayout = syncReviewLayout;
+
+  if (reviewMotionMq.addEventListener) reviewMotionMq.addEventListener('change', syncReviewLayout);
+  else if (reviewMotionMq.addListener) reviewMotionMq.addListener(syncReviewLayout);
+  let rvLayResize;
+  window.addEventListener('resize', () => {
+    clearTimeout(rvLayResize);
+    rvLayResize = setTimeout(() => {
+      if (reviewLayout() === 'carousel' && rvCar) rvCar.layout();
+      else syncReviewLayout();
+    }, 200);
+  });
 
   /* ---------- reviews: 留下評價（表單 → Apps Script type:"review"）＋ 顯示已上架的評價 ---------- */
   (() => {
@@ -1870,7 +2108,7 @@
       if (nEl) nEl.textContent = '（+' + n + '）';
       $$('img', row).forEach(im => im.addEventListener('error', () => { const p = im.closest('.rv-pics'); if (p) p.remove(); }, { once: true }));
     };
-    const refreshReviewsView = () => { updateReviewSummary(); buildReviewMarquee(); };
+    const refreshReviewsView = () => { updateReviewSummary(); syncReviewLayout(); };
     loadApproved().then(refreshReviewsView);
     refreshReviewsView();
   })();
