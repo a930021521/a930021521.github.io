@@ -110,8 +110,9 @@
     const t = jpy / JPY_PER_TWD;
     return t > 0 && t < 50 ? Math.ceil(t) : 100 * Math.round(t / 100);
   }
-  /* 北海道折扣開關：true = 價表顯示划線原價＋折扣、預估費用打折；false = 全部回原價（價表改顯示原價、隱藏折扣字樣） */
-  const HOKKAIDO_DISCOUNT_ON = true;
+  /* 北海道折扣開關：true = 價表顯示划線原價＋折扣、預估費用打折；false = 全部回原價（價表改顯示原價、隱藏折扣字樣）。
+   * 85 折與 9 折都已結束，維持 false：只收原價，旺季／超旺季加價照舊。 */
+  const HOKKAIDO_DISCOUNT_ON = false;
   /* 早鳥延長：2026/11/20 23:59（台北時間）前預約 → 整季早鳥價（湯澤早鳥價、北海道 85 折〔星野除外〕、札幌國際搶先開滑早鳥價）。
    * 時間一過自動回到一般價＋湯澤淡季折抵＋北海道折扣（11/30 前 85 折，之後 9 折）。測試用：網址加 ?eb=1 / ?eb=0 強制開關。 */
   const EB_EXT_END = Date.parse('2026-11-20T23:59:59.999+08:00');
@@ -193,7 +194,8 @@
       ? 100 * Math.round(raw * EARLY_BIRD.rate / 100) // 85 折百位進位，同早鳥第二彈
       : Math.round(raw * EARLY_BIRD.rate);            // 9 折，同 97d085e
   }
-  const ebExt = key => EB_EXT_ON && !EB_EXCLUDE.has(key);
+  // 第二彈的北海道 85 折只在百分比折扣開啟時生效；關閉後不打折、也不標成早鳥價
+  const ebExt = key => HOKKAIDO_DISCOUNT_ON && EB_EXT_ON && !EB_EXCLUDE.has(key);
   // NT$ list price × rate; HK85 / 早鳥第二彈 85 折 rounds to NT$100，9 折用 Math.round
   const hkDiscTwd = (twd, key) => ebExt(key) ? 100 * Math.round(twd * EB_EXT.rate / 100) : applyEarlyBird(twd);
   const hkDiscJpy = (jpy, key) => Math.round(jpy * (ebExt(key) ? EB_EXT.rate : EARLY_BIRD.rate));
