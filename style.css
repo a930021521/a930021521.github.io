@@ -968,6 +968,9 @@ button{cursor:pointer}
 .rv-src{margin-left:auto;align-self:flex-start;padding:4px 10px 4px 9px;border-radius:999px;border:1px solid rgba(226,230,235,.22);
   font:600 .66rem/1 var(--lat);letter-spacing:.08em;color:#C9CED6;white-space:nowrap}
 .rv-src::before{content:"";display:inline-block;width:5px;height:5px;margin:0 6px 1px 0;border-radius:50%;background:#FF5B00;vertical-align:middle;opacity:.85}
+.rv-meta{margin-left:auto;align-self:flex-start;display:flex;flex-direction:column;align-items:flex-end;gap:4px}
+.rv-meta .rv-src{margin-left:0}
+.rv-season{font-size:.68rem;line-height:1.2;color:#8E97A3;letter-spacing:.06em;white-space:nowrap}
 .rv-rate{display:flex;align-items:center;gap:10px;margin-top:18px}
 .rv-stars{display:inline-flex;gap:3px}
 .rv-stars svg{width:15px;height:15px;fill:#D8BC84}

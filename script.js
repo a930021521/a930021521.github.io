@@ -2076,13 +2076,15 @@
     const okPhoto = u => /^https:\/\/(drive\.google\.com\/thumbnail\?|lh3\.googleusercontent\.com\/)/.test(String(u || ''));
     const cardHtml = (v, extra) => {
       const n = Math.max(1, Math.min(5, Math.round(+v.stars) || 5));
-      const m = /^\d{4}-(\d{2})-(\d{2})/.exec(String(v.date || ''));
+      const m = /^(\d{4})-(\d{2})-(\d{2})/.exec(String(v.date || ''));
       const name = String(v.name || '學員').slice(0, 20);
       const tag = [v.resort, v.board].filter(Boolean).join('｜');
+      const y0 = m && +m[2] >= 1 && +m[2] <= 12 ? (+m[2] >= 7 ? +m[1] : +m[1] - 1) : 0;
+      const season = y0 ? (y0 + '–' + String((y0 + 1) % 100).padStart(2, '0') + ' 雪季') : '';
       return '<li class="rv-card rv-site' + (extra ? ' rv-extra' : '') + '">' +
         '<div class="rv-top"><span class="rv-ava" aria-hidden="true">' + esc(Array.from(name)[0].toUpperCase()) + '</span>' +
-        '<div class="rv-who"><b class="rv-name">' + esc(name) + '</b>' + (m ? '<time class="rv-date">' + (+m[1]) + '月' + (+m[2]) + '日</time>' : '') + '</div>' +
-        '<span class="rv-src">官網評價</span></div>' +
+        '<div class="rv-who"><b class="rv-name">' + esc(name) + '</b>' + (m ? '<time class="rv-date">' + (+m[2]) + '月' + (+m[3]) + '日</time>' : '') + '</div>' +
+        '<div class="rv-meta"><span class="rv-src">官網評價</span>' + (season ? '<time class="rv-season" datetime="' + esc(m[1] + '-' + m[2] + '-' + m[3]) + '">' + season + '</time>' : '') + '</div></div>' +
         '<div class="rv-rate"><span class="rv-stars" role="img" aria-label="' + n + ' 顆星（滿分 5 顆星）">' + [1, 2, 3, 4, 5].map(i => STAR_SVG.replace('<svg ', '<svg ' + (i > n ? 'class="off" ' : '')) ).join('') + '</span><span class="rv-word">' + WORDS[n] + '</span></div>' +
         (tag ? '<p class="rv-tag">' + esc(tag) + '</p>' : '') +
         '<div class="rv-body"><p class="rv-text">' + esc(String(v.text || '').slice(0, 120)) + '</p></div>' +
