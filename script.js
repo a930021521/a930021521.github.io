@@ -2087,7 +2087,7 @@
         '<div class="rv-meta"><span class="rv-src">官網評價</span>' + (season ? '<time class="rv-season" datetime="' + esc(m[1] + '-' + m[2] + '-' + m[3]) + '">' + season + '</time>' : '') + '</div></div>' +
         '<div class="rv-rate"><span class="rv-stars" role="img" aria-label="' + n + ' 顆星（滿分 5 顆星）">' + [1, 2, 3, 4, 5].map(i => STAR_SVG.replace('<svg ', '<svg ' + (i > n ? 'class="off" ' : '')) ).join('') + '</span><span class="rv-word">' + WORDS[n] + '</span></div>' +
         (tag ? '<p class="rv-tag">' + esc(tag) + '</p>' : '') +
-        '<div class="rv-body"><p class="rv-text">' + esc(String(v.text || '').slice(0, 120)) + '</p></div>' +
+        '<div class="rv-body"><p class="rv-text">' + esc(String(v.text || '').slice(0, 300)) + '</p><button type="button" class="rv-more" aria-expanded="false" hidden>展開</button></div>' +
         (okPhoto(v.photo) ? '<div class="rv-pics"><img src="' + esc(v.photo) + '" alt="學員上課照片" width="192" height="192" loading="lazy" decoding="async" referrerpolicy="no-referrer"></div>' : '') +
         '</li>';
     };
