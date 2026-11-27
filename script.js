@@ -1607,6 +1607,176 @@
     if (document.fonts) document.fonts.ready.then(check);
   })();
 
+  /* ---------- reviews: 留下評價（表單 → Apps Script type:"review"）＋ 顯示已上架的評價 ---------- */
+  (() => {
+    const box = $('#review'); if (!box) return;
+    const form = $('#rv-form', box), panel = $('#rv-panel', box), openBtn = $('.rv-open', box), thanks = $('.rv-thanks', box);
+    const picks = $$('.rv-pick', box), picksWrap = $('.rv-picks', box), word = $('.rv-pick-word', box);
+    const chips = $('.rv-chips', box), msgEl = $('.rv-msg', box), sendBtn = $('.rv-send', box);
+    const nameIn = form.elements.rvName, resortIn = form.elements.rvResort, textIn = form.elements.rvText, fileIn = form.elements.rvPhoto;
+    const prev = $('.rv-photo-prev', box), prevImg = $('img', prev);
+    const WORDS = ['', '待改進', '普通', '不錯', '很讚', '超讚'];
+    const LINE_URL = 'https://line.me/R/ti/p/@dqi1670m';
+    const LS = { log: 'smRvLog', cid: 'smRvCid' };
+    let stars = 0, photo = null, openedAt = 0;
+    const ls = { get(k) { try { return localStorage.getItem(k); } catch (_) { return null; } }, set(k, v) { try { localStorage.setItem(k, v); } catch (_) {} } };
+    let cid = ls.get(LS.cid);
+    if (!cid) { cid = Math.random().toString(36).slice(2, 12) + Date.now().toString(36); ls.set(LS.cid, cid); }
+
+    const showMsg = (html) => { msgEl.innerHTML = html || ''; msgEl.hidden = !html; };
+    const lineHint = '請稍後再試，或直接<a href="' + LINE_URL + '" target="_blank" rel="noopener">用 LINE 傳給我們</a>。';
+    const setStars = n => {
+      stars = n; picksWrap.classList.remove('invalid');
+      picks.forEach(b => { const v = +b.dataset.v; b.classList.toggle('on', v <= n); b.setAttribute('aria-checked', v === n); b.tabIndex = (n ? v === n : v === 1) ? 0 : -1; });
+      word.textContent = WORDS[n] || '';
+    };
+    picks.forEach(b => {
+      b.addEventListener('click', () => setStars(+b.dataset.v));
+      b.addEventListener('keydown', e => {
+        const k = e.key; if (!['ArrowRight', 'ArrowUp', 'ArrowLeft', 'ArrowDown'].includes(k)) return;
+        e.preventDefault(); const n = Math.min(5, Math.max(1, (stars || 0) + (k === 'ArrowRight' || k === 'ArrowUp' ? 1 : -1)));
+        setStars(n); picks[n - 1].focus();
+      });
+    });
+    setStars(0);
+    textIn.addEventListener('input', () => { $('.rv-count b', box).textContent = textIn.value.length; textIn.classList.remove('invalid'); });
+    nameIn.addEventListener('input', () => nameIn.classList.remove('invalid'));
+    resortIn.addEventListener('change', () => resortIn.classList.remove('invalid'));
+    form.addEventListener('change', e => { if (e.target.name === 'rvBoard') chips.classList.remove('invalid'); });
+
+    /* open / close / direct link #review */
+    const open = (scroll) => {
+      if (panel.hidden) { panel.hidden = false; openedAt = Date.now(); }
+      openBtn.setAttribute('aria-expanded', 'true');
+      if (thanks.hidden === false) return;
+      if (scroll) box.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    };
+    const close = () => {
+      panel.hidden = true; openBtn.setAttribute('aria-expanded', 'false');
+      thanks.hidden = true; form.hidden = false; showMsg('');
+    };
+    openBtn.addEventListener('click', () => { open(false); nameIn.focus({ preventScroll: true }); track('review_open'); });
+    $('.rv-cancel', box).addEventListener('click', () => { close(); openBtn.focus({ preventScroll: true }); });
+    $('.rv-close', box).addEventListener('click', () => { close(); openBtn.focus({ preventScroll: true }); });
+    const fromHash = () => { if (location.hash === '#review') { open(true); } };
+    window.addEventListener('hashchange', fromHash);
+    if (location.hash === '#review') { // opened from a shared link: images above still load, so re-aim a few times until the reader moves
+      open(false);
+      let moved = false; const stop = () => { moved = true; };
+      ['wheel', 'touchstart', 'keydown'].forEach(ev => window.addEventListener(ev, stop, { once: true, passive: true }));
+      const aim = () => { if (!moved) box.scrollIntoView({ behavior: 'auto', block: 'start' }); };
+      aim(); window.addEventListener('load', aim); setTimeout(aim, 500); setTimeout(aim, 1500);
+    }
+
+    /* photo: resize in the browser (long side 1280 px, JPEG) before upload; also drops phone location data */
+    const readPhoto = file => new Promise((resolve, reject) => {
+      const url = URL.createObjectURL(file), img = new Image();
+      img.onload = () => {
+        try {
+          const enc = (max, q) => {
+            const k = Math.min(1, max / Math.max(img.naturalWidth, img.naturalHeight));
+            const w = Math.max(1, Math.round(img.naturalWidth * k)), h = Math.max(1, Math.round(img.naturalHeight * k));
+            const c = document.createElement('canvas'); c.width = w; c.height = h;
+            const g = c.getContext('2d'); g.fillStyle = '#fff'; g.fillRect(0, 0, w, h); g.drawImage(img, 0, 0, w, h);
+            return c.toDataURL('image/jpeg', q);
+          };
+          let d = enc(1280, 0.82); if (d.length > 1.6e6) d = enc(960, 0.7);
+          URL.revokeObjectURL(url);
+          if (d.length > 3.6e6) reject(new Error('big')); else resolve(d);
+        } catch (e) { reject(e); }
+      };
+      img.onerror = () => { URL.revokeObjectURL(url); reject(new Error('decode')); };
+      img.src = url;
+    });
+    const clearPhoto = () => { photo = null; fileIn.value = ''; prev.hidden = true; prevImg.removeAttribute('src'); };
+    fileIn.addEventListener('change', async () => {
+      const f = fileIn.files && fileIn.files[0]; showMsg('');
+      if (!f) return clearPhoto();
+      if (!/^image\//.test(f.type) && f.type) { clearPhoto(); return showMsg('請選擇照片檔案。'); }
+      try { const d = await readPhoto(f); photo = d; prevImg.src = d; prev.hidden = false; }
+      catch (_) { clearPhoto(); showMsg('這張照片無法使用，請換一張，或不附照片。'); }
+    });
+    $('.rv-photo-x', box).addEventListener('click', clearPhoto);
+
+    /* repeat-submit limit (this browser): 30 s apart, 2 per 24 h. The Apps Script also limits per visitor and per hour. */
+    const recent = () => { let a = []; try { a = JSON.parse(ls.get(LS.log) || '[]'); } catch (_) {} const t = Date.now(); return a.filter(x => t - x < 864e5); };
+    const limited = () => { const a = recent(); return a.length >= 2 || (a.length && Date.now() - a[a.length - 1] < 3e4); };
+
+    form.addEventListener('submit', async e => {
+      e.preventDefault(); showMsg('');
+      if (form.elements.website.value) { form.hidden = true; thanks.hidden = false; return; } // honeypot filled: look done, send nothing
+      if (limited()) return showMsg('您剛剛已送出過評價，謝謝！如要補充，請<a href="' + LINE_URL + '" target="_blank" rel="noopener">用 LINE 告訴我們</a>。');
+      const name = nameIn.value.trim(), text = textIn.value.trim(), board = (form.elements.rvBoard.value || '');
+      let bad = null;
+      if (!stars) { picksWrap.classList.add('invalid'); bad = bad || picks[0]; }
+      if (!name) { nameIn.classList.add('invalid'); bad = bad || nameIn; }
+      if (!resortIn.value) { resortIn.classList.add('invalid'); bad = bad || resortIn; }
+      if (!board) { chips.classList.add('invalid'); bad = bad || $('input', chips); }
+      if (text.length < 2) { textIn.classList.add('invalid'); bad = bad || textIn; }
+      if (bad) { showMsg('請把標示 * 的欄位填好。'); try { bad.focus({ preventScroll: false }); } catch (_) {} return; }
+      if (/https?:\/\/|www\./i.test(name + ' ' + text)) return showMsg('心得裡請不要放網址。');
+      sendBtn.disabled = true; sendBtn.textContent = '送出中…'; form.classList.add('is-busy');
+      const payload = { type: 'review', stars, name, resort: resortIn.value, board, text, cid, ms: Date.now() - openedAt, website: '' };
+      if (photo) payload.photo = { mime: 'image/jpeg', data: photo.replace(/^data:[^,]*,/, '') };
+      try {
+        const ctl = typeof AbortController === 'function' ? new AbortController() : null, to = setTimeout(() => ctl && ctl.abort(), 30000);
+        const r = await fetch(CONFIG.endpoint, { method: 'POST', headers: { 'Content-Type': 'text/plain;charset=utf-8' }, body: JSON.stringify(payload), signal: ctl ? ctl.signal : undefined });
+        clearTimeout(to);
+        let data = null; try { data = JSON.parse(await r.text()); } catch (_) {}
+        if (!data || data.ok !== true) {
+          if (data && data.error === 'limit') throw Object.assign(new Error('limit'), { limit: true });
+          throw new Error((data && data.error) || 'fail');
+        }
+        const log = recent(); log.push(Date.now()); ls.set(LS.log, JSON.stringify(log));
+        form.hidden = true; thanks.hidden = false; thanks.focus({ preventScroll: true });
+        track('submit_review', { stars, resort: payload.resort, board, has_photo: !!photo });
+        form.reset(); setStars(0); clearPhoto(); $('.rv-count b', box).textContent = '0';
+        box.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+      } catch (err) {
+        showMsg(err && err.limit ? '您已送出過幾則評價了，謝謝！如要補充，請<a href="' + LINE_URL + '" target="_blank" rel="noopener">用 LINE 告訴我們</a>。' : '暫時無法送出。' + lineHint);
+      } finally { sendBtn.disabled = false; sendBtn.textContent = '送出評價'; form.classList.remove('is-busy'); }
+    });
+
+    /* ---- approved reviews (Apps Script doGet ?type=reviews) → cards like the hand-made ones; failure leaves the page as is ---- */
+    const STAR_SVG = '<svg viewBox="0 0 20 20" aria-hidden="true"><path d="M10 1.6l2.47 5.3 5.8.68-4.3 3.96 1.15 5.73L10 14.4l-5.12 2.87 1.15-5.73-4.3-3.96 5.8-.68z"/></svg>';
+    const okPhoto = u => /^https:\/\/(drive\.google\.com\/thumbnail\?|lh3\.googleusercontent\.com\/)/.test(String(u || ''));
+    const cardHtml = (v, extra) => {
+      const n = Math.max(1, Math.min(5, Math.round(+v.stars) || 5));
+      const m = /^\d{4}-(\d{2})-(\d{2})/.exec(String(v.date || ''));
+      const name = String(v.name || '學員').slice(0, 20);
+      const tag = [v.resort, v.board].filter(Boolean).join('｜');
+      return '<li class="rv-card rv-site' + (extra ? ' rv-extra' : '') + '">' +
+        '<div class="rv-top"><span class="rv-ava" aria-hidden="true">' + esc(Array.from(name)[0].toUpperCase()) + '</span>' +
+        '<div class="rv-who"><b class="rv-name">' + esc(name) + '</b>' + (m ? '<time class="rv-date">' + (+m[1]) + '月' + (+m[2]) + '日</time>' : '') + '</div>' +
+        '<span class="rv-src">官網評價</span></div>' +
+        '<div class="rv-rate"><span class="rv-stars" role="img" aria-label="' + n + ' 顆星（滿分 5 顆星）">' + [1, 2, 3, 4, 5].map(i => STAR_SVG.replace('<svg ', '<svg ' + (i > n ? 'class="off" ' : '')) ).join('') + '</span><span class="rv-word">' + WORDS[n] + '</span></div>' +
+        (tag ? '<p class="rv-tag">' + esc(tag) + '</p>' : '') +
+        '<div class="rv-body"><p class="rv-text">' + esc(String(v.text || '').slice(0, 120)) + '</p></div>' +
+        (okPhoto(v.photo) ? '<div class="rv-pics"><img src="' + esc(v.photo) + '" alt="學員上課照片" width="192" height="192" loading="lazy" decoding="async" referrerpolicy="no-referrer"></div>' : '') +
+        '</li>';
+    };
+    const loadApproved = async () => {
+      const row = $('.rv-row'); if (!row) return;
+      let list;
+      try {
+        const ctl = typeof AbortController === 'function' ? new AbortController() : null, to = setTimeout(() => ctl && ctl.abort(), 8000);
+        const r = await fetch(CONFIG.endpoint + '?type=reviews', { signal: ctl ? ctl.signal : undefined });
+        clearTimeout(to);
+        const data = JSON.parse(await r.text());
+        list = data && data.ok === true && Array.isArray(data.reviews) ? data.reviews.slice(0, 30) : null;
+      } catch (_) { list = null; }
+      if (!list || !list.length) return;
+      const x0 = row.scrollLeft;
+      row.insertAdjacentHTML('afterbegin', list.map((v, i) => cardHtml(v, i >= 3)).join(''));
+      if (x0 < 8) { row.style.scrollSnapType = 'none'; row.scrollLeft = 0; requestAnimationFrame(() => { row.scrollLeft = 0; row.style.scrollSnapType = ''; }); }
+      const note = $('.rv-note'); if (note) note.textContent = '評價來自 Klook 過往學員與官網留言的學員';
+      const n = $$('.rv-extra', row).length, nEl = $('.rv-all-n');
+      if (nEl) nEl.textContent = '（+' + n + '）';
+      $$('img', row).forEach(im => im.addEventListener('error', () => { const p = im.closest('.rv-pics'); if (p) p.remove(); }, { once: true }));
+    };
+    loadApproved();
+  })();
+
   /* ---------- init ---------- */
   syncMethod(); renderCal(); renderDays(); setParty(1, 0); updateLive(); go(1, false);
   const y = $('#year'); if (y) y.textContent = new Date().getFullYear();
@@ -1963,7 +2133,7 @@
     if (history.replaceState) history.replaceState(null, '', a.getAttribute('href'));
   }, true);
   if (showHash(location.hash)) requestAnimationFrame(() => toPrices(false));
-  window.addEventListener('hashchange', () => { showHash(location.hash); toPrices(false); });
+  window.addEventListener('hashchange', () => { if (showHash(location.hash)) toPrices(false); });
   if (mq.addEventListener) mq.addEventListener('change', syncMode);
   else mq.addListener(syncMode);
   syncMode();

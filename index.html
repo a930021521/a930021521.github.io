@@ -45,7 +45,7 @@
 <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@200;300;400;600;700&display=swap" rel="stylesheet">
 <link rel="preload" as="image" type="image/webp" href="img/hero-m-opt5.webp" media="(max-width:640px)" fetchpriority="high">
 <link rel="preload" as="image" type="image/webp" href="img/hero-yuzawa-1920.webp" media="(min-width:641px)" fetchpriority="high">
-<link rel="stylesheet" href="style.css?v=hero49">
+<link rel="stylesheet" href="style.css?v=hero50">
 <link rel="stylesheet" href="hero-snow.css?v=1">
 <link rel="stylesheet" href="resort-carousel.css?v=16">
 </head>
@@ -1128,6 +1128,59 @@ Jay教練是我們這兩天玩的這麼愉快的大功臣！
         </li>
     </ul>
     <div class="rv-all-wrap"><button type="button" class="rv-all" aria-expanded="false">顯示更多評價<span class="rv-all-n">（+3）</span></button></div>
+    <div class="rv-write" id="review">
+      <div class="rv-write-bar">
+        <div class="rv-write-t"><b>上過課了嗎？</b><span>留下您的評價，讓更多人認識我們。</span></div>
+        <button type="button" class="btn btn-ghost rv-open" aria-expanded="false" aria-controls="rv-panel">留下評價</button>
+      </div>
+      <div class="rv-panel" id="rv-panel" hidden>
+        <form class="rv-form" id="rv-form" novalidate autocomplete="off">
+          <div class="rv-fld">
+            <span class="rv-lab" id="rv-stars-lab">整體感受 <em>*</em></span>
+            <div class="rv-picks" role="radiogroup" aria-labelledby="rv-stars-lab"><button type="button" class="rv-pick" role="radio" aria-checked="false" aria-label="1 顆星" data-v="1"><svg viewBox="0 0 20 20" aria-hidden="true"><path d="M10 1.6l2.47 5.3 5.8.68-4.3 3.96 1.15 5.73L10 14.4l-5.12 2.87 1.15-5.73-4.3-3.96 5.8-.68z"/></svg></button><button type="button" class="rv-pick" role="radio" aria-checked="false" aria-label="2 顆星" data-v="2"><svg viewBox="0 0 20 20" aria-hidden="true"><path d="M10 1.6l2.47 5.3 5.8.68-4.3 3.96 1.15 5.73L10 14.4l-5.12 2.87 1.15-5.73-4.3-3.96 5.8-.68z"/></svg></button><button type="button" class="rv-pick" role="radio" aria-checked="false" aria-label="3 顆星" data-v="3"><svg viewBox="0 0 20 20" aria-hidden="true"><path d="M10 1.6l2.47 5.3 5.8.68-4.3 3.96 1.15 5.73L10 14.4l-5.12 2.87 1.15-5.73-4.3-3.96 5.8-.68z"/></svg></button><button type="button" class="rv-pick" role="radio" aria-checked="false" aria-label="4 顆星" data-v="4"><svg viewBox="0 0 20 20" aria-hidden="true"><path d="M10 1.6l2.47 5.3 5.8.68-4.3 3.96 1.15 5.73L10 14.4l-5.12 2.87 1.15-5.73-4.3-3.96 5.8-.68z"/></svg></button><button type="button" class="rv-pick" role="radio" aria-checked="false" aria-label="5 顆星" data-v="5"><svg viewBox="0 0 20 20" aria-hidden="true"><path d="M10 1.6l2.47 5.3 5.8.68-4.3 3.96 1.15 5.73L10 14.4l-5.12 2.87 1.15-5.73-4.3-3.96 5.8-.68z"/></svg></button><output class="rv-pick-word" aria-live="polite"></output></div>
+          </div>
+          <label class="fld"><span class="rv-lab">名字或暱稱 <em>*</em></span>
+            <input type="text" name="rvName" maxlength="20" placeholder="例：小明" autocomplete="off">
+          </label>
+          <div class="rv-two">
+            <label class="fld"><span class="rv-lab">雪場 <em>*</em></span>
+              <select name="rvResort"><option value="" selected disabled hidden>請選擇雪場</option><optgroup label="越後湯澤"><option value="岩原">岩原</option><option value="中里">中里</option><option value="苗場">苗場</option><option value="神樂">神樂</option><option value="神立">神立</option><option value="石打丸山">石打丸山</option></optgroup><optgroup label="北海道"><option value="北海道・二世古">二世古</option><option value="北海道・留壽都">留壽都</option><option value="北海道・富良野">富良野</option><option value="北海道・星野">星野</option><option value="北海道・札幌國際">札幌國際</option><option value="北海道・手稻">手稻</option></optgroup></select>
+            </label>
+            <div class="rv-fld">
+              <span class="rv-lab" id="rv-board-lab">板類 <em>*</em></span>
+              <div class="rv-chips" role="radiogroup" aria-labelledby="rv-board-lab">
+                <label class="rv-chip"><input type="radio" name="rvBoard" value="單板"><span>單板</span></label>
+                <label class="rv-chip"><input type="radio" name="rvBoard" value="雙板"><span>雙板</span></label>
+              </div>
+            </div>
+          </div>
+          <label class="fld"><span class="rv-lab">心得 <em>*</em></span>
+            <textarea name="rvText" rows="3" maxlength="120" placeholder="一兩句話就好"></textarea>
+            <span class="rv-count" aria-live="off"><b>0</b>/120</span>
+          </label>
+          <div class="rv-fld">
+            <span class="rv-lab">照片（選填）</span>
+            <div class="rv-photo">
+              <label class="rv-photo-btn"><input type="file" name="rvPhoto" accept="image/*"><span>選擇照片</span></label>
+              <span class="rv-photo-prev" hidden><img alt="" width="56" height="56"><button type="button" class="rv-photo-x" aria-label="移除照片">✕</button></span>
+            </div>
+          </div>
+          <input class="rv-hp" type="text" name="website" tabindex="-1" autocomplete="off" aria-hidden="true">
+          <p class="rv-msg" role="alert" hidden></p>
+          <p class="rv-hint">送出後由教練確認，通過才會顯示在網站上。</p>
+          <div class="rv-actions">
+            <button type="submit" class="btn btn-main rv-send">送出評價</button>
+            <button type="button" class="btn btn-ghost rv-cancel">取消</button>
+          </div>
+        </form>
+        <div class="rv-thanks" hidden tabindex="-1">
+          <span class="rv-thanks-ic" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M5 12.5l4.2 4.2L19 7" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/></svg></span>
+          <b>謝謝您！</b>
+          <p>評價已收到，教練確認後就會顯示在這裡。</p>
+          <button type="button" class="btn btn-ghost rv-close">關閉</button>
+        </div>
+      </div>
+    </div>
   </div>
 </section>
 
@@ -1275,7 +1328,7 @@ Jay教練是我們這兩天玩的這麼愉快的大功臣！
     <svg class="msum-chev" viewBox="0 0 24 24" aria-hidden="true"><path d="M6 15l6-6 6 6" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>
   </button>
 </div>
-<script src="script.js?v=hk0"></script>
+<script src="script.js?v=kn29"></script>
 <script src="resort-carousel.js?v=kn2"></script>
 
 </body>
